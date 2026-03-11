@@ -50,7 +50,7 @@
 /* ============================================================ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { width: 100%; height: 100%; overflow: hidden; }
+html, body { width: 100%; height: 100%; overflow-x: hidden; }
 
 body {
   background: var(--bg);
@@ -157,7 +157,7 @@ body::after {
   justify-content: space-between;
   padding: 20px 40px;
   border-bottom: 1px solid var(--nav-rule);
-  background: rgba(12,12,12,0.5);
+  background: rgba(12,12,12,0.35);
   backdrop-filter: blur(14px);
   opacity: 0;
   transform: translateY(-10px);
@@ -238,6 +238,18 @@ body::after {
   line-height: 2.2;
 }
 
+/* ── CONTENT SECTION ─────────────────────────────────────────────── */
+.page-content{
+  position: relative;
+  z-index: 5;
+  margin-top: 100vh;
+}
+
+.section-test{
+  min-height: 100vh;
+  padding: 120px 40px;
+}
+
 </style>
 </head>
 <body>
@@ -250,7 +262,7 @@ body::after {
   <div class="intro-wordmark">Aurafact</div>
   <h1 class="intro-title">Archiving the Acoustic Memory of Place</h1>
   <p class="intro-sub">Environmental Sound Archive</p>
-  <button class="enter-btn" id="enterBtn">Enter Archive</button>
+  <button class="enter-btn" id="enterBtn" aria-label="Enter the Aurafact sound archive">Enter Archive</button>
 </div>
 
 <!-- Nav -->
@@ -276,51 +288,19 @@ body::after {
   <span>Active Artifact</span>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     SCROLL BODY — sits below the full-viewport wave header
-═══════════════════════════════════════════════════════════ -->
-  <div id="scroll-body">
+<main class="page-content">
 
-  <!-- MANIFESTO ──────────────────────────────────────────────── -->
-  <section id="manifesto" class="reveal">
+<section class="section-test">
+  <h2>Archive</h2>
+  <p>This is where your archive grid will go.</p>
+</section>
 
-    <div class="manifesto-left">
-      <span class="manifesto-eyebrow">Aurafact — Field Notes</span>
+<section class="section-test">
+  <h2>Sound Explorer</h2>
+  <p>Future interface here.</p>
+</section>
 
-      <div class="manifesto-quote-wrap">
-        <span class="manifesto-openquote">&ldquo;</span>
-        <p class="manifesto-quote">
-          A location without its sound<br>is only half remembered.
-        </p>
-      </div>
-
-      <span class="manifesto-attr">— Aurafact Manifesto, 2024</span>
-    </div>
-
-    <div class="manifesto-right">
-      <p class="manifesto-body">
-        We photograph every surface of the earth.
-        We map every road, every coastline, every rooftop.
-        Yet we have no systematic method for preserving
-        <strong>the acoustic texture of a place</strong> —
-        the specific density of birdsong at dawn in a Congolese
-        market, the echo of a harbour at low tide, the rhythmic
-        clatter of a train platform in a city that no longer runs
-        that line.
-      </p>
-      <p class="manifesto-body">
-        Aurafact is an infrastructure for acoustic memory.
-        Each recording is treated not as a file, but as a
-        <strong>fully documented specimen</strong> — carrying its
-        environmental DNA: GPS coordinates, barometric pressure,
-        the exact microphone used, the time of sunrise that morning.
-      </p>
-      <a href="#" class="manifesto-read-more">Read the full manifesto</a>
-    </div>
-
-  </section>
-  </div>
-
+</main>
 
 
 <script>
@@ -353,7 +333,7 @@ const COLS = {
    HEADER values are what the sim eases toward after Enter.   */
 const SIM = {
   LINE_COUNT:   36,     // number of vertical lines across width
-  SEGMENTS:     90,     // points per line (vertical resolution)
+  SEGMENTS:     70,     // points per line (vertical resolution)
   DECAY:        0.0022, // amplitude falloff with distance from source
   BAND_SIGMA:   42,     // width of pressure band in px (Gaussian)
   RING_COUNT:   3,      // trailing rings per pulse
@@ -553,6 +533,9 @@ const sketch = p => {
 };
 
 new p5(sketch);
+
+
+
 
 
 /* ── INTRO TEXT: staggered entrance ─────────────────────────── */
