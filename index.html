@@ -1,39 +1,585 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurafact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;1,400&family=DM+Mono:wght@300;400&family=Cormorant+Garamond:ital,wght@1,300&display=swap" rel="stylesheet">
 
-<title>Listening Atlas</title>
+<!-- p5.js — wave simulation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/p5.min.js"></script>
+<!-- GSAP — page transitions -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
-<link rel="stylesheet" href="style.css">
+<style>
 
+/* ============================================================
+   COLOUR TOKENS
+   All HTML/CSS colours live here.
+   Canvas colours live in the JS block marked CANVAS COLOURS.
+   ============================================================ */
+:root {
+  --bg:              #0C0C0C;   /* page + canvas background          */
+
+  /* Intro typography */
+  --text-primary:    #EDECEA;   /* heading                           */
+  --text-secondary:  #4A4A4A;   /* subtitle                          */
+  --text-mono:       #3A3A3A;   /* wordmark / labels                 */
+
+  /* Button */
+  --btn-border:      #2E2E2E;
+  --btn-text:        #888888;
+  --btn-hover-border:#777777;
+  --btn-hover-text:  #EDECEA;
+
+  /* Nav */
+  --nav-logo:        #EDECEA;
+  --nav-link:        #EDECEA;
+  --nav-link-hover:  #EDECEA;
+  --nav-rule:        #2c2c2c;
+
+  /* Header overlay text */
+  --header-title:    #EDECEA;
+  --header-sub:      #EDECEA;
+  --header-coord:    #EDECEA;
+
+  --grain-opacity:   0.045;
+}
+/* ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+/* Grain */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: var(--grain-opacity);
+  pointer-events: none;
+  z-index: 9000;
+}
+
+
+/* ── p5 CANVAS CONTAINER ───────────────────────────────────────
+   Fixed, full viewport, behind everything.
+   The same canvas persists through intro → header.          */
+#p5-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+#p5-container canvas { display: block; }
+
+
+/* ── INTRO OVERLAY ─────────────────────────────────────────────
+   Centred text + button, above canvas.
+   Dissolved by GSAP on Enter.                               */
+#intro {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: all;
+}
+
+.intro-wordmark {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 30px;
+  opacity: 0;
+}
+
+.intro-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(58px, 9vw, 108px);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 0.9;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 22px;
+  letter-spacing: -0.01em;
+  opacity: 0;
+}
+
+.intro-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 58px;
+  opacity: 0;
+}
+
+.enter-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--btn-border);
+  color: var(--btn-text);
+  padding: 13px 38px;
+  cursor: pointer;
+  opacity: 0;
+  transition: border-color 0.3s, color 0.3s;
+}
+.enter-btn:hover {
+  border-color: var(--btn-hover-border);
+  color: var(--btn-hover-text);
+}
+
+
+/* ── NAV ───────────────────────────────────────────────────────
+   Hidden until transition completes.                        */
+#site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  border-bottom: 1px solid var(--nav-rule);
+  background: rgba(12,12,12,0.5);
+  backdrop-filter: blur(14px);
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+.nav-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--nav-logo);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--nav-link);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--nav-link-hover); }
+
+
+/* ── HEADER TEXT ───────────────────────────────────────────────
+   Bottom-left title block + bottom-right coords.
+   Appear after transition.                                  */
+#header-text {
+  position: fixed;
+  bottom: 56px;
+  left: 40px;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.header-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px, 3.8vw, 54px);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--header-title);
+  line-height: 1.05;
+  margin-bottom: 10px;
+}
+
+.header-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--header-sub);
+}
+
+#header-coords {
+  position: fixed;
+  bottom: 56px;
+  right: 40px;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+  text-align: right;
+}
+#header-coords span {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.10em;
+  color: var(--header-coord);
+  line-height: 2.2;
+}
+
+</style>
 </head>
-
 <body>
 
-<div class="container">
+<!-- p5 canvas mounts here -->
+<div id="p5-container"></div>
 
-    <svg class="waves" viewBox="0 0 600 600">
-
-        <circle cx="300" cy="300" r="10" class="wave"/>
-        <circle cx="300" cy="300" r="10" class="wave"/>
-        <circle cx="300" cy="300" r="10" class="wave"/>
-
-    </svg>
-
-    <div class="source"></div>
-
-    <h1>Listening Atlas</h1>
-
-    <p class="subtitle">A digital archive of environmental sound</p>
-
-    <button class="enter">Enter Archive</button>
-
+<!-- Intro -->
+<div id="intro">
+  <div class="intro-wordmark">Aurafact</div>
+  <h1 class="intro-title">Archiving<br>the Invisible</h1>
+  <p class="intro-sub">Environmental Sound Archive</p>
+  <button class="enter-btn" id="enterBtn">Enter Archive</button>
 </div>
 
-<script src="script.js"></script>
+<!-- Nav -->
+<nav id="site-nav">
+  <a href="#" class="nav-logo">Aurafact</a>
+  <ul class="nav-links">
+    <li><a href="#">Map</a></li>
+    <li><a href="#">Archive</a></li>
+    <li><a href="#">Lab</a></li>
+    <li><a href="#">Manifesto</a></li>
+    <li><a href="#">Enter</a></li>
+  </ul>
+</nav>
 
+<!-- Header text overlay -->
+<div id="header-text">
+  <h2 class="header-title">Environmental Sound,<br>Preserved.</h2>
+  <p class="header-sub">847 artifacts &nbsp;·&nbsp; 63 regions &nbsp;·&nbsp; Since 2019</p>
+</div>
+<div id="header-coords">
+  <span>43.2965°N · 5.3698°E</span>
+  <span>Marseille Vieux-Port</span>
+  <span>Active Artifact</span>
+</div>
+
+
+<script>
+/* ============================================================
+   CANVAS COLOURS
+   These control everything p5 draws.
+
+   LINE        vertical line at rest  [R, G, B]
+   LINE_HI     compressed zone (bright)
+   LINE_LO     rarefied zone (dark)
+   RING        concentric wave-front rings
+   SOURCE      centre source dot
+   BG          canvas background — keep in sync with --bg above
+   ============================================================ */
+const COLS = {
+  BG:       '#0C0C0C',
+  LINE:     [72,  72,  70],    // resting
+  LINE_HI:  [205, 204, 200],   // compression  ← brighten for colour accent
+  LINE_LO:  [18,  18,  17],    // rarefaction  ← darken for colour accent
+  RING:     [60,  60,  58],    // wave-front rings
+  SOURCE:   [150, 148, 144],   // source glow + dot
+};
+/* ============================================================ */
+
+
+/* ── SIMULATION PARAMETERS ─────────────────────────────────────
+   Tweak these to change the feel of the animation.
+
+   INTRO values are active on load.
+   HEADER values are what the sim eases toward after Enter.   */
+const SIM = {
+  LINE_COUNT:   36,     // number of vertical lines across width
+  SEGMENTS:     90,     // points per line (vertical resolution)
+  DECAY:        0.0022, // amplitude falloff with distance from source
+  BAND_SIGMA:   42,     // width of pressure band in px (Gaussian)
+  RING_COUNT:   3,      // trailing rings per pulse
+  RING_SPACING: 78,     // px between trailing rings
+
+  // ── Live values (lerped at runtime) ──
+  // Intro state
+  WAVE_SPEED:   2.8,    // px/frame the wave front travels outward
+  AMPLITUDE:    26,     // max horizontal line displacement in px
+  PULSE_EVERY:  150,    // frames between auto-pulses
+
+  // Header state targets — edit these to tune the calm mode
+  HEADER_WAVE_SPEED:  0.9,   // slower propagation
+  HEADER_AMPLITUDE:   4,     // subtler line displacement
+  HEADER_PULSE_EVERY: 500,   // much longer interval between pulses
+
+  // Lerp speed: how quickly it eases between intro and header (0–1)
+  // Lower = slower, dreamier transition. 0.012 ≈ ~5 second ease.
+  LERP_SPEED: 0.012,
+};
+/* ============================================================ */
+
+
+const sketch = p => {
+
+  const waves = [];
+  let srcX, srcY;
+  let fc = 0;  // own frame counter (avoids p.frameCount drift)
+
+  // Live lerp state — these are what the draw loop actually reads.
+  // They glide toward their targets each frame.
+  let liveSpeed     = SIM.WAVE_SPEED;
+  let liveAmplitude = SIM.AMPLITUDE;
+  let livePulseEvery = SIM.PULSE_EVERY;
+
+  // Targets start at intro values; updated by the transition.
+  let targetSpeed     = SIM.WAVE_SPEED;
+  let targetAmplitude = SIM.AMPLITUDE;
+  let targetPulseEvery = SIM.PULSE_EVERY;
+
+  // Expose target setter to the transition script.
+  window._simCalm = () => {
+    targetSpeed      = SIM.HEADER_WAVE_SPEED;
+    targetAmplitude  = SIM.HEADER_AMPLITUDE;
+    targetPulseEvery = SIM.HEADER_PULSE_EVERY;
+  };
+
+  // ── Setup ─────────────────────────────────────────────────
+  p.setup = () => {
+    const cnv = p.createCanvas(p.windowWidth, p.windowHeight);
+    cnv.parent('p5-container');
+    p.frameRate(60);
+    p.noFill();
+    srcX = p.width  * 0.5;
+    srcY = p.height * 0.5;
+    emit();
+  };
+
+  p.windowResized = () => {
+    p.resizeCanvas(p.windowWidth, p.windowHeight);
+  };
+
+  // ── Emit a wave pulse ──────────────────────────────────────
+  function emit() {
+    waves.push({ ox: srcX, oy: srcY, born: fc });
+  }
+
+  // ── Horizontal displacement at canvas point (px, py) ──────
+  // Sums contributions from all active waves.
+  // Positive = rightward push (compression)
+  // Negative = leftward pull (rarefaction)
+  function disp(px, py) {
+    let total = 0;
+    for (const w of waves) {
+      const age   = fc - w.born;
+      const dist  = Math.hypot(px - w.ox, py - w.oy);
+      const front = age * liveSpeed;
+      const diff  = dist - front;
+
+      // Gaussian bell centred on the wave front
+      const env  = Math.exp(-(diff * diff) / (2 * SIM.BAND_SIGMA * SIM.BAND_SIGMA));
+      const atten = Math.exp(-SIM.DECAY * dist);
+
+      // One full sine cycle per wavefront → one compression + one rarefaction band
+      total += liveAmplitude * env * atten * Math.sin(diff * 0.095 * Math.PI);
+    }
+    return total;
+  }
+
+  // ── Linear interpolate two RGB arrays ─────────────────────
+  function lerpRGB(a, b, t) {
+    t = Math.max(0, Math.min(1, t));
+    return [
+      a[0] + (b[0] - a[0]) * t,
+      a[1] + (b[1] - a[1]) * t,
+      a[2] + (b[2] - a[2]) * t,
+    ];
+  }
+
+  // ── Draw ──────────────────────────────────────────────────
+  p.draw = () => {
+    fc++;
+
+    // Ease live values toward their targets each frame
+    const k = SIM.LERP_SPEED;
+    liveSpeed      += (targetSpeed      - liveSpeed)      * k;
+    liveAmplitude  += (targetAmplitude  - liveAmplitude)  * k;
+    livePulseEvery += (targetPulseEvery - livePulseEvery) * k;
+
+    if (fc % Math.round(livePulseEvery) === 0) emit();
+
+    p.background(p.color(COLS.BG));
+
+    // 1 ── Vertical lines ────────────────────────────────────
+    for (let i = 0; i <= SIM.LINE_COUNT; i++) {
+      const baseX = p.map(i, 0, SIM.LINE_COUNT, 0, p.width);
+
+      p.beginShape();
+      for (let j = 0; j <= SIM.SEGMENTS; j++) {
+        const baseY = p.map(j, 0, SIM.SEGMENTS, 0, p.height);
+        const d     = disp(baseX, baseY);
+        const x     = baseX + d;
+
+        // Normalised displacement −1 … +1
+        const t = Math.max(-1, Math.min(1, d / liveAmplitude));
+
+        // Colour
+        const rgb = t >= 0
+          ? lerpRGB(COLS.LINE, COLS.LINE_HI,  t)
+          : lerpRGB(COLS.LINE, COLS.LINE_LO, -t);
+
+        // Opacity: dim at rest, brighter at pressure extremes
+        const alpha = p.map(Math.abs(t), 0, 1, 38, 188);
+
+        p.stroke(rgb[0], rgb[1], rgb[2], alpha);
+        p.strokeWeight(0.75);
+        p.vertex(x, baseY);
+      }
+      p.endShape();
+    }
+
+    // 2 ── Concentric rings ───────────────────────────────────
+    const maxD = Math.hypot(p.width, p.height);
+    for (const w of waves) {
+      const age   = fc - w.born;
+      const front = age * liveSpeed;
+
+      for (let k = 0; k < SIM.RING_COUNT; k++) {
+        const r = front - k * SIM.RING_SPACING;
+        if (r <= 0 || r > maxD + 50) continue;
+
+        // Alpha: fades with distance and with harmonic index
+        const distFade = p.map(r, 0, maxD * 0.9, 1, 0);
+        const harmFade = p.map(k, 0, SIM.RING_COUNT - 1, 1, 0.2);
+        const alpha    = Math.max(0, distFade * harmFade * 160);
+
+        p.noFill();
+        p.stroke(COLS.RING[0], COLS.RING[1], COLS.RING[2], alpha);
+        p.strokeWeight(k === 0 ? 0.9 : 0.45);
+        p.ellipse(w.ox, w.oy, r * 2, r * 2);
+      }
+    }
+
+    // 3 ── Source dot ─────────────────────────────────────────
+    // Soft radial glow
+    for (let g = 5; g >= 0; g--) {
+      const gr = g * 8 + 5;
+      const ga = p.map(g, 0, 5, 90, 0);
+      p.noStroke();
+      p.fill(COLS.SOURCE[0], COLS.SOURCE[1], COLS.SOURCE[2], ga);
+      p.ellipse(srcX, srcY, gr * 2);
+    }
+    // Core
+    p.noStroke();
+    p.fill(COLS.SOURCE[0], COLS.SOURCE[1], COLS.SOURCE[2], 210);
+    p.ellipse(srcX, srcY, 5, 5);
+
+    // 4 ── Cull dead waves ────────────────────────────────────
+    for (let i = waves.length - 1; i >= 0; i--) {
+      if ((fc - waves[i].born) * liveSpeed > maxD + 300) {
+        waves.splice(i, 1);
+      }
+    }
+  };
+
+  // ── Click: move source, fire pulse ────────────────────────
+  p.mousePressed = () => {
+    if (!window._interactive) return;
+    srcX = p.mouseX;
+    srcY = p.mouseY;
+    emit();
+  };
+
+  // Expose controls to the transition script
+  window._emit      = emit;
+  window._setSource = (x, y) => { srcX = x; srcY = y; };
+};
+
+new p5(sketch);
+
+
+/* ── INTRO TEXT: staggered entrance ─────────────────────────── */
+gsap.fromTo('.intro-wordmark',
+  { opacity: 0, y: 10 },
+  { opacity: 1, y: 0, duration: 1.0, ease: 'power2.out', delay: 0.9 }
+);
+gsap.fromTo('.intro-title',
+  { opacity: 0, y: 18 },
+  { opacity: 1, y: 0, duration: 1.2, ease: 'power2.out', delay: 1.4 }
+);
+gsap.fromTo('.intro-sub',
+  { opacity: 0 },
+  { opacity: 1,        duration: 1.0, ease: 'power2.out', delay: 2.0 }
+);
+gsap.fromTo('.enter-btn',
+  { opacity: 0 },
+  { opacity: 1,        duration: 0.9, ease: 'power2.out', delay: 2.5 }
+);
+
+
+/* ── TRANSITION: Enter Archive ────────────────────────────────
+   The canvas keeps running — we only animate the HTML layers.*/
+document.getElementById('enterBtn').addEventListener('click', () => {
+
+  // Extra pulse from centre as the screen clears,
+  // then begin easing the sim toward its calm state.
+  if (window._emit)    window._emit();
+  if (window._simCalm) window._simCalm();
+
+  const tl = gsap.timeline({ defaults: { ease: 'power2.inOut' } });
+
+  // Dissolve intro text
+  tl.to(['.intro-title', '.intro-wordmark', '.intro-sub'], {
+    opacity: 0,
+    y: -12,
+    duration: 0.5,
+    stagger: 0.05,
+  });
+  tl.to('.enter-btn', { opacity: 0, duration: 0.35 }, '<0.08');
+
+  // Remove pointer events from intro
+  tl.set('#intro', { pointerEvents: 'none' });
+
+  // Slide nav in from top
+  tl.to('#site-nav', {
+    opacity: 1,
+    y: 0,
+    duration: 0.65,
+    ease: 'power3.out',
+    onStart: () => {
+      document.getElementById('site-nav').style.pointerEvents = 'all';
+    }
+  }, '-=0.15');
+
+  // Fade header text and coords
+  tl.to('#header-text', {
+    opacity: 1,
+    duration: 0.8,
+    ease: 'power2.out',
+  }, '-=0.25');
+
+  tl.to('#header-coords', {
+    opacity: 1,
+    duration: 0.8,
+    ease: 'power2.out',
+  }, '-=0.55');
+
+  // Enable click-to-reposition on the canvas
+  tl.call(() => { window._interactive = true; });
+
+});
+</script>
 </body>
 </html>
