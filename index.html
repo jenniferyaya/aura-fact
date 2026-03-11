@@ -6,7 +6,7 @@
 <title>Aurafact</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;1,400&family=DM+Mono:wght@300;400&family=Cormorant+Garamond:ital,wght@1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 
 <!-- p5.js — wave simulation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/p5.min.js"></script>
@@ -55,7 +55,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 body {
   background: var(--bg);
   color: var(--text-primary);
-  font-family: 'EB Garamond', Georgia, serif;
+  font-family: "Libre Baskerville", serif;
 }
 
 /* Grain */
@@ -97,17 +97,16 @@ body::after {
 
 .intro-wordmark {
   font-family: 'DM Mono', monospace;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.30em;
   text-transform: uppercase;
-  color: var(--text-mono);
   margin-bottom: 30px;
   opacity: 0;
 }
 
 .intro-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(58px, 9vw, 108px);
+  font-family: "Libre Baskerville", serif;
+  font-size: clamp(58px, 9vw, 70px);
   font-style: italic;
   font-weight: 300;
   line-height: 0.9;
@@ -120,10 +119,9 @@ body::after {
 
 .intro-sub {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--text-secondary);
   margin-bottom: 58px;
   opacity: 0;
 }
@@ -144,6 +142,7 @@ body::after {
 .enter-btn:hover {
   border-color: var(--btn-hover-border);
   color: var(--btn-hover-text);
+  background-color: var(--btn-border);
 }
 
 
@@ -167,7 +166,7 @@ body::after {
 
 .nav-logo {
   font-family: 'DM Mono', monospace;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--nav-logo);
@@ -181,7 +180,7 @@ body::after {
 }
 .nav-links a {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--nav-link);
@@ -204,8 +203,8 @@ body::after {
 }
 
 .header-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(30px, 3.8vw, 54px);
+  font-family: "Libre Baskerville", serif;
+  font-size: clamp(26px, 3.8vw, 54px);
   font-style: italic;
   font-weight: 300;
   color: var(--header-title);
@@ -215,7 +214,7 @@ body::after {
 
 .header-sub {
   font-family: 'DM Mono', monospace;
-  font-size: 8.5px;
+  font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--header-sub);
@@ -233,7 +232,7 @@ body::after {
 #header-coords span {
   display: block;
   font-family: 'DM Mono', monospace;
-  font-size: 8.5px;
+  font-size: 11px;
   letter-spacing: 0.10em;
   color: var(--header-coord);
   line-height: 2.2;
@@ -249,7 +248,7 @@ body::after {
 <!-- Intro -->
 <div id="intro">
   <div class="intro-wordmark">Aurafact</div>
-  <h1 class="intro-title">Archiving<br>the Invisible</h1>
+  <h1 class="intro-title">Archiving the Acoustic Memory of Place</h1>
   <p class="intro-sub">Environmental Sound Archive</p>
   <button class="enter-btn" id="enterBtn">Enter Archive</button>
 </div>
@@ -268,7 +267,7 @@ body::after {
 
 <!-- Header text overlay -->
 <div id="header-text">
-  <h2 class="header-title">Environmental Sound,<br>Preserved.</h2>
+  <h2 class="header-title">Archiving the Acoustic Memory of Place</h2>
   <p class="header-sub">847 artifacts &nbsp;·&nbsp; 63 regions &nbsp;·&nbsp; Since 2019</p>
 </div>
 <div id="header-coords">
@@ -276,6 +275,52 @@ body::after {
   <span>Marseille Vieux-Port</span>
   <span>Active Artifact</span>
 </div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCROLL BODY — sits below the full-viewport wave header
+═══════════════════════════════════════════════════════════ -->
+  <div id="scroll-body">
+
+  <!-- MANIFESTO ──────────────────────────────────────────────── -->
+  <section id="manifesto" class="reveal">
+
+    <div class="manifesto-left">
+      <span class="manifesto-eyebrow">Aurafact — Field Notes</span>
+
+      <div class="manifesto-quote-wrap">
+        <span class="manifesto-openquote">&ldquo;</span>
+        <p class="manifesto-quote">
+          A location without its sound<br>is only half remembered.
+        </p>
+      </div>
+
+      <span class="manifesto-attr">— Aurafact Manifesto, 2024</span>
+    </div>
+
+    <div class="manifesto-right">
+      <p class="manifesto-body">
+        We photograph every surface of the earth.
+        We map every road, every coastline, every rooftop.
+        Yet we have no systematic method for preserving
+        <strong>the acoustic texture of a place</strong> —
+        the specific density of birdsong at dawn in a Congolese
+        market, the echo of a harbour at low tide, the rhythmic
+        clatter of a train platform in a city that no longer runs
+        that line.
+      </p>
+      <p class="manifesto-body">
+        Aurafact is an infrastructure for acoustic memory.
+        Each recording is treated not as a file, but as a
+        <strong>fully documented specimen</strong> — carrying its
+        environmental DNA: GPS coordinates, barometric pressure,
+        the exact microphone used, the time of sunrise that morning.
+      </p>
+      <a href="#" class="manifesto-read-more">Read the full manifesto</a>
+    </div>
+
+  </section>
+  </div>
+
 
 
 <script>
@@ -581,5 +626,10 @@ document.getElementById('enterBtn').addEventListener('click', () => {
 
 });
 </script>
+
+
+
+
+
 </body>
 </html>
