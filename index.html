@@ -50,7 +50,7 @@
 /* ============================================================ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { width: 100%; height: 100%; overflow-x: hidden; }
+html, body { width: 100%; overflow-x: hidden; }
 
 body {
   background: var(--bg);
@@ -74,7 +74,7 @@ body::after {
    Fixed, full viewport, behind everything.
    The same canvas persists through intro → header.          */
 #p5-container {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 0;
 }
@@ -85,7 +85,7 @@ body::after {
    Centred text + button, above canvas.
    Dissolved by GSAP on Enter.                               */
 #intro {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 10;
   display: flex;
@@ -157,7 +157,7 @@ body::after {
   justify-content: space-between;
   padding: 20px 40px;
   border-bottom: 1px solid var(--nav-rule);
-  background: rgba(12,12,12,0.35);
+  background: rgba(12,12,12,0.5);
   backdrop-filter: blur(14px);
   opacity: 0;
   transform: translateY(-10px);
@@ -194,7 +194,7 @@ body::after {
    Bottom-left title block + bottom-right coords.
    Appear after transition.                                  */
 #header-text {
-  position: fixed;
+  position: absolute;
   bottom: 56px;
   left: 40px;
   z-index: 20;
@@ -221,7 +221,7 @@ body::after {
 }
 
 #header-coords {
-  position: fixed;
+  position: absolute;
   bottom: 56px;
   right: 40px;
   z-index: 20;
@@ -243,6 +243,8 @@ body::after {
   position: relative;
   z-index: 5;
   margin-top: 100vh;
+  background-color: #f5f5f5;
+  color: var(--text-secondary)
 }
 
 .section-test{
@@ -267,7 +269,7 @@ body::after {
 
 <!-- Nav -->
 <nav id="site-nav">
-  <a href="#" class="nav-logo">Aurafact</a>
+  <a href="index.html" class="nav-logo">Aurafact</a>
   <ul class="nav-links">
     <li><a href="#">Map</a></li>
     <li><a href="archive.html">Archive</a></li>
