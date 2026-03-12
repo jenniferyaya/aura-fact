@@ -30,7 +30,7 @@
 
   /* Button */
   --btn-border:      #2E2E2E;
-  --btn-text:        #888888;
+  --btn-text:        #2E2E2E;
   --btn-hover-border:#777777;
   --btn-hover-text:  #EDECEA;
 
@@ -247,9 +247,422 @@ body::after {
   color: var(--text-secondary)
 }
 
+.archive-section {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  min-height: calc(100vh - 80px);
+}
+
+.archive-left {
+  padding: 100px 60px 140px 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.archive-table-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 24px;
+}
+
+.archive-right {
+  border-left: 1px solid #1a1a1a;
+  padding: 100px 40px 100px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0;
+}
+
+.right-quote {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(15px, 1.5vw, 20px);
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+
+.right-quote-caption {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 40px;
+}
+
+.right-rule {
+  border: none;
+  border-top: 1px solid #1a1a1a;
+  margin: 0 0 40px;
+}
+
+.right-ecology-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 18px;
+}
+
+.right-ecology-body {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  line-height: 1.9;
+  color: var(--text-mono);
+}
+
+.right-panel-title {
+  font-family: 'DM Mono', monospace;
+  font-weight: 400;
+  font-size: clamp(14px, 1.4vw, 20px);
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.right-image-block {
+  margin-top: 40px;
+  margin-left: -48px;
+  margin-right: -40px;
+  aspect-ratio: 4 / 3;
+  background: #0e0e0e;
+  border-top: 1px solid #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #1e1e1e;
+  overflow: hidden;
+}
+
+.right-image-block img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.88;
+  transition: opacity 0.4s;
+}
+
+.right-image-block img:hover { opacity: 1; }
+
+.right-panel-title {
+  font-family: 'DM Mono', monospace;
+  font-weight: 400;
+  font-size: clamp(14px, 1.4vw, 20px);
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+
+.right-img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background: #0e0e0e;
+  outline: 1px solid #1a1a1a;
+  overflow: hidden;
+  display: block;
+  line-height: 0;
+}
+
+.right-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.9;
+  transition: opacity 0.4s;
+}
+
+.right-img:hover img {
+  opacity: 1;
+}
+
+.right-taxonomy {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.right-taxonomy-id {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+}
+
+.right-taxonomy-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  color: var(--text-secondary);
+}
+
+.right-taxonomy-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+}
+
+
+/* ── Panel header ── */
+.studies-panel-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+/* ── Primary study ── */
+.study-primary {
+  margin-bottom: 20px;
+}
+
+.study-primary .study-img-frame {
+  outline: 1px solid #1a1a1a;
+  overflow: hidden;
+  line-height: 0;
+  background: #0e0e0e;
+}
+
+.study-primary .study-img-frame img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  display: block;
+  opacity: 0.88;
+  transition: opacity 0.5s;
+}
+
+.study-primary .study-img-frame:hover img { opacity: 1; }
+
+/* ── Secondary row ── */
+.study-secondary-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.study-secondary .study-img-frame {
+  outline: 1px solid #1a1a1a;
+  overflow: hidden;
+  line-height: 0;
+  background: #0e0e0e;
+}
+
+.study-secondary .study-img-frame img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+  opacity: 0.82;
+  transition: opacity 0.5s;
+}
+
+.study-secondary .study-img-frame:hover img { opacity: 1; }
+
+/* ── Placeholder (when image file not yet present) ── */
+.study-img-frame .img-placeholder {
+  width: 100%;
+  background: #0e0e0e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #222;
+}
+
+.study-primary   .study-img-frame .img-placeholder { aspect-ratio: 3 / 2; }
+.study-secondary .study-img-frame .img-placeholder { aspect-ratio: 1 / 1; }
+
+/* ── Study metadata block ── */
+.study-meta {
+  padding: 10px 0 0;
+  line-height: 0;
+}
+
+.study-meta-id {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.study-meta-title {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 2px;
+}
+
+.study-meta-sub {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  line-height: 1;
+}
+
+.study-divider {
+  border: none;
+  border-top: 1px solid #1a1a1a;
+  margin: 18px 0;
+}
+
+.archive-intro {
+  font-family: 'DM Mono', monospace;
+  font-size: 16px;
+  letter-spacing: 0.09em;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  max-width: 580px;
+  margin-bottom: 60px;
+}
+
 .section-test{
   min-height: 100vh;
   padding: 120px 40px;
+}
+
+.archive-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'DM Mono', monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.10em;
+}
+
+.archive-table thead th {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 12px;
+  text-align: left;
+  padding: 0 24px 16px 0;
+  border-bottom: 1px solid #1e1e1e;
+}
+
+.archive-table tbody tr {
+  border-bottom: 1px solid #181818;
+  transition: background 0.2s;
+}
+
+.archive-table tbody tr {
+  cursor: pointer;
+}
+
+.archive-table tbody tr:hover {
+  background: rgba(12,12,12,0.35);
+  backdrop-filter: blur(14px);
+}
+
+.archive-table tbody tr.is-playing {
+  background: rgba(255,255,255,0.03);
+}
+
+/* Sound preview indicator */
+.archive-table tbody td.sound-cell {
+  width: 28px;
+  padding-right: 0;
+}
+
+.sound-indicator {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+tr:hover .sound-indicator,
+tr.is-playing .sound-indicator {
+  opacity: 1;
+}
+
+.sound-indicator span {
+  display: block;
+  width: 2px;
+  background: var(--text-secondary);
+  border-radius: 1px;
+  animation: none;
+}
+
+tr.is-playing .sound-indicator span {
+  animation: bar-bounce 0.6s ease-in-out infinite alternate;
+}
+
+.sound-indicator span:nth-child(1) { height: 6px;  animation-delay: 0s;    }
+.sound-indicator span:nth-child(2) { height: 10px; animation-delay: 0.1s;  }
+.sound-indicator span:nth-child(3) { height: 7px;  animation-delay: 0.2s;  }
+.sound-indicator span:nth-child(4) { height: 12px; animation-delay: 0.05s; }
+
+@keyframes bar-bounce {
+  from { transform: scaleY(0.3); }
+  to   { transform: scaleY(1.4); }
+}
+
+/* Browse button */
+.archive-cta {
+  margin-top: 32px;
+  display: inline-block;
+  align-self: flex-start;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--btn-border);
+  color: var(--btn-text);
+  padding: 13px 38px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.3s, color 0.3s, background-color 0.3s;
+}
+.archive-cta:hover {
+  border-color: var(--btn-hover-border);
+  color: var(--btn-hover-text);
+  background-color: var(--btn-border);
+}
+
+.archive-table tbody td {
+  padding: 18px 24px 18px 0;
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+
+.archive-table tbody td:first-child {
+  letter-spacing: 0.14em;
 }
 
 </style>
@@ -292,9 +705,93 @@ body::after {
 
 <main class="page-content">
 
-<section class="section-test">
-  <h2>Archive</h2>
-  <p>This is where your archive grid will go.</p>
+<section class="archive-section">
+
+  <!-- Left: intro + table -->
+  <div class="archive-left">
+    <h2 class="archive-table-title">H2 Placeholder</h2>
+    <p class="archive-intro">Aurafact is a living archive of the world's disappearing soundscapes — field recordings captured at precise coordinates, catalogued by acoustic signature, and preserved before silence takes their place.</p>
+
+    <h2 class="archive-table-title">H2 Placeholder</h2>
+
+    <table class="archive-table" id="archiveTable">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Specimen ID</th>
+          <th>Stamp</th>
+          <th>Type</th>
+          <th>Frequency Profile</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-sound="urban">
+          <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
+          <td>AF-0091</td>
+          <td>2023-04-17 · 06:12</td>
+          <td>Urban Ambient</td>
+          <td>80 Hz – 4.2 kHz · dense low-mid</td>
+        </tr>
+        <tr data-sound="coastal">
+          <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
+          <td>AF-0134</td>
+          <td>2023-07-03 · 14:44</td>
+          <td>Coastal Field</td>
+          <td>20 Hz – 8 kHz · broadband, tidal surge</td>
+        </tr>
+        <tr data-sound="forest">
+          <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
+          <td>AF-0208</td>
+          <td>2024-01-29 · 07:58</td>
+          <td>Forest Interior</td>
+          <td>200 Hz – 12 kHz · layered biophony</td>
+        </tr>
+        <tr data-sound="industrial">
+          <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
+          <td>AF-0312</td>
+          <td>2024-03-11 · 22:05</td>
+          <td>Industrial Margin</td>
+          <td>60 Hz – 2 kHz · sustained harmonic drone</td>
+        </tr>
+        <tr data-sound="desert">
+          <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
+          <td>AF-0447</td>
+          <td>2024-08-22 · 05:30</td>
+          <td>Desert Dawn</td>
+          <td>400 Hz – 10 kHz · sparse, high transients</td>
+        </tr>
+        <tr data-sound="desert">
+          <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
+          <td>AF-0447</td>
+          <td>2024-08-22 · 05:30</td>
+          <td>Desert Dawn</td>
+          <td>400 Hz – 10 kHz · sparse, high transients</td>
+        </tr>
+        <tr data-sound="desert">
+          <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
+          <td>AF-0447</td>
+          <td>2024-08-22 · 05:30</td>
+          <td>Desert Dawn</td>
+          <td>400 Hz – 10 kHz · sparse, high transients</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <a href="archive.html" class="archive-cta">Browse full archive →</a>
+  </div>
+
+<!-- Right column -->
+  <div class="archive-right">
+
+    <p class="right-quote">"A place without its sound is only half remembered."</p>
+    <p class="right-quote-caption">— Aurafact &nbsp;·&nbsp; Field Notes &nbsp;·&nbsp; 2024</p>
+
+    <div class="right-image-block"><img src="img/aurafact-acoustic-study-02.png" alt=""></div>
+    <div class="right-image-block"><img src="img/aurafact-acoustic-study-03.png" alt=""></div>
+
+
+  </div>
+
 </section>
 
 <section class="section-test">
@@ -615,6 +1112,217 @@ document.getElementById('enterBtn').addEventListener('click', () => {
 
 
 
+
+
+<script>
+/* ── SOUND PREVIEW — Web Audio API ────────────────────────────
+   Synthesises a 3-second textural preview for each soundscape
+   type using oscillators + noise shaped to the frequency
+   profile of each specimen.                                  */
+
+const SOUND_PROFILES = {
+  urban: {
+    // Low-mid rumble: two detuned saws + filtered noise
+    build(ctx) {
+      const out = ctx.createGain();
+      out.gain.setValueAtTime(0, ctx.currentTime);
+      out.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.4);
+      out.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 2.4);
+      out.gain.linearRampToValueAtTime(0, ctx.currentTime + 3.0);
+
+      [110, 113, 220].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const g   = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.value = freq;
+        g.gain.value = i === 2 ? 0.06 : 0.12;
+        osc.connect(g); g.connect(out);
+        osc.start(); osc.stop(ctx.currentTime + 3.1);
+      });
+
+      // Band-pass noise for city texture
+      const buf  = ctx.createBuffer(1, ctx.sampleRate * 3, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      const ns  = ctx.createBufferSource();
+      const bp  = ctx.createBiquadFilter();
+      bp.type = 'bandpass'; bp.frequency.value = 800; bp.Q.value = 0.6;
+      ns.buffer = buf;
+      ns.connect(bp); bp.connect(out);
+      ns.start(); ns.stop(ctx.currentTime + 3.1);
+
+      out.connect(ctx.destination);
+      return out;
+    }
+  },
+  coastal: {
+    // Broadband crash: filtered white noise with slow LFO swell
+    build(ctx) {
+      const out = ctx.createGain();
+      out.gain.setValueAtTime(0, ctx.currentTime);
+      out.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 0.8);
+      out.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 2.0);
+      out.gain.linearRampToValueAtTime(0, ctx.currentTime + 3.0);
+
+      const buf  = ctx.createBuffer(1, ctx.sampleRate * 3, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      const ns  = ctx.createBufferSource();
+      const lp  = ctx.createBiquadFilter();
+      lp.type = 'lowpass'; lp.frequency.value = 3000;
+      const lfo = ctx.createOscillator();
+      const lfg = ctx.createGain();
+      lfo.frequency.value = 0.3; lfg.gain.value = 1200;
+      lfo.connect(lfg); lfg.connect(lp.frequency);
+      ns.buffer = buf;
+      ns.connect(lp); lp.connect(out); out.connect(ctx.destination);
+      lfo.start(); ns.start(); lfo.stop(ctx.currentTime + 3.1); ns.stop(ctx.currentTime + 3.1);
+      return out;
+    }
+  },
+  forest: {
+    // Layered birdsong: sparse high sine chirps over soft noise bed
+    build(ctx) {
+      const out = ctx.createGain();
+      out.gain.setValueAtTime(0, ctx.currentTime);
+      out.gain.linearRampToValueAtTime(0.14, ctx.currentTime + 0.5);
+      out.gain.linearRampToValueAtTime(0.14, ctx.currentTime + 2.5);
+      out.gain.linearRampToValueAtTime(0, ctx.currentTime + 3.0);
+
+      // Soft noise bed
+      const buf  = ctx.createBuffer(1, ctx.sampleRate * 3, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      const ns = ctx.createBufferSource();
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass'; hp.frequency.value = 1200;
+      const ng = ctx.createGain(); ng.gain.value = 0.08;
+      ns.buffer = buf; ns.connect(hp); hp.connect(ng); ng.connect(out);
+      ns.start(); ns.stop(ctx.currentTime + 3.1);
+
+      // Chirps
+      [[0.2, 3200], [0.6, 4800], [1.1, 3600], [1.8, 5200], [2.4, 4100]].forEach(([t, f]) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.frequency.value = f; o.type = 'sine';
+        g.gain.setValueAtTime(0, ctx.currentTime + t);
+        g.gain.linearRampToValueAtTime(0.09, ctx.currentTime + t + 0.03);
+        g.gain.linearRampToValueAtTime(0, ctx.currentTime + t + 0.12);
+        o.connect(g); g.connect(out);
+        o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.15);
+      });
+
+      out.connect(ctx.destination);
+      return out;
+    }
+  },
+  industrial: {
+    // Sustained drone: low fundamentals + heavy harmonic stack
+    build(ctx) {
+      const out = ctx.createGain();
+      out.gain.setValueAtTime(0, ctx.currentTime);
+      out.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.6);
+      out.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 2.4);
+      out.gain.linearRampToValueAtTime(0, ctx.currentTime + 3.0);
+
+      [60, 120, 180, 240].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const g   = ctx.createGain();
+        osc.type = i % 2 === 0 ? 'square' : 'sawtooth';
+        osc.frequency.value = freq;
+        g.gain.value = 0.12 / (i + 1);
+        const lp = ctx.createBiquadFilter();
+        lp.type = 'lowpass'; lp.frequency.value = 900;
+        osc.connect(g); g.connect(lp); lp.connect(out);
+        osc.start(); osc.stop(ctx.currentTime + 3.1);
+      });
+
+      out.connect(ctx.destination);
+      return out;
+    }
+  },
+  desert: {
+    // Sparse highs: wind shimmer + distant transients
+    build(ctx) {
+      const out = ctx.createGain();
+      out.gain.setValueAtTime(0, ctx.currentTime);
+      out.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 1.0);
+      out.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 2.2);
+      out.gain.linearRampToValueAtTime(0, ctx.currentTime + 3.0);
+
+      // Wind shimmer
+      const buf  = ctx.createBuffer(1, ctx.sampleRate * 3, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      const ns  = ctx.createBufferSource();
+      const bp  = ctx.createBiquadFilter();
+      bp.type = 'bandpass'; bp.frequency.value = 5000; bp.Q.value = 1.2;
+      const ng = ctx.createGain(); ng.gain.value = 0.15;
+      ns.buffer = buf; ns.connect(bp); bp.connect(ng); ng.connect(out);
+      ns.start(); ns.stop(ctx.currentTime + 3.1);
+
+      // Sparse high transients
+      [[0.4, 6000], [1.2, 8000], [2.1, 7200]].forEach(([t, f]) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.frequency.value = f; o.type = 'sine';
+        g.gain.setValueAtTime(0, ctx.currentTime + t);
+        g.gain.linearRampToValueAtTime(0.06, ctx.currentTime + t + 0.01);
+        g.gain.linearRampToValueAtTime(0, ctx.currentTime + t + 0.08);
+        o.connect(g); g.connect(out);
+        o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.1);
+      });
+
+      out.connect(ctx.destination);
+      return out;
+    }
+  }
+};
+
+(function initSoundPreviews() {
+  let audioCtx   = null;
+  let activeTimer = null;
+  let activeRow   = null;
+
+  function getCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function stopCurrent() {
+    if (activeTimer) { clearTimeout(activeTimer); activeTimer = null; }
+    if (activeRow)   { activeRow.classList.remove('is-playing'); activeRow = null; }
+  }
+
+  document.querySelectorAll('#archiveTable tbody tr').forEach(row => {
+    let hoverTimer = null;
+
+    row.addEventListener('mouseenter', () => {
+      // 120 ms debounce — don't fire on accidental passes
+      hoverTimer = setTimeout(() => {
+        stopCurrent();
+        const type = row.dataset.sound;
+        const profile = SOUND_PROFILES[type];
+        if (!profile) return;
+
+        const ctx = getCtx();
+        profile.build(ctx);
+
+        row.classList.add('is-playing');
+        activeRow = row;
+        activeTimer = setTimeout(stopCurrent, 3000);
+      }, 120);
+    });
+
+    row.addEventListener('mouseleave', () => {
+      clearTimeout(hoverTimer);
+      // Only stop if this row is the currently playing one
+      if (activeRow === row) stopCurrent();
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
