@@ -266,7 +266,17 @@ body::after {
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--text-mono);
-  margin-bottom: 24px;
+  margin-bottom: 32px;
+}
+
+.page h2 {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 4px;
 }
 
 .archive-right {
@@ -541,15 +551,22 @@ body::after {
   margin: 18px 0;
 }
 
-.archive-intro {
-  font-family: 'DM Mono', monospace;
-  font-size: 16px;
-  letter-spacing: 0.09em;
+p {
+  font-family: "Libre Baskerville", serif;
+  font-size: 14px;
   line-height: 1.5;
   color: var(--text-secondary);
   max-width: 580px;
+  margin-bottom: 16px;
+}
+
+.space-after {
   margin-bottom: 60px;
 }
+.space-after-1-2 {
+  margin-bottom: 32px;
+}
+
 
 .section-test{
   min-height: 100vh;
@@ -841,19 +858,22 @@ tr.is-playing .sound-indicator span {
 
   <!-- Left: intro + table -->
   <div class="archive-left">
-    <h2 class="archive-table-title">H2 Placeholder</h2>
-    <p class="archive-intro">Aurafact is a living archive of the world's disappearing soundscapes — field recordings captured at precise coordinates, catalogued by acoustic signature, and preserved before silence takes their place.</p>
+    <h2 class="page">Acoustic Preservation</h2>
+    <p>Every environment possesses a sonic fingerprint, a shifting composition of biological, geological, and human sound. Yet while landscapes are photographed and mapped with precision, their acoustic identity is rarely documented.</p>
+    <p class="space-after"><i>Aurafact</i> approaches environmental recordings as archival specimens. Each capture preserves a moment in the sonic evolution of a place, transforming sound into a permanent, searchable record for research, reflection, and cultural memory.</p>
 
-    <h2 class="archive-table-title">Archive</h2>
-    <h3>Recent Additions</h3>
+
+    <h2 class="space-after-1-2 page">Archive — Recent Additions</h2>
 
     <table class="archive-table" id="archiveTable">
       <thead>
         <tr>
           <th></th>
           <th>Specimen ID</th>
-          <th>Stamp</th>
-          <th>Type</th>
+          <th>Artifact</th>
+          <th>Location</th>
+          <th>Source Type</th>
+          <th>Crowd Assembly</th>
           <th>Frequency Profile</th>
         </tr>
       </thead>
@@ -861,9 +881,11 @@ tr.is-playing .sound-indicator span {
         <tr data-sound="urban" data-audio="audio/AF-0003-world-cup-watch-party-ottawa-2022.mp3">
           <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
           <td>AF-0003</td>
-          <td>2022-11-25 · 16:09</td>
+          <td>World Cup Watch Party</td>
+          <td>Ottawa, CA</td>
+          <td>Anthropophony</td>
           <td>Crowd Assembly</td>
-          <td>120 Hz – 5 kHz · urban</td>
+          <td>120 Hz – 5 kHz · layered human chorus</td>
         </tr>
         <tr data-sound="coastal">
           <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
