@@ -211,61 +211,13 @@ body::after {
 .alpha-btn.has-entries { color: var(--text-secondary); }
 .alpha-btn.empty { opacity: 0.28; pointer-events: none; cursor: default; }
 
-/* ── MAIN BODY: two-column ───────────────────────────────────── */
+/* ── MAIN BODY: single column ────────────────────────────────── */
 .glossary-body {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 1fr;
 }
 
-/* ── LEFT: sticky letter index ─────────────────────────────────  */
-.letter-index {
-  position: sticky;
-  top: calc(var(--nav-h) + 49px); /* nav + alpha-nav height */
-  align-self: start;
-  padding: 56px 32px 56px 80px;
-  border-right: 1px solid var(--rule);
-}
-
-.letter-index-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.30em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-  margin-bottom: 20px;
-  display: block;
-}
-
-.letter-index-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.letter-index-list li a {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--rule-light);
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.letter-index-list li a:hover { color: var(--text-accent); }
-
-.letter-index-count {
-  font-size: 9px;
-  opacity: 0.55;
-}
-
-/* ── RIGHT: entries ──────────────────────────────────────────── */
+/* ── ENTRIES ─────────────────────────────────────────────────── */
 .glossary-entries {
   padding: 0;
 }
@@ -443,7 +395,6 @@ body::after {
 @media (max-width: 1099px) {
   .page-header    { padding: calc(var(--nav-h) + 56px) 40px 56px; gap: 48px; }
   .alpha-nav      { padding: 0 40px; }
-  .letter-index   { padding: 48px 24px 48px 40px; }
   .letter-heading { padding: 28px 20px 28px 24px; }
   .letter-group-meta { padding: 28px 40px 28px 24px; }
   .glossary-entry { grid-template-columns: 200px 1fr; }
@@ -457,10 +408,6 @@ body::after {
 @media (max-width: 900px) {
   .page-header { grid-template-columns: 1fr; gap: 32px; }
   .page-header-right { text-align: left; }
-  .glossary-body { grid-template-columns: 1fr; }
-  .letter-index {
-    display: none; /* hidden on tablet/mobile — alpha-nav covers navigation */
-  }
   .glossary-entry { grid-template-columns: 1fr; }
   .entry-term-col {
     padding: 24px 24px 12px;
@@ -551,25 +498,6 @@ body::after {
 
 <!-- ── MAIN BODY ─────────────────────────────────────────────── -->
 <div class="glossary-body">
-
-  <!-- Left: sticky letter index -->
-  <aside class="letter-index">
-    <span class="letter-index-label">Index</span>
-    <ul class="letter-index-list">
-      <li><a href="#letter-A"><span>A</span><span class="letter-index-count">4</span></a></li>
-      <li><a href="#letter-D"><span>D</span><span class="letter-index-count">2</span></a></li>
-      <li><a href="#letter-F"><span>F</span><span class="letter-index-count">1</span></a></li>
-      <li><a href="#letter-H"><span>H</span><span class="letter-index-count">1</span></a></li>
-      <li><a href="#letter-L"><span>L</span><span class="letter-index-count">1</span></a></li>
-      <li><a href="#letter-M"><span>M</span><span class="letter-index-count">1</span></a></li>
-      <li><a href="#letter-P"><span>P</span><span class="letter-index-count">2</span></a></li>
-      <li><a href="#letter-R"><span>R</span><span class="letter-index-count">1</span></a></li>
-      <li><a href="#letter-S"><span>S</span><span class="letter-index-count">3</span></a></li>
-      <li><a href="#letter-T"><span>T</span><span class="letter-index-count">1</span></a></li>
-    </ul>
-  </aside>
-
-  <!-- Right: all entries -->
   <main class="glossary-entries">
 
     <!-- ── A ── -->
