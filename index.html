@@ -134,6 +134,42 @@ body::after {
   padding-bottom: 2px;
 }
 
+/* Hamburger: hidden on desktop */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--nav-link);
+  cursor: pointer;
+  z-index: 201;
+  transition: color 0.2s;
+}
+.nav-toggle:hover { color: var(--text-accent); }
+.nav-toggle span {
+  display: block;
+  width: 20px;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform 0.25s ease, opacity 0.2s;
+}
+.nav-toggle span:nth-child(1) { transform-origin: center; }
+.nav-toggle span:nth-child(2) { transform-origin: center; }
+.nav-toggle span:nth-child(3) { transform-origin: center; }
+#site-nav.nav-open .nav-toggle span:nth-child(1) {
+  transform: translateY(7.5px) rotate(45deg);
+}
+#site-nav.nav-open .nav-toggle span:nth-child(2) {
+  opacity: 0;
+}
+#site-nav.nav-open .nav-toggle span:nth-child(3) {
+  transform: translateY(-7.5px) rotate(-45deg);
+}
 
 /* ── HEADER TEXT ───────────────────────────────────────────────
    Bottom-left title block + bottom-right coords.            */
@@ -577,8 +613,34 @@ tr.is-playing .sound-indicator span {
 }
 
 @media (max-width: 767px) {
-  .nav-links { display: none; }
   #site-nav { padding: 14px 20px; }
+  .nav-toggle { display: flex; }
+  .nav-links {
+    display: none;
+    position: fixed;
+    inset: 0;
+    top: var(--nav-h);
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 0;
+    padding: 32px 24px 48px;
+    background: rgba(12,12,12,0.98);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid var(--nav-rule);
+    z-index: 199;
+    overflow: hidden;
+  }
+  #site-nav.nav-open .nav-links { display: flex; }
+  .nav-links li { border-bottom: 1px solid var(--nav-rule); }
+  .nav-links a {
+    display: block;
+    padding: 18px 0;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+  }
+  .nav-links a.active { border-bottom: none; padding-bottom: 18px; }
+  body.nav-menu-open { overflow: hidden; }
   #header-text  { left: 20px; bottom: 28px; }
   #header-coords { display: none; }
   .header-title { font-size: clamp(18px, 6vw, 28px); }
@@ -719,6 +781,9 @@ tr.is-playing .sound-indicator span {
 <!-- Nav -->
 <nav id="site-nav">
   <a href="index.html" class="nav-logo">Aurafact</a>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
   <ul class="nav-links">
     <li><a href="archive.html">Archive</a></li>
     <li><a href="acousticstudies.html">Acoustic Studies</a></li>
@@ -1440,6 +1505,32 @@ const SOUND_PROFILES = {
 
 
 <script>
+/* ── MOBILE NAV TOGGLE ───────────────────────────────────────── */
+(function() {
+  var nav = document.getElementById('site-nav');
+  var btn = document.querySelector('.nav-toggle');
+  var links = document.querySelectorAll('.nav-links a');
+  if (!nav || !btn) return;
+
+  function open() {
+    nav.classList.add('nav-open');
+    document.body.classList.add('nav-menu-open');
+    btn.setAttribute('aria-label', 'Close menu');
+    btn.setAttribute('aria-expanded', 'true');
+  }
+  function close() {
+    nav.classList.remove('nav-open');
+    document.body.classList.remove('nav-menu-open');
+    btn.setAttribute('aria-label', 'Open menu');
+    btn.setAttribute('aria-expanded', 'false');
+  }
+
+  btn.addEventListener('click', function() {
+    if (nav.classList.contains('nav-open')) close(); else open();
+  });
+  links.forEach(function(a) { a.addEventListener('click', close); });
+})();
+
 /* ── SYSTEM CLOCK ────────────────────────────────────────────── */
 (function() {
   const el = document.getElementById('footerTime');
