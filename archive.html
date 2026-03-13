@@ -1,1 +1,890 @@
-p
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurafact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+<!-- p5.js — wave simulation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/p5.min.js"></script>
+<!-- GSAP — page transitions -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+<style>
+	* ============================================================
+   COLOUR TOKENS
+   All HTML/CSS colours live here.
+   Canvas colours live in the JS block marked CANVAS COLOURS.
+   ============================================================ */
+:root {
+  --bg:              #0C0C0C;   /* page + canvas background          */
+
+  /* Intro typography */
+  --text-primary:    #EDECEA;   /* heading                           */
+  --text-secondary:  #4A4A4A;   /* subtitle                          */
+  --text-mono:       #3A3A3A;   /* wordmark / labels                 */
+  --text-accent:     #AD472F;
+
+  /* Button */
+  --btn-border:      #2E2E2E;
+  --btn-text:        #2E2E2E;
+  --btn-hover-border:#777777;
+  --btn-hover-text:  #EDECEA;
+
+  /* Nav */
+  --nav-logo:        #EDECEA;
+  --nav-link:        #EDECEA;
+  --nav-link-hover:  #EDECEA;
+  --nav-rule:        #2c2c2c;
+
+  /* Header overlay text */
+  --header-title:    #EDECEA;
+  --header-sub:      #EDECEA;
+  --header-coord:    #EDECEA;
+
+  --grain-opacity:   0.045;
+}
+/* ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; overflow-x: hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: "Libre Baskerville", serif;
+}
+
+/* Grain */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: var(--grain-opacity);
+  pointer-events: none;
+  z-index: 9000;
+}
+
+
+/* ── p5 CANVAS CONTAINER ───────────────────────────────────────
+   Fixed, full viewport, behind everything.
+   The same canvas persists through intro → header.          */
+#p5-container {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+#p5-container canvas { display: block; }
+
+
+/* ── INTRO OVERLAY ─────────────────────────────────────────────
+   Centred text + button, above canvas.
+   Dissolved by GSAP on Enter.                               */
+#intro {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: all;
+}
+
+.intro-wordmark {
+  font-family: 'DM Mono', monospace;
+  font-size: 18px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  opacity: 0;
+}
+
+.intro-title {
+  font-family: "Libre Baskerville", serif;
+  font-size: clamp(58px, 9vw, 70px);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 0.9;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 22px;
+  letter-spacing: -0.01em;
+  opacity: 0;
+}
+
+.intro-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  margin-bottom: 58px;
+  color: var(--text-primary);
+}
+
+.enter-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--btn-border);
+  color: var(--text-primary);
+  padding: 13px 38px;
+  cursor: pointer;
+  opacity: 0;
+  transition: border-color 0.3s, color 0.3s;
+}
+.enter-btn:hover {
+  border-color: var(--btn-hover-border);
+  color: var(--btn-hover-text);
+  background-color: var(--btn-border);
+}
+
+
+/* ── NAV ───────────────────────────────────────────────────────
+   Hidden until transition completes.                        */
+#site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  border-bottom: 1px solid var(--nav-rule);
+  background: rgba(12,12,12,0.5);
+  backdrop-filter: blur(14px);
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+.nav-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--nav-logo);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--nav-link);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--nav-link-hover); }
+
+
+/* ── HEADER TEXT ───────────────────────────────────────────────
+   Bottom-left title block + bottom-right coords.
+   Appear after transition.                                  */
+#header-text {
+  position: absolute;
+  bottom: 56px;
+  left: 40px;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.header-title {
+  font-family: "Libre Baskerville", serif;
+  font-size: clamp(26px, 3.8vw, 54px);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--header-title);
+  line-height: 1.05;
+  margin-bottom: 10px;
+}
+
+.header-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--header-sub);
+}
+
+#header-coords {
+  position: absolute;
+  bottom: 56px;
+  right: 40px;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+  text-align: right;
+}
+#header-coords span {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  color: var(--header-coord);
+  line-height: 2.2;
+}
+
+/* ── CONTENT SECTION ─────────────────────────────────────────────── */
+.page-content{
+  position: relative;
+  z-index: 5;
+  margin-top: 100vh;
+  background-color: #f5f5f5;
+  color: var(--text-secondary)
+}
+
+/* Archive section: full width, single column */
+.archive-section {
+  width: 100%;
+  padding: 100px 80px 120px;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.archive-left {
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Studies section ─────────────────────────────────────────── */
+.studies-section {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+/* Left: quote column */
+.studies-quote-col {
+  padding: 80px 48px 80px 80px;
+  border-right: 1px solid #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Right: research panel */
+.studies-panel {
+  padding: 80px 80px 80px 64px;
+}
+
+/* Panel label */
+.studies-panel-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+/* ── Image frame: shared base ─── */
+.study-img-frame {
+  position: relative;
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.study-img-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.88;
+  transition: opacity 0.4s;
+}
+
+.study-img-frame img:hover { opacity: 1; }
+
+/* Placeholder — visible only when no img present */
+.img-ph {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0a;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #222;
+}
+
+/* ── Row 1: two large images 3:2 ─── */
+.study-large-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 56px;
+}
+
+.study-large { display: flex; flex-direction: column; }
+
+.study-large .study-img-frame {
+  aspect-ratio: 3 / 2;
+}
+
+/* ── Divider ─── */
+.study-divider {
+  border: none;
+  border-top: 1px solid #1a1a1a;
+  margin: 0 0 24px;
+}
+
+/* ── Row 2: four thumbnails ─── */
+.study-thumb-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.study-thumb { display: flex; flex-direction: column; }
+
+.study-thumb .study-img-frame {
+  aspect-ratio: 1 / 1;
+}
+
+/* ── Metadata block ─── */
+.study-meta {
+  padding: 8px 0 0;
+}
+
+.study-meta-id {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 2px;
+}
+
+.study-meta-title {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  margin-bottom: 1px;
+}
+
+.study-meta-sub {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.10em;
+  color: var(--text-mono);
+}
+
+/* Thumbnail meta: even more compact */
+.study-thumb .study-meta-title {
+  font-size: 8px;
+}
+
+
+
+.page-h2 {
+  font-family: 'DM Mono', monospace;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-accent);
+  margin-bottom: 4px;
+}
+.page-h3 {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+
+
+/* .archive-right removed */
+
+.right-quote {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(15px, 1.5vw, 24px);
+  line-height: 1.55;
+  margin-bottom: 16px;
+  color: var( --text-accent);
+}
+
+.right-quote-caption {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var( --text-accent);
+  margin-bottom: 40px;
+}
+
+.right-rule {
+  border: none;
+  border-top: 1px solid #1a1a1a;
+  margin: 0 0 40px;
+}
+
+.right-ecology-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-accent);
+  margin-bottom: 24px;
+}
+
+.right-ecology-body {
+  font-family: "Libre Baskerville", serif;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-mono);
+  margin-bottom: 24px;
+}
+
+
+
+p {
+  font-family: "Libre Baskerville", serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 700px;
+  margin-bottom: 16px;
+}
+
+.space-after {
+  margin-bottom: 60px;
+}
+.space-after-1-2 {
+  margin-bottom: 32px;
+}
+
+.space-after-24 {
+  margin-bottom: 24px;
+}
+
+
+.section-test{ padding: 80px 40px; }
+
+.archive-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'DM Mono', monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.10em;
+}
+
+.archive-table thead th {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 12px;
+  text-align: left;
+  padding: 0 24px 16px 0;
+  border-bottom: 1px solid #1e1e1e;
+}
+
+.archive-table tbody tr {
+  border-bottom: 1px solid #181818;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.archive-table tbody tr:hover {
+  background: rgba(12,12,12,0.35);
+  backdrop-filter: blur(14px);
+}
+
+.archive-table tbody tr.is-playing {
+  background: rgba(255,255,255,0.03);
+}
+
+/* Sound preview indicator */
+.archive-table tbody td.sound-cell {
+  width: 28px;
+  padding-right: 0;
+}
+
+.sound-indicator {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+tr:hover .sound-indicator,
+tr.is-playing .sound-indicator {
+  opacity: 1;
+}
+
+.sound-indicator span {
+  display: block;
+  width: 2px;
+  background: var(--text-secondary);
+  border-radius: 1px;
+  animation: none;
+}
+
+tr.is-playing .sound-indicator span {
+  animation: bar-bounce 0.6s ease-in-out infinite alternate;
+}
+
+.sound-indicator span:nth-child(1) { height: 6px;  animation-delay: 0s;    }
+.sound-indicator span:nth-child(2) { height: 10px; animation-delay: 0.1s;  }
+.sound-indicator span:nth-child(3) { height: 7px;  animation-delay: 0.2s;  }
+.sound-indicator span:nth-child(4) { height: 12px; animation-delay: 0.05s; }
+
+@keyframes bar-bounce {
+  from { transform: scaleY(0.3); }
+  to   { transform: scaleY(1.4); }
+}
+
+/* Browse button */
+.archive-cta {
+  margin-top: 32px;
+  display: inline-block;
+  align-self: flex-start;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--btn-border);
+  color: var(--btn-text);
+  padding: 13px 38px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.3s, color 0.3s, background-color 0.3s;
+}
+.archive-cta:hover {
+  border-color: var(--btn-hover-border);
+  color: var(--btn-hover-text);
+  background-color: var(--btn-border);
+}
+
+.archive-table tbody td {
+  padding: 18px 24px 18px 0;
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+
+.archive-table tbody td:first-child {
+  letter-spacing: 0.14em;
+}
+
+
+
+/* ============================================================
+   RESPONSIVE SYSTEM
+   Breakpoints:
+   — Desktop  : ≥1024px  (two-column, current default)
+   — Tablet   : 768–1023px
+   — Mobile   : <768px
+   ============================================================ */
+
+/* ── Tablet: 768–1023px ─────────────────────────────────────── */
+@media (max-width: 1023px) {
+
+  /* Nav: tighten padding, reduce link gap */
+  #site-nav { padding: 16px 24px; }
+  .nav-links { gap: 20px; }
+
+  /* Hero text */
+  #header-text  { left: 24px; bottom: 40px; }
+  #header-coords { right: 24px; bottom: 40px; }
+
+  /* Archive: full width, tighter padding */
+  .archive-section { padding: 64px 24px 80px; }
+  .archive-left { max-width: 100%; }
+
+  /* Studies: stack on tablet */
+  .studies-section { grid-template-columns: 1fr; }
+  .studies-quote-col {
+    padding: 48px 24px;
+    border-right: none;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .studies-panel { padding: 48px 24px 64px; }
+  .study-thumb-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+  /* Table: allow horizontal scroll on smaller viewports */
+  .archive-table { font-size: 9px; }
+}
+
+/* ── Mobile: <768px ─────────────────────────────────────────── */
+@media (max-width: 767px) {
+
+  /* Nav: hide links, show logo only */
+  .nav-links { display: none; }
+  #site-nav { padding: 14px 20px; }
+
+  /* Hero */
+  #hero { min-height: 100svh; }
+  #header-text  { left: 20px; bottom: 28px; }
+  #header-coords { display: none; }
+
+  .header-title {
+    font-size: clamp(18px, 6vw, 28px);
+  }
+
+  /* Intro overlay */
+  .intro-title {
+    font-size: clamp(36px, 10vw, 52px);
+    padding: 0 20px;
+  }
+  .intro-wordmark { font-size: 14px; }
+
+  /* Page content */
+  .page-content { margin-top: 100svh; }
+
+  .archive-section { padding: 48px 20px 56px; }
+  .archive-left { max-width: 100%; }
+
+  .studies-section { grid-template-columns: 1fr; }
+  .studies-quote-col {
+    padding: 40px 20px;
+    border-right: none;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .studies-panel { padding: 40px 20px 56px; }
+  .study-large-row { grid-template-columns: 1fr; gap: 16px; }
+  .study-thumb-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+  /* Table: horizontal scroll container */
+  .archive-table {
+    font-size: 8.5px;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  .archive-table thead,
+  .archive-table tbody,
+  .archive-table tr { display: table-row; }
+  .archive-table th,
+  .archive-table td  { white-space: nowrap; }
+
+  /* CTA button: full width on mobile */
+  .archive-cta {
+    display: block;
+    text-align: center;
+    align-self: unset;
+    padding: 14px 20px;
+  }
+
+  /* Quote text */
+  .right-quote {
+    font-size: clamp(16px, 5vw, 22px);
+  }
+
+  /* Section test */
+  .section-test { padding: 60px 20px; }
+}
+
+
+/* ── SITE FOOTER ─────────────────────────────────────────────── */
+.site-footer {
+  background-color: #f5f5f5;
+}
+
+/* Three-column nav links row */
+.footer-nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.footer-col {
+  padding: 64px 48px 64px 80px;
+  border-right: 1px solid #1a1a1a;
+}
+
+.footer-col:first-child { padding-left: 80px; }
+.footer-col:last-child  { border-right: none; padding-right: 80px; }
+
+.footer-col-label {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 24px;
+  padding-bottom: 14px;
+}
+
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-col ul li a {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.10em;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-col ul li a:hover {
+  color: var(--text-accent);
+}
+
+/* Bottom bar */
+.footer-bottom {
+  padding: 28px 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-copy, .footer-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  line-height: 1.8;
+}
+
+/* Footer responsive */
+@media (max-width: 1023px) {
+  .footer-col:first-child { padding-left: 24px; }
+  .footer-col:last-child  { padding-right: 24px; }
+  .footer-bottom          { padding: 24px; }
+}
+
+@media (max-width: 767px) {
+  .footer-nav {
+    grid-template-columns: 1fr;
+  }
+  .footer-col {
+    padding: 40px 20px;
+    border-right: none;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .footer-col:first-child { padding-left: 20px; }
+  .footer-col:last-child  { padding-right: 20px; border-bottom: none; }
+  .footer-bottom          { padding: 24px 20px; flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+
+</style>
+</head>
+<body>
+<!-- Nav -->
+<nav id="site-nav">
+  <a href="index.html" class="nav-logo">Aurafact</a>
+  <ul class="nav-links">
+    <li><a href="archive.html">Archive</a></li>
+    <li><a href="#">Manifesto</a></li>
+  </ul>
+</nav>
+
+
+
+
+
+
+	
+<footer class="site-footer">
+
+  <!-- Three nav columns -->
+  <div class="footer-nav">
+
+    <div class="footer-col">
+      <span class="footer-col-label">Navigate</span>
+      <ul>
+        <li><a href="#">Global Sound Map</a></li>
+        <li><a href="archive.html">Archive Explorer</a></li>
+        <li><a href="#">Sonic Lab</a></li>
+        <li><a href="#">Compare Tool</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <span class="footer-col-label">About</span>
+      <ul>
+        <li><a href="#">The Manifesto</a></li>
+        <li><a href="#">Recording Standards</a></li>
+        <li><a href="#">Accessibility</a></li>
+        <li><a href="#">Submit a Recording</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <span class="footer-col-label">Archive</span>
+      <ul>
+        <li><a href="#">Geophony</a></li>
+        <li><a href="#">Biophony</a></li>
+        <li><a href="#">Anthropophony</a></li>
+        <li><a href="#">Chronological Index</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="footer-bottom">
+    <p class="footer-copy">
+      © 2026 Aurafact / Environmental Sound Archive
+    </p>
+    <p class="footer-time" id="footerTime"></p>
+  </div>
+
+</footer>
+
+
+
+
+<h1>Specimen Archive</h1>
+<p>The archive catalogues environmental recordings as acoustic specimens.
+Each artifact represents a documented sonic condition of a place, preserved alongside its ecological, geographic, and technical metadata.</p>
+
+FILTER BY
+
+Source Type
+[ All ] [ Geophony ] [ Biophony ] [ Anthropophony ]
+
+Environment
+[ Urban ] [ Forest ] [ Coastal ] [ Desert ]
+
+Frequency Range
+[ Low ] [ Mid ] [ High ]
+
+Sort
+[ Most Recent ] [ Most Complex ] [ Loudest ]
+
+
+FIELD NOTES
+
+Crowd response recorded during the 2022 FIFA World Cup watch party.
+Layered vocal reactions dominate the mid frequency band, punctuated by intermittent chants and transient bursts of cheering.
