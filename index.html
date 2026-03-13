@@ -857,7 +857,7 @@ tr.is-playing .sound-indicator span {
         </tr>
       </thead>
       <tbody>
-        <tr data-sound="urban" data-audio="audio/AF-0091-world-cup-watch-party-ottawa-2022.mp3">
+        <tr data-sound="urban" data-audio="audio/AF-00001-world-cup-watch-party-ottawa-2022.mp3">
           <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
           <td>AF-0001</td>
           <td>2022-11-25 · 16:09</td>
@@ -1398,44 +1398,48 @@ const SOUND_PROFILES = {
 };
 
 (function initSoundPreviews() {
-  let audioCtx   = null;
   let activeTimer = null;
   let activeRow   = null;
-
-  function getCtx() {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    return audioCtx;
-  }
+  let activeAudio = null;
 
   function stopCurrent() {
     if (activeTimer) { clearTimeout(activeTimer); activeTimer = null; }
     if (activeRow)   { activeRow.classList.remove('is-playing'); activeRow = null; }
+    if (activeAudio) {
+      activeAudio.pause();
+      activeAudio.currentTime = 0;
+      activeAudio = null;
+    }
   }
 
   document.querySelectorAll('#archiveTable tbody tr').forEach(row => {
     let hoverTimer = null;
 
     row.addEventListener('mouseenter', () => {
-      // 120 ms debounce — don't fire on accidental passes
       hoverTimer = setTimeout(() => {
         stopCurrent();
-        const type = row.dataset.sound;
-        const profile = SOUND_PROFILES[type];
-        if (!profile) return;
 
-        const ctx = getCtx();
-        profile.build(ctx);
+        const audioSrc = row.dataset.audio;
+
+        if (audioSrc) {
+          // Real audio file — play 3-second preview
+          const audio = new Audio(audioSrc);
+          audio.volume = 0.85;
+          audio.currentTime = 0;
+          audio.play().catch(err => console.warn('Audio play blocked:', err));
+          activeAudio = audio;
+        }
+        // No file: silence — bar animation still shows
 
         row.classList.add('is-playing');
         activeRow = row;
         activeTimer = setTimeout(stopCurrent, 3000);
+
       }, 120);
     });
 
     row.addEventListener('mouseleave', () => {
       clearTimeout(hoverTimer);
-      // Only stop if this row is the currently playing one
       if (activeRow === row) stopCurrent();
     });
   });
