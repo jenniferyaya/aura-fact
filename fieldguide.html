@@ -3,14 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Archive — Aurafact</title>
+<title>Field Guide — Aurafact</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 
 <style>
+
 /* ============================================================
-   COLOUR TOKENS — exact match with index.html
+   COLOUR TOKENS — exact match with system
    ============================================================ */
 :root {
   --bg:              #0C0C0C;
@@ -27,31 +28,27 @@
   --grain-opacity:   0.045;
   --nav-h:           61px;
 
-  /* Table — from index.html */
-  --table-rule-head: #1e1e1e;
-  --table-rule-row:  #181818;
-  --row-hover-bg:    rgba(255,255,255,0.03);
-  --row-active-bg:   rgba(173,71,47,0.07);
+  /* Page */
+  --page-bg:         #f5f5f5;
+  --rule:            #1e1e1e;
+  --rule-light:      #e0dfdc;
 
-  /* Panel */
-  --panel-bg:        #0e0e0e;
-  --panel-rule:      #1e1e1e;
-  --panel-w:         360px;
-
-  /* Footer */
-  --footer-bg:       #f5f5f5;
+  /* Taxonomy colours */
+  --geo:             #4a7a62;
+  --bio:             #6a5a8a;
+  --anthro:          #AD472F;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { width: 100%; height: 100%; overflow-x: hidden; }
+html, body { width: 100%; min-height: 100%; overflow-x: hidden; }
 
 body {
-  background: var(--bg);
-  color: var(--text-primary);
+  background: var(--page-bg);
+  color: var(--text-secondary);
   font-family: "Libre Baskerville", serif;
 }
 
-/* Grain — identical to index.html */
+/* Grain */
 body::after {
   content: '';
   position: fixed; inset: 0;
@@ -61,7 +58,7 @@ body::after {
   z-index: 9000;
 }
 
-/* ── NAV ────────────────────────────────────────────────────── */
+/* ── NAV ─────────────────────────────────────────────────────── */
 #site-nav {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -103,489 +100,482 @@ body::after {
   padding-bottom: 2px;
 }
 
-/* ── TWO-COLUMN BODY ────────────────────────────────────────── */
-.archive-body {
-  display: flex;
-  padding-top: var(--nav-h);
-  min-height: 100vh;
-  background-color: #f5f5f5;
+/* ── PAGE HEADER ─────────────────────────────────────────────── */
+.page-header {
+  padding-top: calc(var(--nav-h) + 80px);
+  padding-bottom: 80px;
+  padding-left: 80px;
+  padding-right: 80px;
+  border-bottom: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 80px;
+  align-items: end;
 }
 
-/* ── LEFT: TABLE COLUMN ─────────────────────────────────────── */
-.table-col {
-  flex: 1;
-  min-width: 0;
-  border-right: 1px solid var(--table-rule-head);
-  display: flex;
-  flex-direction: column;
-}
-
-/* Page header */
-.archive-header {
-  padding: 56px 48px 40px 80px;
-  border-bottom: 1px solid var(--table-rule-head);
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 32px;
-}
-
-.archive-header h1 {
-  font-family: "Libre Baskerville", serif;
-  font-style: italic;
-  font-weight: 300;
-  font-size: clamp(24px, 3.2vw, 44px);
-  color: var( --text-secondary);
-  line-height: 1.0;
-  margin-bottom: 10px;
-}
-
-.archive-header-sub {
+.page-eyebrow {
   font-family: 'DM Mono', monospace;
   font-size: 9px;
-  letter-spacing: 0.26em;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--text-mono);
-}
-
-/* Search */
-.search-wrap {
-  position: relative;
-  width: 240px;
-  flex-shrink: 0;
-}
-
-.search-wrap svg {
-  position: absolute;
-  left: 11px; top: 50%;
-  transform: translateY(-50%);
-  width: 11px; height: 11px;
-  stroke: var(--text-mono);
-  fill: none;
-  pointer-events: none;
-}
-
-#searchInput {
-  width: 100%;
-  background: transparent;
-  border: 1px solid var(--btn-border);
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.10em;
-  color: var(--text-primary);
-  padding: 9px 10px 9px 30px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-#searchInput::placeholder { color: var(--text-mono); }
-#searchInput:focus { border-color: var(--text-secondary); }
-
-/* Result / sort bar */
-.result-bar {
-  padding: 32px 48px 12px 80px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  color: var(--text-accent);
   margin-bottom: 16px;
-}
-
-.result-count {
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-}
-
-.sort-wrap { display: flex; align-items: center; gap: 8px; }
-
-.sort-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-}
-
-.sort-select {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  background: transparent;
-  border: 1px solid var(--btn-border);
-  color: var(--text-secondary);
-  padding: 4px 8px;
-  cursor: pointer;
-  outline: none;
-  appearance: none;
-}
-
-/* Table */
-.archive-table-wrap {
-  padding: 0 0 0 80px;
-  flex: 1;
-  overflow-x: auto;
-  border-bottom: 1px solid var(--btn-border);
-}
-
-.archive-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.10em;
-}
-
-.archive-table thead th {
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 12px;
-  text-align: left;
-  padding: 0 24px 14px 0;
-  border-bottom: 1px solid var(--table-rule-head);
-  color: var(--text-mono);
-  white-space: nowrap;
-}
-
-.archive-table tbody tr {
-  border-bottom: 1px solid var(--table-rule-row);
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.archive-table tbody tr:hover {
-  background: rgba(12,12,12,0.35);
-  backdrop-filter: blur(14px)
-}
-
-.archive-table tbody tr.is-selected {
-  background: rgba(255,255,255,0.03);
-}
-
-.archive-table tbody tr.hidden { display: none; }
-
-.archive-table tbody td {
-  padding: 16px 24px 16px 0;
-  color: var(--text-secondary);
-  vertical-align: middle;
-  white-space: nowrap;
-}
-
-.td-id {
-  color: var(--text-mono);
-  font-size: 9px;
-  letter-spacing: 0.18em;
-}
-
-/* Type badge 
-.type-badge {
-  display: inline-block;
-  font-family: 'DM Mono', monospace;
-  font-size: 7px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  padding: 3px 6px;
-  border: 1px solid currentColor;
-  white-space: nowrap;
-}
-
-.type-badge.geo    { color: #5a8a72; }
-.type-badge.bio    { color: #7a6a9a; }
-.type-badge.anthro { color: var(--text-accent); } */
-
-/* Active row indicator — left edge bar 
-.archive-table tbody tr.is-selected td:first-child {
-  box-shadow: inset 3px 0 0 var(--text-accent);
-} */
-
-/* Empty state */
-.empty-state { padding: 60px 80px; display: none; }
-.empty-state.visible { display: block; }
-.empty-state p {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-}
-
-/* ── RIGHT: DETAIL PANEL ────────────────────────────────────── */
-.detail-col {
-  width: var(--panel-w);
-  flex-shrink: 0;
-  position: sticky;
-  top: var(--nav-h);
-  height: calc(100vh - var(--nav-h));
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  border-bottom: 1px solid #1a1a1a;
-}
-
-.detail-col::-webkit-scrollbar { width: 3px; }
-.detail-col::-webkit-scrollbar-track { background: transparent; }
-.detail-col::-webkit-scrollbar-thumb { background: var(--panel-rule); }
-
-/* Empty state */
-.panel-empty {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 32px;
-  text-align: center;
-  opacity: 1;
-  transition: opacity 0.2s;
-}
-
-.panel-empty.hidden { display: none; }
-
-.panel-empty-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-  line-height: 2;
-}
-
-/* Loaded state */
-.panel-content { display: none; flex-direction: column; }
-.panel-content.visible { display: flex; }
-
-/* Panel header */
-.panel-head {
-  padding: 28px 28px 20px;
-  border-bottom: 1px solid var(--panel-rule);
-}
-
-.panel-spec-id {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-  margin-bottom: 6px;
   display: block;
 }
 
-.panel-title {
+.page-title {
   font-family: "Libre Baskerville", serif;
   font-style: italic;
   font-weight: 300;
-  font-size: 20px;
+  font-size: clamp(32px, 4.5vw, 58px);
   color: var(--text-secondary);
-  line-height: 1.15;
+  line-height: 1.0;
+  margin-bottom: 14px;
+}
+
+.page-desc {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  color: var(--text-mono);
+  max-width: 480px;
+}
+
+.page-header-right {
+  padding-bottom: 4px;
+}
+
+.toc-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  display: block;
   margin-bottom: 6px;
 }
 
-.panel-location {
+.toc-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.toc-list li {
+  border-bottom: 1px solid var(--rule-light);
+}
+
+.toc-list li a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.toc-list li a:hover { color: var(--text-secondary); }
+
+.toc-num {
+  font-size: 10px;
+  opacity: 0.6;
+}
+
+/* ── SHARED SECTION CHROME ───────────────────────────────────── */
+.guide-section {
+  border-bottom: 1px solid var(--rule);
+}
+
+/* Two-column: left label col + right content col */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+}
+
+.section-label-col {
+  padding: 80px 48px 80px 80px;
+  border-right: 1px solid var(--rule);
+}
+
+.section-number {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-accent);
+  display: block;
+  margin-bottom: 12px;
+}
+
+.section-heading {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(22px, 2.8vw, 36px);
+  color: var(--text-secondary);
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.section-standfirst {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  line-height: 1.35;
+  color: var(--text-mono);
+}
+
+.section-content-col {
+  padding: 80px 80px 80px 64px;
+}
+
+/* ── SECTION 01: WHAT IS SOUND ───────────────────────────────── */
+.sound-body {
+  font-family: "Libre Baskerville", serif;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin-bottom: 32px;
+}
+
+.sound-body + .sound-body {
+  margin-top: -16px;
+}
+
+.sound-pull {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1.45;
+  color: var(--text-accent);
+  max-width: 480px;
+  padding: 32px 0 32px 24px;
+  margin: 40px 0;
+}
+
+.sound-definition-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--rule-light);
+  border: 1px solid var(--rule-light);
+  margin-top: 48px;
+}
+
+.sound-def-item {
+  background: var(--page-bg);
+  padding: 24px 28px;
+}
+
+.sound-def-term {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.sound-def-body {
+  font-family: "Libre Baskerville", serif;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
+/* ── SECTION 02: TAXONOMY ────────────────────────────────────── */
+.taxonomy-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.taxonomy-entry {
+  padding: 40px 0;
+  border-bottom: 1px solid var(--rule-light);
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.taxonomy-entry:last-child { border-bottom: none; padding-bottom: 0; }
+
+.taxonomy-marker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.taxonomy-tag {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid currentColor;
+  width: fit-content;
+}
+
+.taxonomy-tag.geo    { color: var(--geo); }
+.taxonomy-tag.bio    { color: var(--bio); }
+.taxonomy-tag.anthro { color: var(--anthro); }
+
+.taxonomy-index {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.14em;
+  color: var(--text-secondary);
+  opacity: 0.65;
+}
+
+.taxonomy-name {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(20px, 2.2vw, 28px);
+  color: var(--text-secondary);
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+.taxonomy-def {
+    font-family: "Libre Baskerville", serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin-bottom: 32px;
+}
+
+.taxonomy-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.example-chip {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-mono);
-}
-
-/* ── WAVEFORM / SPECTROGRAM DISPLAY ─────────────────────────── */
-.panel-viz {
-  height: 96px;
-  background: #080808;
-  border-bottom: 1px solid var(--panel-rule);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-  padding: 0 4px 4px;
-  gap: 2px;
-}
-
-.viz-bar {
-  flex: 1;
-  background: var(--text-mono);
-  border-radius: 1px 1px 0 0;
-  transition: background 0.3s;
-  min-height: 2px;
-}
-
-/* Playing state — bars animate and colour shifts */
-.panel-viz.playing .viz-bar {
-  background: var(--text-accent);
-  animation: spec-pulse 0.9s ease-in-out infinite alternate;
-}
-
-@keyframes spec-pulse {
-  from { opacity: 0.5; transform: scaleY(0.6); }
-  to   { opacity: 1;   transform: scaleY(1); }
-}
-
-/* Playhead line */
-.playhead {
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 1px;
-  background: var(--text-accent);
-  left: 0;
-  opacity: 0;
-  transition: opacity 0.2s;
-  pointer-events: none;
-}
-
-.panel-viz.playing .playhead { opacity: 0.6; }
-
-/* Freq range labels */
-.viz-label-low,
-.viz-label-high {
-  position: absolute;
-  font-family: 'DM Mono', monospace;
-  font-size: 7px;
-  letter-spacing: 0.10em;
-  color: var(--text-mono);
-  bottom: 6px;
-}
-
-.viz-label-low  { left: 8px; }
-.viz-label-high { right: 8px; }
-
-/* ── AUDIO PLAYER ───────────────────────────────────────────── */
-.panel-player {
-  padding: 20px 28px;
-  border-bottom: 1px solid var(--panel-rule);
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.play-pause-btn {
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--btn-border);
   background: transparent;
-  cursor: pointer;
+  border: 1px solid var(--rule-light);
+  padding: 4px 10px;
+}
+
+/* ── SECTION 03: LISTENING DIMENSIONS ───────────────────────── */
+.dimensions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--rule-light);
+  border: 1px solid var(--rule-light);
+}
+
+.dimension-item {
+  background: var(--page-bg);
+  padding: 32px 32px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dimension-number {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-accent);
+  opacity: 0.7;
+}
+
+.dimension-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--text-mono);
+    display: block;
+}
+}
+
+.dimension-def {
+  font-family: "Libre Baskerville", serif;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.dimension-values {
+  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.dimension-value {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  border: 1px solid var(--rule-light);
+  padding: 3px 8px;
+}
+
+/* ── SECTION 04: FIELD RECORDING PRINCIPLES ─────────────────── */
+
+/* Single-column full-width layout for this section */
+.principles-section {
+  border-bottom: 1px solid var(--rule);
+}
+
+.principles-header {
+  padding: 80px 80px 0;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 80px;
+  border-bottom: 1px solid var(--rule-light);
+  padding-bottom: 64px;
+}
+
+.principles-intro {
+  font-family: "Libre Baskerville", serif;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  max-width: 580px;
+}
+
+.principles-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  counter-reset: principle;
+}
+
+.principles-list li {
+  counter-increment: principle;
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule-light);
+  align-items: baseline;
+}
+
+.principles-list li:last-child { border-bottom: none; }
+
+.principles-list li::before {
+  content: counter(principle, decimal-leading-zero);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--text-accent);
+  opacity: 0.7;
+  padding-top: 3px;
+}
+
+.principle-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+  color: var(--text-mono);
+}
+
+/* Image grid — 3:2 columns */
+.principles-images {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 1px;
+  background: var(--rule);
+}
+
+.principles-img-frame {
+  overflow: hidden;
+  position: relative;
+  line-height: 0;
+}
+
+.principles-img-frame img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.85;
+  transition: opacity 0.4s;
+}
+
+.principles-img-frame img:hover { opacity: 1; }
+
+.principles-img-frame .img-ph {
+  position: absolute; inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  transition: border-color 0.2s, background 0.2s;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.play-pause-btn:hover { border-color: var(--btn-hover-border); background: rgba(255,255,255,0.04); }
-.play-pause-btn.playing { border-color: var(--text-accent); }
-.play-pause-btn svg { width: 10px; height: 10px; fill: var(--text-primary); }
-
-/* Progress bar */
-.player-progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-
-.progress-bar-track {
-  width: 100%;
-  height: 2px;
-  background: var(--btn-border);
-  cursor: pointer;
-  position: relative;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background: var(--text-accent);
-  width: 0%;
-  transition: width 0.1s linear;
-  pointer-events: none;
-}
-
-.player-time {
-  display: flex;
-  justify-content: space-between;
-}
-
-.player-time span {
+.img-ph span {
   font-family: 'DM Mono', monospace;
-  font-size: 7px;
-  letter-spacing: 0.10em;
-  color: var(--text-mono);
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #222;
 }
 
-/* No audio notice */
-.no-audio-notice {
-  padding: 20px 28px;
-  border-bottom: 1px solid var(--panel-rule);
+.img-ph .ph-label {
+  font-size: 9px;
+  color: #1e1e1e;
 }
 
-.no-audio-notice p {
+/* Left image taller */
+.principles-img-frame.img-primary {
+  aspect-ratio: 3 / 2;
+}
+
+/* Right image matches */
+.principles-img-frame.img-secondary {
+  aspect-ratio: 3 / 2;
+}
+
+.img-caption {
+  padding: 14px 20px;
+  background: var(--page-bg);
+  border-top: 1px solid var(--rule-light);
+  line-height: 0;
+}
+
+.img-caption span {
   font-family: 'DM Mono', monospace;
   font-size: 8px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-mono);
-  opacity: 0.5;
-  max-width: none;
-  margin: 0;
+  line-height: 1;
 }
 
-/* ── METADATA ───────────────────────────────────────────────── */
-.panel-meta {
-  padding: 20px 28px;
-  border-bottom: 1px solid var(--panel-rule);
-}
-
-.panel-section-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.30em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-  margin-bottom: 14px;
-  display: block;
-}
-
-.meta-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 8px 0;
-  border-bottom: 1px solid #151515;
-  gap: 12px;
-}
-
-.meta-row:last-child { border-bottom: none; }
-
-.meta-key {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.20em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-  flex-shrink: 0;
-}
-
-.meta-val {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  color: var(--text-secondary);
-  text-align: right;
-  line-height: 1.4;
-}
-
-/* ── FIELD NOTES ────────────────────────────────────────────── */
-.panel-notes {
-  padding: 20px 28px 32px;
-}
-
-.panel-notes-body {
-  font-family: "Libre Baskerville", serif;
-  font-size: 12px;
-  line-height: 1.75;
-  color: #555;
-  max-width: none;
-  margin: 0;
-}
-
-/* ── FOOTER ─────────────────────────────────────────────────── */
+/* ── SITE FOOTER ─────────────────────────────────────────────── */
 .site-footer {
-  background-color: var(--footer-bg);
+  background-color: #f5f5f5;
 }
 
+/* Three-column nav links row */
 .footer-nav {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -597,7 +587,8 @@ body::after {
   border-right: 1px solid #1a1a1a;
 }
 
-.footer-col:last-child { border-right: none; padding-right: 80px; }
+.footer-col:first-child { padding-left: 80px; }
+.footer-col:last-child  { border-right: none; padding-right: 80px; }
 
 .footer-col-label {
   display: block;
@@ -610,7 +601,12 @@ body::after {
   padding-bottom: 14px;
 }
 
-.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
 .footer-col ul li a {
   font-family: 'DM Mono', monospace;
@@ -621,8 +617,11 @@ body::after {
   transition: color 0.2s;
 }
 
-.footer-col ul li a:hover { color: var(--text-accent); }
+.footer-col ul li a:hover {
+  color: var(--text-accent);
+}
 
+/* Bottom bar */
 .footer-bottom {
   padding: 28px 80px;
   display: flex;
@@ -630,7 +629,7 @@ body::after {
   justify-content: space-between;
 }
 
-.footer-copy, .footer-time {
+.footer-copy {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.16em;
@@ -639,41 +638,98 @@ body::after {
   line-height: 1.8;
 }
 
-/* ── RESPONSIVE ─────────────────────────────────────────────── */
+.footer-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  line-height: 1.8;
+  text-align: right;
+}
+
+/* Footer responsive */
+@media (max-width: 1023px) {
+  .footer-col:first-child { padding-left: 24px; }
+  .footer-col:last-child  { padding-right: 24px; }
+  .footer-bottom          { padding: 24px; }
+}
+
+@media (max-width: 767px) {
+  .footer-nav {
+    grid-template-columns: 1fr;
+  }
+  .footer-col {
+    padding: 40px 20px;
+    border-right: none;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .footer-col:first-child { padding-left: 20px; }
+  .footer-col:last-child  { padding-right: 20px; border-bottom: none; }
+  .footer-bottom          { padding: 24px 20px; flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+
+
+/* Footer responsive */
+@media (max-width: 1023px) {
+  .footer-col:first-child { padding-left: 24px; }
+  .footer-col:last-child  { padding-right: 24px; }
+  .footer-bottom          { padding: 24px; }
+}
+
+@media (max-width: 767px) {
+  .footer-nav {
+    grid-template-columns: 1fr;
+  }
+  .footer-col {
+    padding: 40px 20px;
+    border-right: none;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .footer-col:first-child { padding-left: 20px; }
+  .footer-col:last-child  { padding-right: 20px; border-bottom: none; }
+  .footer-bottom          { padding: 24px 20px; flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
 @media (max-width: 1100px) {
-  :root { --panel-w: 300px; }
-  .archive-header { padding: 40px 32px 32px 40px; }
-  .result-bar     { padding: 12px 32px 12px 40px; }
-  .archive-table-wrap { padding-left: 40px; }
+  .page-header       { padding: calc(var(--nav-h) + 56px) 40px 56px; gap: 48px; }
+  .section-label-col { padding: 64px 32px 64px 40px; }
+  .section-content-col { padding: 64px 40px 64px 40px; }
+  .principles-header { padding: 64px 40px 48px; gap: 48px; }
+  .principles-images { }
 }
 
 @media (max-width: 900px) {
-  /* Stack: table on top, panel below */
-  .archive-body { flex-direction: column; }
-  .detail-col {
-    width: 100%;
-    position: static;
-    height: auto;
-    border-left: none;
-    border-top: 1px solid var(--panel-rule);
+  .page-header       { grid-template-columns: 1fr; gap: 40px; }
+  .two-col           { grid-template-columns: 1fr; }
+  .section-label-col {
+    padding: 48px 24px 32px 24px;
+    border-right: none;
+    border-bottom: 1px solid var(--rule-light);
   }
-  .archive-header { padding: 32px 24px 24px; }
-  .result-bar { padding: 12px 24px; }
-  .archive-table-wrap { padding-left: 24px; }
+  .section-content-col { padding: 40px 24px 56px; }
+  .principles-header { grid-template-columns: 1fr; gap: 32px; }
+  .taxonomy-entry    { grid-template-columns: 1fr; gap: 16px; }
+  .dimensions-grid   { grid-template-columns: 1fr; }
+  .sound-definition-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 767px) {
   #site-nav { padding: 14px 20px; }
   .nav-links { display: none; }
-  .archive-header { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .search-wrap { width: 100%; }
-  .archive-table { font-size: 9px; }
+  .page-header { padding: calc(var(--nav-h) + 32px) 20px 40px; }
+  .section-label-col { padding: 40px 20px 24px; }
+  .section-content-col { padding: 32px 20px 48px; }
+  .principles-header { padding: 40px 20px 32px; }
+  .principles-images { grid-template-columns: 1fr; }
   .footer-nav { grid-template-columns: 1fr; }
-  .footer-col { padding: 40px 20px; border-right: none; border-bottom: 1px solid #1a1a1a; }
+  .footer-col { padding: 40px 20px; border-right: none; border-bottom: 1px solid var(--rule-light); }
   .footer-col:last-child { border-bottom: none; }
   .footer-bottom { padding: 24px 20px; flex-direction: column; gap: 8px; }
-  .footer-time { display: none; }
 }
+
 </style>
 </head>
 <body>
@@ -683,555 +739,338 @@ body::after {
   <a href="index.html" class="nav-logo">Aurafact</a>
   <ul class="nav-links">
     <li><a href="archive.html">Archive</a></li>
-    <li><a href="acousticstudies.html" class="active">Acoustic Studies</a></li>
-    <li><a href="fieldguide.html">Field Guide</a></li>
+    <li><a href="acousticstudies.html">Acoustic Studies</a></li>
+    <li><a href="fieldguide.html" class="active">Field Guide</a></li>
   </ul>
 </nav>
 
-<div class="archive-body">
+<!-- ── PAGE HEADER ─────────────────────────────────────────────── -->
+<header class="page-header">
+  <div>
+    <h1 class="page-title">Field Guide</h1>
+    <p class="page-desc">A naturalist's introduction to acoustic ecology — the taxonomy of environmental sound, the dimensions by which it is described, and the principles that guide its preservation.</p>
+  </div>
+  <div class="page-header-right">
+    <span class="toc-label">Contents</span>
+    <ul class="toc-list">
+      <li><a href="#sound"><span>What is Sound</span><span class="toc-num">01</span></a></li>
+      <li><a href="#taxonomy"><span>Acoustic Taxonomy</span><span class="toc-num">02</span></a></li>
+      <li><a href="#dimensions"><span>Listening Dimensions</span><span class="toc-num">03</span></a></li>
+      <li><a href="#principles"><span>Field Recording Principles</span><span class="toc-num">04</span></a></li>
+    </ul>
+  </div>
+</header>
 
-  <!-- ── LEFT: TABLE ───────────────────────────────────────── -->
-  <div class="table-col">
 
-    <div class="archive-header">
-      <div>
-        <h1>Specimen Archive</h1>
-        <p class="archive-header-sub" id="specimenCount"></p>
-      </div>
-      <div class="search-wrap">
-        <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="searchInput" placeholder="Search specimens…">
-      </div>
+<!-- ══════════════════════════════════════════════════════════════
+     01 — WHAT IS SOUND
+     ══════════════════════════════════════════════════════════════ -->
+<section class="guide-section" id="sound">
+  <div class="two-col">
+
+    <div class="section-label-col">
+      <h2 class="section-heading">What is Sound</h2>
+      <p class="section-standfirst">Sound is not background. It is a primary medium through which environments express themselves — a continuous, layered transmission of event and condition.</p>
     </div>
 
-    <div class="result-bar">
-      <span class="result-count" id="resultCount"></span>
-      <div class="sort-wrap">
-        <span class="sort-label">Sort</span>
-        <select class="sort-select" id="sortSelect">
-          <option value="id-asc">ID ↑</option>
-          <option value="id-desc">ID ↓</option>
-          <option value="location-asc">Location A–Z</option>
-        </select>
-      </div>
-    </div>
+    <div class="section-content-col">
+      <p class="sound-body">Sound is mechanical energy propagating through a medium as longitudinal pressure waves — alternating compressions and rarefactions that move outward from a source. In air, these waves travel at approximately 343 metres per second, displacing molecules in their path and carrying encoded information about the events that generated them.</p>
 
-    <div class="archive-table-wrap">
-      <table class="archive-table">
-        <thead>
-          <tr>
-            <th>Specimen ID</th>
-            <th>Artifact</th>
-            <th>Location</th>
-            <th>Source Type</th>
-            <th>Subtype</th>
-            <th>Frequency Profile</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-      <div class="empty-state" id="emptyState">
-        <p>No specimens match the current search.</p>
-      </div>
-    </div>
+      <p class="sound-body">Every environment produces a continuous acoustic signature shaped by its physical composition: the hardness of surfaces, the density of vegetation, the movement of water and air. These signatures are not static — they shift with time of day, season, weather, and the presence or absence of life.</p>
 
-  </div><!-- /table-col -->
+      <blockquote class="sound-pull">A place without its sound is only half remembered.</blockquote>
 
-  <!-- ── RIGHT: DETAIL PANEL ──────────────────────────────── -->
-  <aside class="detail-col" id="detailCol">
+      <p class="sound-body">Where photography captures light reflected off surfaces at a single instant, field recording captures the pressure events that define a place's living moment. It is an act of listening made permanent.</p>
 
-    <!-- Empty / prompt state -->
-    <div class="panel-empty" id="panelEmpty">
-      <p class="panel-empty-label">Select an artifact<br>to inspect</p>
-    </div>
-
-    <!-- Loaded state -->
-    <div class="panel-content" id="panelContent">
-
-      <!-- Header -->
-      <div class="panel-head">
-        <span class="panel-spec-id" id="dp-id"></span>
-        <h2 class="panel-title" id="dp-title"></h2>
-        <span class="panel-location" id="dp-location"></span>
-      </div>
-
-      <!-- Spectrogram / waveform visualisation -->
-      <div class="panel-viz" id="panelViz">
-        <div class="playhead" id="playhead"></div>
-        <span class="viz-label-low" id="vizLow"></span>
-        <span class="viz-label-high" id="vizHigh"></span>
-        <!-- bars injected by JS -->
-      </div>
-
-      <!-- Audio player -->
-      <div class="panel-player" id="panelPlayer">
-        <button class="play-pause-btn" id="playPauseBtn" aria-label="Play / pause">
-          <svg id="playPauseIcon" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg>
-        </button>
-        <div class="player-progress-wrap">
-          <div class="progress-bar-track" id="progressTrack">
-            <div class="progress-bar-fill" id="progressFill"></div>
-          </div>
-          <div class="player-time">
-            <span id="timeElapsed">0:00</span>
-            <span id="timeDuration">—</span>
-          </div>
+      <div class="sound-definition-grid">
+        <div class="sound-def-item">
+          <span class="sound-def-term">Frequency</span>
+          <p class="sound-def-body">The number of pressure cycles per second, measured in hertz (Hz). Perceived as pitch. The audible range spans approximately 20 Hz to 20,000 Hz.</p>
+        </div>
+        <div class="sound-def-item">
+          <span class="sound-def-term">Amplitude</span>
+          <p class="sound-def-body">The magnitude of pressure variation. Perceived as loudness. Measured in decibels (dB SPL), a logarithmic scale relative to the threshold of human hearing.</p>
+        </div>
+        <div class="sound-def-item">
+          <span class="sound-def-term">Timbre</span>
+          <p class="sound-def-body">The tonal quality that distinguishes one sound source from another at equivalent pitch and loudness — the acoustic fingerprint of a source.</p>
+        </div>
+        <div class="sound-def-item">
+          <span class="sound-def-term">Duration</span>
+          <p class="sound-def-body">The temporal extent of a sound event. Ranges from sub-millisecond transients to continuous drones sustained across hours or geological time.</p>
         </div>
       </div>
+    </div>
 
-      <!-- No audio notice (shown when audio: null) -->
-      <div class="no-audio-notice" id="noAudioNotice" style="display:none">
-        <p>Audio file not yet archived</p>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     02 — ACOUSTIC TAXONOMY
+     ══════════════════════════════════════════════════════════════ -->
+<section class="guide-section" id="taxonomy">
+  <div class="two-col">
+
+    <div class="section-label-col">
+      <h2 class="section-heading">Acoustic Taxonomy</h2>
+      <p class="section-standfirst">Aurafact classifies every specimen according to a three-part taxonomy derived from acoustic ecology, as first proposed by R. Murray Schafer and expanded by the World Soundscape Project.</p>
+    </div>
+
+    <div class="section-content-col">
+      <div class="taxonomy-entries">
+
+        <div class="taxonomy-entry">
+          <div class="taxonomy-marker">
+            <span class="taxonomy-tag geo">Geophony</span>
+            <span class="taxonomy-index">Source type 01</span>
+          </div>
+          <div>
+            <h3 class="taxonomy-name">Geophony</h3>
+            <p class="taxonomy-def">Natural non-biological sounds generated by physical and geological processes. Geophony is the oldest acoustic layer of any environment — present before life, and persisting beneath it. It establishes the baseline frequency profile of a place.</p>
+            <div class="taxonomy-examples">
+              <span class="example-chip">Wind</span>
+              <span class="example-chip">Rainfall</span>
+              <span class="example-chip">Ocean swell</span>
+              <span class="example-chip">River current</span>
+              <span class="example-chip">Thunder</span>
+              <span class="example-chip">Seismic tremor</span>
+              <span class="example-chip">Ice movement</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="taxonomy-entry">
+          <div class="taxonomy-marker">
+            <span class="taxonomy-tag bio">Biophony</span>
+            <span class="taxonomy-index">Source type 02</span>
+          </div>
+          <div>
+            <h3 class="taxonomy-name">Biophony</h3>
+            <p class="taxonomy-def">Sounds produced by living organisms as part of their biological activity — vocalisation, locomotion, territory signalling, and mating behaviour. Biophony is the most sensitive indicator of ecosystem health; its density and diversity correlate directly with habitat quality.</p>
+            <div class="taxonomy-examples">
+              <span class="example-chip">Bird song</span>
+              <span class="example-chip">Insect chorus</span>
+              <span class="example-chip">Frog calls</span>
+              <span class="example-chip">Whale song</span>
+              <span class="example-chip">Snapping shrimp</span>
+              <span class="example-chip">Mammal movement</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="taxonomy-entry">
+          <div class="taxonomy-marker">
+            <span class="taxonomy-tag anthro">Anthropophony</span>
+            <span class="taxonomy-index">Source type 03</span>
+          </div>
+          <div>
+            <h3 class="taxonomy-name">Anthropophony</h3>
+            <p class="taxonomy-def">Human-generated acoustic environments arising from technology, infrastructure, and collective activity. Anthropophony now constitutes the dominant acoustic layer across most of the planet's surface, and its increase is directly correlated with the suppression of geophonic and biophonic signals.</p>
+            <div class="taxonomy-examples">
+              <span class="example-chip">Traffic</span>
+              <span class="example-chip">Machinery</span>
+              <span class="example-chip">Crowd assembly</span>
+              <span class="example-chip">Industrial processes</span>
+              <span class="example-chip">Aviation</span>
+              <span class="example-chip">Construction</span>
+              <span class="example-chip">Music</span>
+            </div>
+          </div>
+        </div>
+
       </div>
+    </div>
 
-      <!-- Metadata -->
-      <div class="panel-meta">
-        <span class="panel-section-label">Metadata</span>
-        <div id="dp-meta"></div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     03 — LISTENING DIMENSIONS
+     ══════════════════════════════════════════════════════════════ -->
+<section class="guide-section" id="dimensions">
+  <div class="two-col">
+
+    <div class="section-label-col">
+      <h2 class="section-heading">Listening Dimensions</h2>
+      <p class="section-standfirst">Each Aurafact specimen is described across four perceptual dimensions. These dimensions are distinct from the technical frequency profile — they describe the experiential character of a recording.</p>
+    </div>
+
+    <div class="section-content-col">
+      <div class="dimensions-grid">
+
+        <div class="dimension-item">
+          <h3 class="dimension-name">Frequency Profile</h3>
+          <p class="dimension-def">The dominant spectral range of the recording — where most acoustic energy is concentrated and how it is distributed across the audible spectrum.</p>
+          <div class="dimension-values">
+            <span class="dimension-value">Sub-bass</span>
+            <span class="dimension-value">Low</span>
+            <span class="dimension-value">Low-mid</span>
+            <span class="dimension-value">Mid</span>
+            <span class="dimension-value">High-mid</span>
+            <span class="dimension-value">High</span>
+            <span class="dimension-value">Broadband</span>
+          </div>
+        </div>
+
+        <div class="dimension-item">
+          <h3 class="dimension-name">Acoustic Texture</h3>
+          <p class="dimension-def">The temporal and timbral quality of the soundscape — how events are distributed across time and how individual sounds relate to one another.</p>
+          <div class="dimension-values">
+            <span class="dimension-value">Continuous</span>
+            <span class="dimension-value">Rhythmic</span>
+            <span class="dimension-value">Granular</span>
+            <span class="dimension-value">Transient</span>
+            <span class="dimension-value">Layered</span>
+            <span class="dimension-value">Sparse</span>
+          </div>
+        </div>
+
+        <div class="dimension-item">
+          <h3 class="dimension-name">Environmental Context</h3>
+          <p class="dimension-def">The physical setting and its acoustic properties — surface composition, spatial volume, reflectivity, and proximity to boundaries that shape how sound propagates.</p>
+          <div class="dimension-values">
+            <span class="dimension-value">Forest canopy</span>
+            <span class="dimension-value">Open water</span>
+            <span class="dimension-value">Urban corridor</span>
+            <span class="dimension-value">Enclosed space</span>
+            <span class="dimension-value">Desert plateau</span>
+          </div>
+        </div>
+
+        <div class="dimension-item">
+          <h3 class="dimension-name">Temporal Condition</h3>
+          <p class="dimension-def">The time-based context of the recording — time of day, season, and ecological moment. Many acoustic environments change radically within a single hour.</p>
+          <div class="dimension-values">
+            <span class="dimension-value">Dawn chorus</span>
+            <span class="dimension-value">Dusk transition</span>
+            <span class="dimension-value">Nocturnal</span>
+            <span class="dimension-value">Storm event</span>
+            <span class="dimension-value">Seasonal peak</span>
+          </div>
+        </div>
+
       </div>
+    </div>
 
-      <!-- Field notes -->
-      <div class="panel-notes">
-        <span class="panel-section-label">Field Notes</span>
-        <img src="img/aurafact-acoustic-study-01.png" alt="Longitudinal Pressure Field"
-               onerror="this.style.display='none'">
-        <p class="panel-notes-body" id="dp-notes"></p>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     04 — FIELD RECORDING PRINCIPLES
+     ══════════════════════════════════════════════════════════════ -->
+<section class="principles-section" id="principles">
+
+  <div class="principles-header">
+    <div>
+      <h2 class="section-heading">Field Recording<br>Principles</h2>
+    </div>
+    <div>
+      <p class="principles-intro">Aurafact recordings are captured in natural listening conditions without post-processing or acoustic isolation. Each recording preserves the full acoustic relationships present at the moment of capture — the incidental, the peripheral, and the ambient included.</p>
+      <br>
+      <ul class="principles-list">
+        <li><p class="principle-text">Recordings are made with microphones positioned to reflect natural human listening height and orientation, unless the subject requires otherwise.</p></li>
+        <li><p class="principle-text">No noise reduction, equalisation, or dynamic processing is applied. The noise floor of the recording environment is part of the specimen.</p></li>
+        <li><p class="principle-text">Each capture is documented with precise GPS coordinates, time of capture, meteorological conditions, and equipment used.</p></li>
+        <li><p class="principle-text">Minimum duration is three minutes. Most specimens run longer to allow the acoustic environment to re-establish after the recordist's arrival.</p></li>
+        <li><p class="principle-text">Specimens are never staged or influenced. The recordist's presence should approach zero acoustic impact on the environment.</p></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3:2 image grid -->
+  <div class="principles-images">
+
+    <div class="principles-img-frame img-primary">
+      <img src="img/aurafact-acoustic-study-08.png" alt="Field recording in the boreal interior"
+           onerror="this.style.display='none'">
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:1px; background:var(--rule);">
+      <div class="principles-img-frame img-secondary" style="flex:1;">
+        <img src="img/aurafact-acoustic-study-07.png" alt="Recording equipment in the field"
+             onerror="this.style.display='none'">
       </div>
+    </div>
 
-    </div><!-- /panel-content -->
-  </aside>
+  </div>
 
-</div><!-- /archive-body -->
+</section>
 
-<!-- Footer -->
+
 <footer class="site-footer">
+
+  <!-- Three nav columns -->
   <div class="footer-nav">
+
     <div class="footer-col">
       <span class="footer-col-label">Navigate</span>
       <ul>
-        <li><a href="#">Map</a></li>
-        <li><a href="archive.html">Archive</a></li>
-        <li><a href="#">Lab</a></li>
-        <li><a href="#">Manifesto</a></li>
+        <li><a href="#">Global Sound Map</a></li>
+        <li><a href="archive.html">Archive Explorer</a></li>
+        <li><a href="#">Sonic Lab</a></li>
+        <li><a href="#">Compare Tool</a></li>
       </ul>
     </div>
+
     <div class="footer-col">
       <span class="footer-col-label">About</span>
       <ul>
-        <li><a href="#">Field Methodology</a></li>
-        <li><a href="#">Equipment</a></li>
-        <li><a href="#">Contribute</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><a href="#">The Manifesto</a></li>
+        <li><a href="#">Recording Standards</a></li>
+        <li><a href="#">Accessibility</a></li>
+        <li><a href="#">Submit a Recording</a></li>
       </ul>
     </div>
+
     <div class="footer-col">
       <span class="footer-col-label">Archive</span>
       <ul>
         <li><a href="#">Geophony</a></li>
         <li><a href="#">Biophony</a></li>
         <li><a href="#">Anthropophony</a></li>
-        <li><a href="#">Collections</a></li>
+        <li><a href="#">Chronological Index</a></li>
       </ul>
     </div>
+
   </div>
+
+  <!-- Bottom bar -->
   <div class="footer-bottom">
-    <p class="footer-copy">© 2026 Aurafact — Environmental Sound Archive<br>Preserving Acoustic Memory</p>
+    <p class="footer-copy">
+      © 2026 Aurafact — Environmental Sound Archive<br>
+      Preserving Acoustic Memory
+    </p>
     <p class="footer-time" id="footerTime"></p>
   </div>
+
 </footer>
 
-
 <script>
-/* ── SPECIMEN DATA ──────────────────────────────────────────── */
-const SPECIMENS = [
-  {
-    id: 'AF-0003',
-    artifact: 'World Cup Watch Party',
-    location: 'Ottawa, CA',
-    region: 'North America',
-    source: 'Anthropophony',
-    subtype: 'Crowd Assembly',
-    freq: '120 Hz – 5 kHz',
-    freqLow: '120 Hz',
-    freqHigh: '5 kHz',
-    date: '2022-11-25',
-    duration: '4:32',
-    audio: 'audio/AF-0003-world-cup-watch-party-ottawa-2022.mp3',
-    notes: 'Recorded at a public viewing event in downtown Ottawa during the 2022 FIFA World Cup. Dense crowd vocalisation, rhythmic chanting, ambient city noise underneath.',
-  },
-  {
-    id: 'AF-0134',
-    artifact: 'Atlantic Shore at Dusk',
-    location: 'Brittany, FR',
-    region: 'Europe',
-    source: 'Geophony',
-    subtype: 'Coastal Field',
-    freq: '20 Hz – 8 kHz',
-    freqLow: '20 Hz',
-    freqHigh: '8 kHz',
-    date: '2023-07-03',
-    duration: '6:14',
-    audio: null,
-    notes: 'Low-tide recording at the Pointe du Raz headland. Consistent wave crash with long intervals, distant foghorn, wind across the microphone capsule.',
-  },
-  {
-    id: 'AF-0208',
-    artifact: 'Boreal Interior at Dawn',
-    location: 'Quebec, CA',
-    region: 'North America',
-    source: 'Biophony',
-    subtype: 'Forest Interior',
-    freq: '200 Hz – 12 kHz',
-    freqLow: '200 Hz',
-    freqHigh: '12 kHz',
-    date: '2024-01-29',
-    duration: '8:07',
-    audio: null,
-    notes: 'Recorded 4km from the nearest road. Primary bird chorus begins approximately 38 minutes before sunrise. Woodpecker percussion audible at 1:12.',
-  },
-  {
-    id: 'AF-0312',
-    artifact: 'Steel Mill Perimeter',
-    location: 'Liège, BE',
-    region: 'Europe',
-    source: 'Anthropophony',
-    subtype: 'Industrial Margin',
-    freq: '60 Hz – 2 kHz',
-    freqLow: '60 Hz',
-    freqHigh: '2 kHz',
-    date: '2024-03-11',
-    duration: '5:50',
-    audio: null,
-    notes: 'Perimeter recording of an active rolling mill. The 120Hz fundamental and its harmonics are consistent throughout. Steam vent events at irregular intervals.',
-  },
-  {
-    id: 'AF-0447',
-    artifact: 'Saharan Plateau at Dawn',
-    location: 'Tindouf, DZ',
-    region: 'Africa',
-    source: 'Geophony',
-    subtype: 'Desert Dawn',
-    freq: '400 Hz – 10 kHz',
-    freqLow: '400 Hz',
-    freqHigh: '10 kHz',
-    date: '2024-08-22',
-    duration: '7:23',
-    audio: null,
-    notes: 'Pre-dawn silence broken by thermal wind events. Extremely low noise floor — below 12dB SPL at rest. A single bird call at 4:47AM local time.',
-  },
-  {
-    id: 'AF-0521',
-    artifact: 'Monsoon Onset',
-    location: 'Kerala, IN',
-    region: 'Asia',
-    source: 'Geophony',
-    subtype: 'Rain Event',
-    freq: '100 Hz – 14 kHz',
-    freqLow: '100 Hz',
-    freqHigh: '14 kHz',
-    date: '2023-06-04',
-    duration: '9:48',
-    audio: null,
-    notes: 'First monsoon rain of the season, recorded from an open veranda. Intensity increases sharply at 0:48. Thunder signature at 2:30 and 4:12.',
-  },
-  {
-    id: 'AF-0609',
-    artifact: 'Coral Reef Shallow',
-    location: 'Great Barrier Reef, AU',
-    region: 'Oceania',
-    source: 'Biophony',
-    subtype: 'Marine Interior',
-    freq: '50 Hz – 22 kHz',
-    freqLow: '50 Hz',
-    freqHigh: '22 kHz',
-    date: '2023-09-17',
-    duration: '12:00',
-    audio: null,
-    notes: 'Hydrophone recording at 4m depth on a healthy reef section. Snapping shrimp colony audible throughout. Fish vocalisation clusters at dawn.',
-  },
-  {
-    id: 'AF-0714',
-    artifact: 'Market at Opening',
-    location: 'Marrakech, MA',
-    region: 'Africa',
-    source: 'Anthropophony',
-    subtype: 'Market Environment',
-    freq: '80 Hz – 6 kHz',
-    freqLow: '80 Hz',
-    freqHigh: '6 kHz',
-    date: '2022-10-08',
-    duration: '3:55',
-    audio: null,
-    notes: 'Dawn opening of the Jemaa el-Fna market. Vendors calling, cart wheels on stone, calls to prayer overlapping from multiple minarets.',
-  },
-];
-
-/* ── STATE ──────────────────────────────────────────────────── */
-const state = { search: '', sort: 'id-asc', selectedId: null };
-let audioEl = null;
-let progressRaf = null;
-
-/* ── AUDIO HELPERS ──────────────────────────────────────────── */
-function fmtTime(s) {
-  if (!isFinite(s)) return '—';
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return `${m}:${String(sec).padStart(2, '0')}`;
-}
-
-function stopAudio() {
-  if (audioEl) {
-    audioEl.pause();
-    audioEl.src = '';
-    audioEl = null;
-  }
-  if (progressRaf) { cancelAnimationFrame(progressRaf); progressRaf = null; }
-  setPlayingState(false);
-}
-
-function setPlayingState(playing) {
-  const btn = document.getElementById('playPauseBtn');
-  const icon = document.getElementById('playPauseIcon');
-  const viz = document.getElementById('panelViz');
-  if (!btn || !icon || !viz) return;
-
-  btn.classList.toggle('playing', playing);
-  viz.classList.toggle('playing', playing);
-
-  if (playing) {
-    icon.innerHTML = '<rect x="0" y="0" width="3" height="12"/><rect x="5" y="0" width="3" height="12"/>';
-    icon.setAttribute('viewBox', '0 0 8 12');
-  } else {
-    icon.innerHTML = '<polygon points="0,0 10,6 0,12"/>';
-    icon.setAttribute('viewBox', '0 0 10 12');
-    document.getElementById('progressFill').style.width = '0%';
-    document.getElementById('playhead').style.left = '0';
-  }
-}
-
-function tickProgress() {
-  if (!audioEl) return;
-  const pct = audioEl.duration ? (audioEl.currentTime / audioEl.duration) * 100 : 0;
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('playhead').style.left = pct + '%';
-  document.getElementById('timeElapsed').textContent = fmtTime(audioEl.currentTime);
-  progressRaf = requestAnimationFrame(tickProgress);
-}
-
-/* ── BUILD SPECTROGRAM BARS ─────────────────────────────────── */
-function buildViz(spec) {
-  const viz = document.getElementById('panelViz');
-  // Clear previous bars (keep labels + playhead)
-  [...viz.querySelectorAll('.viz-bar')].forEach(b => b.remove());
-
-  // Heights vary by source type to suggest spectral character
-  const profiles = {
-    Geophony:      [30,45,60,80,90,85,70,55,40,30,25,20,18,22,28,35,42,38,32,28,25,22,20,18,16,18,22,28,32,38],
-    Biophony:      [10,12,18,22,30,45,65,80,72,60,48,55,70,65,50,40,35,45,60,70,65,50,38,30,25,35,50,60,55,40],
-    Anthropophony: [60,75,85,90,88,82,75,68,60,55,50,48,45,42,40,45,50,55,58,52,45,38,32,28,24,22,20,18,16,14],
-  };
-
-  const heights = profiles[spec.source] || profiles.Geophony;
-  const fragment = document.createDocumentFragment();
-  heights.forEach((h, i) => {
-    const bar = document.createElement('div');
-    bar.className = 'viz-bar';
-    bar.style.height = h + '%';
-    bar.style.animationDelay = (i * 0.03) + 's';
-    fragment.appendChild(bar);
-  });
-  viz.appendChild(fragment);
-
-  document.getElementById('vizLow').textContent = spec.freqLow;
-  document.getElementById('vizHigh').textContent = spec.freqHigh;
-}
-
-/* ── OPEN DETAIL PANEL ──────────────────────────────────────── */
-function openPanel(id) {
-  const spec = SPECIMENS.find(s => s.id === id);
-  if (!spec) return;
-
-  // Stop previous audio
-  stopAudio();
-
-  // Update selected row
-  document.querySelectorAll('#tableBody tr').forEach(r => r.classList.remove('is-selected'));
-  const row = document.querySelector(`#tableBody tr[data-id="${id}"]`);
-  if (row) row.classList.add('is-selected');
-
-  state.selectedId = id;
-
-  // Populate header
-  document.getElementById('dp-id').textContent = spec.id;
-  document.getElementById('dp-title').textContent = spec.artifact;
-  document.getElementById('dp-location').textContent = `${spec.location} · ${spec.date}`;
-
-  // Spectrogram
-  buildViz(spec);
-
-  // Audio player / no-audio state
-  const playerEl = document.getElementById('panelPlayer');
-  const noAudioEl = document.getElementById('noAudioNotice');
-
-  if (spec.audio) {
-    playerEl.style.display = 'flex';
-    noAudioEl.style.display = 'none';
-    document.getElementById('timeDuration').textContent = spec.duration || '—';
-    document.getElementById('timeElapsed').textContent = '0:00';
-    document.getElementById('progressFill').style.width = '0%';
-  } else {
-    playerEl.style.display = 'none';
-    noAudioEl.style.display = 'block';
-  }
-
-  // Metadata rows
-  const metaEl = document.getElementById('dp-meta');
-  const rows = [
-    ['Source',    spec.source],
-    ['Subtype',   spec.subtype],
-    ['Region',    spec.region],
-    ['Frequency', spec.freq],
-    ['Recorded',  spec.date],
-    ['Duration',  spec.duration],
-  ];
-  metaEl.innerHTML = rows.map(([k, v]) => `
-    <div class="meta-row">
-      <span class="meta-key">${k}</span>
-      <span class="meta-val">${v}</span>
-    </div>
-  `).join('');
-
-  // Field notes
-  document.getElementById('dp-notes').textContent = spec.notes;
-
-  // Show content
-  document.getElementById('panelEmpty').classList.add('hidden');
-  document.getElementById('panelContent').classList.add('visible');
-}
-
-/* ── PLAY / PAUSE ───────────────────────────────────────────── */
-document.getElementById('playPauseBtn').addEventListener('click', () => {
-  const spec = SPECIMENS.find(s => s.id === state.selectedId);
-  if (!spec || !spec.audio) return;
-
-  if (audioEl && !audioEl.paused) {
-    audioEl.pause();
-    setPlayingState(false);
-    if (progressRaf) { cancelAnimationFrame(progressRaf); progressRaf = null; }
-    return;
-  }
-
-  if (audioEl && audioEl.paused) {
-    audioEl.play().catch(() => {});
-    setPlayingState(true);
-    progressRaf = requestAnimationFrame(tickProgress);
-    return;
-  }
-
-  // Fresh play
-  audioEl = new Audio(spec.audio);
-  audioEl.volume = 0.85;
-
-  audioEl.addEventListener('loadedmetadata', () => {
-    document.getElementById('timeDuration').textContent = fmtTime(audioEl.duration);
-  });
-
-  audioEl.addEventListener('ended', () => {
-    stopAudio();
-    setPlayingState(false);
-  });
-
-  audioEl.play().catch(() => {});
-  setPlayingState(true);
-  progressRaf = requestAnimationFrame(tickProgress);
-});
-
-/* Progress bar scrub */
-document.getElementById('progressTrack').addEventListener('click', e => {
-  if (!audioEl || !audioEl.duration) return;
-  const rect = e.currentTarget.getBoundingClientRect();
-  const pct = (e.clientX - rect.left) / rect.width;
-  audioEl.currentTime = pct * audioEl.duration;
-});
-
-/* ── BUILD TABLE ROWS ───────────────────────────────────────── */
-function buildRows() {
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = '';
-  SPECIMENS.forEach(s => {
-    const bc = s.source === 'Geophony' ? 'geo' : s.source === 'Biophony' ? 'bio' : 'anthro';
-    const tr = document.createElement('tr');
-    tr.dataset.id = s.id;
-    tr.innerHTML = `
-      <td class="td-id">${s.id}</td>
-      <td>${s.artifact}</td>
-      <td>${s.location}</td>
-      <td><span class="type-badge ${bc}">${s.source}</span></td>
-      <td>${s.subtype}</td>
-      <td>${s.freq}</td>
-    `;
-    tr.addEventListener('click', () => openPanel(s.id));
-    tbody.appendChild(tr);
-  });
-}
-
-/* ── FILTER ─────────────────────────────────────────────────── */
-function applyFilters() {
-  const q = state.search.toLowerCase();
-  let n = 0;
-  document.querySelectorAll('#tableBody tr').forEach(row => {
-    const s = SPECIMENS.find(x => x.id === row.dataset.id);
-    const hit = !q || [s.id, s.artifact, s.location, s.source, s.subtype, s.freq]
-      .join(' ').toLowerCase().includes(q);
-    row.classList.toggle('hidden', !hit);
-    if (hit) n++;
-  });
-  document.getElementById('resultCount').textContent =
-    `Showing ${n} specimen${n !== 1 ? 's' : ''}`;
-  document.getElementById('emptyState').classList.toggle('visible', n === 0);
-}
-
-/* ── SORT ───────────────────────────────────────────────────── */
-function applySort() {
-  const tbody = document.getElementById('tableBody');
-  [...tbody.querySelectorAll('tr')].sort((a, b) => {
-    const sa = SPECIMENS.find(x => x.id === a.dataset.id);
-    const sb = SPECIMENS.find(x => x.id === b.dataset.id);
-    switch (state.sort) {
-      case 'id-asc':       return sa.id.localeCompare(sb.id);
-      case 'id-desc':      return sb.id.localeCompare(sa.id);
-      case 'location-asc': return sa.location.localeCompare(sb.location);
-    }
-  }).forEach(r => tbody.appendChild(r));
-}
-
-document.getElementById('searchInput').addEventListener('input', e => {
-  state.search = e.target.value;
-  applyFilters();
-});
-
-document.getElementById('sortSelect').addEventListener('change', e => {
-  state.sort = e.target.value;
-  applySort();
-});
-
-/* ── CLOCK ──────────────────────────────────────────────────── */
-(function () {
+/* ── FOOTER CLOCK ──────────────────────────────────────────────
+   Live UTC timestamp + local time, styled to match the mono
+   label system used throughout the archive.                  */
+(function initFooterClock() {
   const el = document.getElementById('footerTime');
-  const pad = n => String(n).padStart(2, '0');
+  if (!el) return;
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
   function tick() {
-    const d = new Date();
-    el.textContent = `System Time: ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} — ${Intl.DateTimeFormat().resolvedOptions().timeZone}`;
+    const now = new Date();
+    const utcH = pad(now.getUTCHours());
+    const utcM = pad(now.getUTCMinutes());
+    const utcS = pad(now.getUTCSeconds());
+    const locH = pad(now.getHours());
+    const locM = pad(now.getMinutes());
+    el.textContent = `UTC ${utcH}:${utcM}:${utcS}  ·  Local ${locH}:${locM}`;
   }
-  tick(); setInterval(tick, 1000);
+
+  tick();
+  setInterval(tick, 1000);
 })();
-
-/* ── INIT ───────────────────────────────────────────────────── */
-document.getElementById('specimenCount').textContent = `${SPECIMENS.length} Specimens`;
-buildRows();
-applySort();
-applyFilters();
 </script>
-
 </body>
 </html>

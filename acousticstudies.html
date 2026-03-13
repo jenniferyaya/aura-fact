@@ -136,9 +136,9 @@ body::after {
 
 .page-desc {
   font-family: 'DM Mono', monospace;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.08em;
-  line-height: 1.8;
+  line-height: 1.3;
   color: var(--text-mono);
   max-width: 480px;
 }
@@ -293,6 +293,7 @@ body::after {
   opacity: 1;
   transform: translateY(0);
   transition: opacity 0.35s ease, transform 0.35s ease, background 0.2s;
+  margin-bottom: 32px;
 }
 
 .study-card:hover { background: #e4e3e0; }
@@ -305,7 +306,6 @@ body::after {
 .card-img-frame {
   width: 100%;
   aspect-ratio: 4 / 3;
-  background: #1a1a1a;
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
@@ -360,7 +360,7 @@ body::after {
   padding: 4px 8px;
   border: 1px solid currentColor;
   backdrop-filter: blur(8px);
-  background: rgba(12,12,12,0.55);
+  background: rgba(245,245,245,0.55);
 }
 
 .card-tag.geo    { color: #72b894; }
@@ -378,7 +378,7 @@ body::after {
 
 .card-id {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--text-mono);
@@ -389,7 +389,7 @@ body::after {
   font-family: "Libre Baskerville", serif;
   font-style: italic;
   font-weight: 300;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.3;
   color: var(--text-secondary);
   margin-bottom: 10px;
@@ -402,12 +402,11 @@ body::after {
   justify-content: space-between;
   margin-top: auto;
   padding-top: 12px;
-  border-top: 1px solid var(--rule);
 }
 
 .card-location {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-mono);
@@ -415,7 +414,7 @@ body::after {
 
 .card-subtype {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.10em;
   color: var(--text-mono);
   opacity: 0.6;
@@ -493,265 +492,60 @@ body::after {
   max-width: none;
 }
 
-/* ── LIGHTBOX ────────────────────────────────────────────────── */
-.lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
 
-.lightbox.open {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.lb-backdrop {
-  position: absolute; inset: 0;
-  background: rgba(8,8,8,0.92);
-  backdrop-filter: blur(6px);
-}
-
-.lb-panel {
-  position: relative;
-  z-index: 1;
-  width: min(880px, 92vw);
-  max-height: 92vh;
-  overflow-y: auto;
-  background: #111;
-  display: flex;
-  flex-direction: column;
-  transform: translateY(14px);
-  transition: transform 0.3s ease;
-}
-
-.lightbox.open .lb-panel {
-  transform: translateY(0);
-}
-
-.lb-panel::-webkit-scrollbar { width: 3px; }
-.lb-panel::-webkit-scrollbar-track { background: transparent; }
-.lb-panel::-webkit-scrollbar-thumb { background: #2a2a2a; }
-
-.lb-img-frame {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background: #080808;
-  overflow: hidden;
-  position: relative;
-  flex-shrink: 0;
-}
-
-.lb-img-frame img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.lb-img-placeholder {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-}
-
-.lb-img-placeholder span {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #222;
-}
-
-.lb-body {
-  padding: 32px 40px 40px;
-}
-
-.lb-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  gap: 20px;
-}
-
-.lb-header-left {}
-
-.lb-id {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: #444;
-  display: block;
-  margin-bottom: 8px;
-}
-
-.lb-title {
-  font-family: "Libre Baskerville", serif;
-  font-style: italic;
-  font-weight: 300;
-  font-size: 26px;
-  color: var(--text-primary);
-  line-height: 1.1;
-  margin-bottom: 8px;
-}
-
-.lb-location {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #444;
-}
-
-.lb-close {
-  background: transparent;
-  border: 1px solid #2a2a2a;
-  color: #555;
-  width: 36px; height: 36px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  font-family: 'DM Mono', monospace;
-  font-size: 14px;
-  transition: border-color 0.2s, color 0.2s;
-}
-
-.lb-close:hover { border-color: #555; color: var(--text-primary); }
-
-.lb-rule {
-  border: none;
-  border-top: 1px solid #1e1e1e;
-  margin: 0 0 24px;
-}
-
-.lb-meta-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  margin-bottom: 28px;
-}
-
-.lb-meta-item {
-  padding: 12px 0;
-  border-bottom: 1px solid #1a1a1a;
-}
-
-.lb-meta-item:nth-child(odd) {
-  padding-right: 32px;
-  border-right: 1px solid #1a1a1a;
-}
-
-.lb-meta-item:nth-child(even) {
-  padding-left: 32px;
-}
-
-.lb-meta-key {
-  font-family: 'DM Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: #333;
-  display: block;
-  margin-bottom: 4px;
-}
-
-.lb-meta-val {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  color: #666;
-}
-
-.lb-notes-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: #333;
-  display: block;
-  margin-bottom: 12px;
-}
-
-.lb-notes {
-  font-family: "Libre Baskerville", serif;
-  font-size: 13px;
-  line-height: 1.8;
-  color: #666;
-}
-
-.lb-nav {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 32px;
-  padding-top: 24px;
+/* ── SITE FOOTER ─────────────────────────────────────────────── */
+.site-footer {
+  background-color: #f5f5f5;
   border-top: 1px solid #1a1a1a;
 }
 
-.lb-nav-btn {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.20em;
-  text-transform: uppercase;
-  background: transparent;
-  border: 1px solid #2a2a2a;
-  color: #555;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-}
-
-.lb-nav-btn:hover { border-color: #555; color: var(--text-primary); }
-.lb-nav-btn:disabled { opacity: 0.2; cursor: default; }
-
-/* ── FOOTER ──────────────────────────────────────────────────── */
-.site-footer {
-  background-color: #f5f5f5;
-  border-top: 1px solid var(--rule);
-}
-
+/* Three-column nav links row */
 .footer-nav {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border-bottom: 1px solid var(--rule);
+  border-bottom: 1px solid #1a1a1a;
 }
 
 .footer-col {
   padding: 64px 48px 64px 80px;
-  border-right: 1px solid var(--rule);
+  border-right: 1px solid #1a1a1a;
 }
 
-.footer-col:last-child { border-right: none; padding-right: 80px; }
+.footer-col:first-child { padding-left: 80px; }
+.footer-col:last-child  { border-right: none; padding-right: 80px; }
 
 .footer-col-label {
   display: block;
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.30em;
   text-transform: uppercase;
   color: var(--text-mono);
   margin-bottom: 24px;
   padding-bottom: 14px;
-  border-bottom: 1px solid var(--rule);
 }
 
-.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
 .footer-col ul li a {
   font-family: 'DM Mono', monospace;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.10em;
   color: var(--text-secondary);
   text-decoration: none;
   transition: color 0.2s;
 }
 
-.footer-col ul li a:hover { color: var(--text-accent); }
+.footer-col ul li a:hover {
+  color: var(--text-accent);
+}
 
+/* Bottom bar */
 .footer-bottom {
   padding: 28px 80px;
   display: flex;
@@ -767,6 +561,38 @@ body::after {
   color: var(--text-mono);
   line-height: 1.8;
 }
+
+.footer-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  line-height: 1.8;
+  text-align: right;
+}
+
+/* Footer responsive */
+@media (max-width: 1023px) {
+  .footer-col:first-child { padding-left: 24px; }
+  .footer-col:last-child  { padding-right: 24px; }
+  .footer-bottom          { padding: 24px; }
+}
+
+@media (max-width: 767px) {
+  .footer-nav {
+    grid-template-columns: 1fr;
+  }
+  .footer-col {
+    padding: 40px 20px;
+    border-right: none;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .footer-col:first-child { padding-left: 20px; }
+  .footer-col:last-child  { padding-right: 20px; border-bottom: none; }
+  .footer-bottom          { padding: 24px 20px; flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+
 
 /* ── RESPONSIVE ──────────────────────────────────────────────── */
 @media (max-width: 1100px) {
@@ -790,11 +616,6 @@ body::after {
   .footer-nav { grid-template-columns: 1fr; }
   .footer-col { padding: 40px 20px; border-right: none; border-bottom: 1px solid var(--rule); }
   .footer-bottom { padding: 24px 20px; flex-direction: column; gap: 8px; }
-  .lb-panel { width: 100vw; max-height: 100vh; }
-  .lb-body { padding: 24px 20px 32px; }
-  .lb-meta-grid { grid-template-columns: 1fr; }
-  .lb-meta-item:nth-child(odd) { border-right: none; padding-right: 0; }
-  .lb-meta-item:nth-child(even) { padding-left: 0; }
   .view-list .card-img-frame { width: 100px; }
 }
 
@@ -861,79 +682,55 @@ body::after {
   </div>
 </main>
 
-<!-- Lightbox -->
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
-  <div class="lb-backdrop" id="lbBackdrop"></div>
-  <div class="lb-panel">
 
-    <div class="lb-img-frame">
-      <img src="" alt="" id="lb-img" style="display:none;">
-      <div class="lb-img-placeholder" id="lb-img-ph">
-        <span>No image on file</span>
-      </div>
-    </div>
-
-    <div class="lb-body">
-      <div class="lb-header">
-        <div class="lb-header-left">
-          <span class="lb-id" id="lb-id"></span>
-          <h2 class="lb-title" id="lb-title"></h2>
-          <span class="lb-location" id="lb-location"></span>
-        </div>
-        <button class="lb-close" id="lbClose" aria-label="Close">✕</button>
-      </div>
-
-      <hr class="lb-rule">
-
-      <div class="lb-meta-grid" id="lb-meta"></div>
-
-      <span class="lb-notes-label">Field Notes</span>
-      <p class="lb-notes" id="lb-notes"></p>
-
-      <div class="lb-nav">
-        <button class="lb-nav-btn" id="lbPrev">← Previous</button>
-        <button class="lb-nav-btn" id="lbNext">Next →</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- Footer -->
 <footer class="site-footer">
+
+  <!-- Three nav columns -->
   <div class="footer-nav">
+
     <div class="footer-col">
       <span class="footer-col-label">Navigate</span>
       <ul>
-        <li><a href="#">Map</a></li>
-        <li><a href="archive.html">Archive</a></li>
-        <li><a href="acousticstudies.html">Acoustic Studies</a></li>
-        <li><a href="#">Manifesto</a></li>
+        <li><a href="#">Global Sound Map</a></li>
+        <li><a href="archive.html">Archive Explorer</a></li>
+        <li><a href="#">Sonic Lab</a></li>
+        <li><a href="#">Compare Tool</a></li>
       </ul>
     </div>
+
     <div class="footer-col">
       <span class="footer-col-label">About</span>
       <ul>
-        <li><a href="#">Field Methodology</a></li>
-        <li><a href="#">Equipment</a></li>
-        <li><a href="#">Contribute</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><a href="#">The Manifesto</a></li>
+        <li><a href="#">Recording Standards</a></li>
+        <li><a href="#">Accessibility</a></li>
+        <li><a href="#">Submit a Recording</a></li>
       </ul>
     </div>
+
     <div class="footer-col">
       <span class="footer-col-label">Archive</span>
       <ul>
         <li><a href="#">Geophony</a></li>
         <li><a href="#">Biophony</a></li>
         <li><a href="#">Anthropophony</a></li>
-        <li><a href="#">Collections</a></li>
+        <li><a href="#">Chronological Index</a></li>
       </ul>
     </div>
+
   </div>
+
+  <!-- Bottom bar -->
   <div class="footer-bottom">
-    <p class="footer-copy">© 2026 Aurafact — Environmental Sound Archive<br>Preserving Acoustic Memory</p>
+    <p class="footer-copy">
+      © 2026 Aurafact — Environmental Sound Archive<br>
+      Preserving Acoustic Memory
+    </p>
+    <p class="footer-time" id="footerTime"></p>
   </div>
+
 </footer>
+
 
 
 <script>
@@ -954,7 +751,7 @@ const STUDIES = [
     freq: '120 Hz – 5 kHz',
     date: '2022-11-25',
     duration: '4:32',
-    image: 'img/AF-0003-ottawa.jpg',
+    image: 'img/aurafact-acoustic-study-07.png',
     featured: false,
     notes: 'Recorded at a public viewing event in downtown Ottawa during the 2022 FIFA World Cup. Dense crowd vocalisation, rhythmic chanting, ambient city noise underneath.',
   },
@@ -1064,7 +861,6 @@ const STUDIES = [
 const state = {
   filter: 'all',
   view: 'grid',
-  lightboxIndex: null,   // index into VISIBLE array
 };
 
 let visibleStudies = [...STUDIES]; // filtered set
@@ -1123,7 +919,6 @@ function buildCards() {
       </div>
     `;
 
-    card.addEventListener('click', () => openLightbox(idx));
     grid.insertBefore(card, empty);
   });
 
@@ -1174,97 +969,35 @@ document.getElementById('viewList').addEventListener('click', () => {
 });
 
 /* ============================================================
-   LIGHTBOX
-   ============================================================ */
-function openLightbox(idx) {
-  state.lightboxIndex = idx;
-  populateLightbox(idx);
-  document.getElementById('lightbox').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function populateLightbox(idx) {
-  const s = visibleStudies[idx];
-  if (!s) return;
-
-  // Image
-  const imgEl = document.getElementById('lb-img');
-  const phEl  = document.getElementById('lb-img-ph');
-  if (s.image) {
-    imgEl.src = s.image;
-    imgEl.alt = s.title;
-    imgEl.style.display = 'block';
-    phEl.style.display  = 'none';
-  } else {
-    imgEl.style.display = 'none';
-    phEl.style.display  = 'flex';
-  }
-
-  // Header
-  document.getElementById('lb-id').textContent       = s.id;
-  document.getElementById('lb-title').textContent    = s.title;
-  document.getElementById('lb-location').textContent = `${s.location} · ${s.date}`;
-
-  // Meta grid
-  const metaItems = [
-    ['Source',    s.source],
-    ['Subtype',   s.subtype],
-    ['Region',    s.region],
-    ['Frequency', s.freq],
-    ['Recorded',  s.date],
-    ['Duration',  s.duration],
-  ];
-  document.getElementById('lb-meta').innerHTML = metaItems.map(([k, v]) => `
-    <div class="lb-meta-item">
-      <span class="lb-meta-key">${k}</span>
-      <span class="lb-meta-val">${v}</span>
-    </div>
-  `).join('');
-
-  // Notes
-  document.getElementById('lb-notes').textContent = s.notes;
-
-  // Nav buttons
-  document.getElementById('lbPrev').disabled = idx === 0;
-  document.getElementById('lbNext').disabled = idx === visibleStudies.length - 1;
-}
-
-document.getElementById('lbClose').addEventListener('click', closeLightbox);
-document.getElementById('lbBackdrop').addEventListener('click', closeLightbox);
-
-document.getElementById('lbPrev').addEventListener('click', () => {
-  if (state.lightboxIndex > 0) {
-    state.lightboxIndex--;
-    populateLightbox(state.lightboxIndex);
-  }
-});
-
-document.getElementById('lbNext').addEventListener('click', () => {
-  if (state.lightboxIndex < visibleStudies.length - 1) {
-    state.lightboxIndex++;
-    populateLightbox(state.lightboxIndex);
-  }
-});
-
-// Keyboard navigation
-document.addEventListener('keydown', e => {
-  const lb = document.getElementById('lightbox');
-  if (!lb.classList.contains('open')) return;
-  if (e.key === 'Escape')      closeLightbox();
-  if (e.key === 'ArrowLeft')   document.getElementById('lbPrev').click();
-  if (e.key === 'ArrowRight')  document.getElementById('lbNext').click();
-});
-
-/* ============================================================
    INIT
    ============================================================ */
 buildCards();
 </script>
 
+
+<script>
+/* ── FOOTER CLOCK ──────────────────────────────────────────────
+   Live UTC timestamp + local time, styled to match the mono
+   label system used throughout the archive.                  */
+(function initFooterClock() {
+  const el = document.getElementById('footerTime');
+  if (!el) return;
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const now = new Date();
+    const utcH = pad(now.getUTCHours());
+    const utcM = pad(now.getUTCMinutes());
+    const utcS = pad(now.getUTCSeconds());
+    const locH = pad(now.getHours());
+    const locM = pad(now.getMinutes());
+    el.textContent = `UTC ${utcH}:${utcM}:${utcS}  ·  Local ${locH}:${locM}`;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
 </body>
 </html>
