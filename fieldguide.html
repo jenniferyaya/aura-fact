@@ -498,6 +498,7 @@ body::after {
   grid-template-columns: 3fr 2fr;
   gap: 1px;
   background: var(--rule);
+  border-top: 1px solid var(--rule);
 }
 
 .principles-img-frame {
@@ -715,7 +716,7 @@ body::after {
 <header class="page-header">
   <div>
     <h1 class="page-title">Field Guide</h1>
-    <p class="page-desc">A naturalist's introduction to acoustic ecology — the taxonomy of environmental sound, the dimensions by which it is described, and the principles that guide its preservation.</p>
+    <p class="page-desc">A short primer on the taxonomy of environmental sound, the dimensions by which it is defined, and the rigorous principles that guide its preservation.</p>
   </div>
   <div class="page-header-right">
     <span class="toc-label">Contents</span>
@@ -737,34 +738,33 @@ body::after {
 
     <div class="section-label-col">
       <h2 class="section-heading">What is Sound</h2>
-      <p class="section-standfirst">Sound is not background. It is a primary medium through which environments express themselves — a continuous, layered transmission of event and condition.</p>
+      <p class="section-standfirst">Sound is not a background element; it is a primary medium through which an environment expresses itself—a continuous, layered transmission of event and condition.</p>
     </div>
 
     <div class="section-content-col">
-      <p class="sound-body">Sound is mechanical energy propagating through a medium as longitudinal pressure waves — alternating compressions and rarefactions that move outward from a source. In air, these waves travel at approximately 343 metres per second, displacing molecules in their path and carrying encoded information about the events that generated them.</p>
+      <p class="sound-body">Physically, sound is mechanical energy propagating through a medium as longitudinal pressure waves. These alternating compressions and rarefactions move outward from a source at approximately 343 meters per second (in air), displacing molecules and carrying encoded data about the physical events that generated them.</p>
 
-      <p class="sound-body">Every environment produces a continuous acoustic signature shaped by its physical composition: the hardness of surfaces, the density of vegetation, the movement of water and air. These signatures are not static — they shift with time of day, season, weather, and the presence or absence of life.</p>
-
+      <p class="sound-body">Every environment produces a continuous acoustic signature dictated by its physical composition: the reverberation of stone, the dampening density of vegetation, and the fluid movement of water and air. These signatures are never static; they shift with the hour, the season, the weather, and the presence, or absence, of life.
       <blockquote class="sound-pull">A place without its sound is only half remembered.</blockquote>
 
-      <p class="sound-body">Where photography captures light reflected off surfaces at a single instant, field recording captures the pressure events that define a place's living moment. It is an act of listening made permanent.</p>
+      <p class="sound-body">Where photography captures light reflected off surfaces in a frozen instant, field recording captures the pressure events that define a place’s living moment. It is an act of listening made permanent.</p>
 
       <div class="sound-definition-grid">
         <div class="sound-def-item">
           <span class="sound-def-term">Frequency</span>
-          <p class="sound-def-body">The number of pressure cycles per second, measured in hertz (Hz). Perceived as pitch. The audible range spans approximately 20 Hz to 20,000 Hz.</p>
+          <p class="sound-def-body">The number of pressure cycles per second, measured in Hertz (Hz). Perceived as pitch. The human audible range spans approximately 20 Hz to 20,000 Hz.</p>
         </div>
         <div class="sound-def-item">
           <span class="sound-def-term">Amplitude</span>
-          <p class="sound-def-body">The magnitude of pressure variation. Perceived as loudness. Measured in decibels (dB SPL), a logarithmic scale relative to the threshold of human hearing.</p>
+          <p class="sound-def-body">he magnitude of pressure variation. Perceived as loudness and measured in decibels (dB SPL)—a logarithmic scale relative to the threshold of human hearing.</p>
         </div>
         <div class="sound-def-item">
           <span class="sound-def-term">Timbre</span>
-          <p class="sound-def-body">The tonal quality that distinguishes one sound source from another at equivalent pitch and loudness — the acoustic fingerprint of a source.</p>
+          <p class="sound-def-body">The tonal quality that distinguishes one source from another at the same pitch and volume; essentially, the "acoustic fingerprint" of a sound.</p>
         </div>
         <div class="sound-def-item">
           <span class="sound-def-term">Duration</span>
-          <p class="sound-def-body">The temporal extent of a sound event. Ranges from sub-millisecond transients to continuous drones sustained across hours or geological time.</p>
+          <p class="sound-def-body">The temporal span of a sound event, ranging from sub-millisecond transients to drones sustained over geological time.</p>
         </div>
       </div>
     </div>
@@ -781,7 +781,7 @@ body::after {
 
     <div class="section-label-col">
       <h2 class="section-heading">Acoustic Taxonomy</h2>
-      <p class="section-standfirst">Aurafact classifies every specimen according to a three-part taxonomy derived from acoustic ecology, as first proposed by R. Murray Schafer and expanded by the World Soundscape Project.</p>
+      <p class="section-standfirst">Aurafact classifies every specimen according to a three-part taxonomy derived from the work of R. Murray Schafer and the World Soundscape Project.</p>
     </div>
 
     <div class="section-content-col">
@@ -794,7 +794,7 @@ body::after {
           </div>
           <div>
             <h3 class="taxonomy-name">Geophony</h3>
-            <p class="taxonomy-def">Natural non-biological sounds generated by physical and geological processes. Geophony is the oldest acoustic layer of any environment — present before life, and persisting beneath it. It establishes the baseline frequency profile of a place.</p>
+            <p class="taxonomy-def">The oldest acoustic layer of our planet. Geophony comprises natural, non-biological sounds generated by physical and geological processes. It establishes the foundational frequency profile of a landscape.</p>
             <div class="taxonomy-examples">
               <span class="example-chip">Wind</span>
               <span class="example-chip">Rainfall</span>
@@ -814,7 +814,7 @@ body::after {
           </div>
           <div>
             <h3 class="taxonomy-name">Biophony</h3>
-            <p class="taxonomy-def">Sounds produced by living organisms as part of their biological activity — vocalisation, locomotion, territory signalling, and mating behaviour. Biophony is the most sensitive indicator of ecosystem health; its density and diversity correlate directly with habitat quality.</p>
+            <p class="taxonomy-def">The collective sound produced by living organisms, vocalizations, locomotion, and territorial signaling. Biophony is a critical indicator of ecosystem health; its density and diversity correlate directly with habitat quality.</p>
             <div class="taxonomy-examples">
               <span class="example-chip">Bird song</span>
               <span class="example-chip">Insect chorus</span>
@@ -833,7 +833,7 @@ body::after {
           </div>
           <div>
             <h3 class="taxonomy-name">Anthropophony</h3>
-            <p class="taxonomy-def">Human-generated acoustic environments arising from technology, infrastructure, and collective activity. Anthropophony now constitutes the dominant acoustic layer across most of the planet's surface, and its increase is directly correlated with the suppression of geophonic and biophonic signals.</p>
+            <p class="taxonomy-def">Human-generated sounds arising from technology, infrastructure, and collective activity. Anthropophony is now the dominant acoustic layer across much of the globe, often masking or suppressing geophonic and biophonic signals.</p>
             <div class="taxonomy-examples">
               <span class="example-chip">Traffic</span>
               <span class="example-chip">Machinery</span>
@@ -852,7 +852,6 @@ body::after {
   </div>
 </section>
 
-
 <!-- ══════════════════════════════════════════════════════════════
      03 — LISTENING DIMENSIONS
      ══════════════════════════════════════════════════════════════ -->
@@ -861,7 +860,7 @@ body::after {
 
     <div class="section-label-col">
       <h2 class="section-heading">Listening Dimensions</h2>
-      <p class="section-standfirst">Each Aurafact specimen is described across four perceptual dimensions. These dimensions are distinct from the technical frequency profile — they describe the experiential character of a recording.</p>
+      <p class="section-standfirst">Beyond technical frequency profiles, <i>Aurafact</i> specimens are described across four perceptual dimensions that capture the experiential character of the recording.</p>
     </div>
 
     <div class="section-content-col">
@@ -869,7 +868,7 @@ body::after {
 
         <div class="dimension-item">
           <h3 class="dimension-name">Frequency Profile</h3>
-          <p class="dimension-def">The dominant spectral range of the recording — where most acoustic energy is concentrated and how it is distributed across the audible spectrum.</p>
+          <p class="dimension-def">The dominant spectral range where acoustic energy is concentrated (e.g., Sub-bass, Mid-range, Broadband)</p>
           <div class="dimension-values">
             <span class="dimension-value">Sub-bass</span>
             <span class="dimension-value">Low</span>
@@ -883,7 +882,7 @@ body::after {
 
         <div class="dimension-item">
           <h3 class="dimension-name">Acoustic Texture</h3>
-          <p class="dimension-def">The temporal and timbral quality of the soundscape — how events are distributed across time and how individual sounds relate to one another.</p>
+          <p class="dimension-def">The temporal quality of the soundscape—how events are distributed across time (e.g., Granular, Rhythmic, Sparse, Layered).</p>
           <div class="dimension-values">
             <span class="dimension-value">Continuous</span>
             <span class="dimension-value">Rhythmic</span>
@@ -896,7 +895,7 @@ body::after {
 
         <div class="dimension-item">
           <h3 class="dimension-name">Environmental Context</h3>
-          <p class="dimension-def">The physical setting and its acoustic properties — surface composition, spatial volume, reflectivity, and proximity to boundaries that shape how sound propagates.</p>
+          <p class="dimension-def">The physical setting—surface reflectivity, spatial volume, and proximity to boundaries that shape sound propagation (e.g., Forest Canopy, Urban Corridor, Desert Plateau)</p>
           <div class="dimension-values">
             <span class="dimension-value">Forest canopy</span>
             <span class="dimension-value">Open water</span>
@@ -908,7 +907,7 @@ body::after {
 
         <div class="dimension-item">
           <h3 class="dimension-name">Temporal Condition</h3>
-          <p class="dimension-def">The time-based context of the recording — time of day, season, and ecological moment. Many acoustic environments change radically within a single hour.</p>
+          <p class="dimension-def">The time-based context—time of day, season, and ecological moment (e.g., Dawn Chorus, Nocturnal, Storm Event).</p>
           <div class="dimension-values">
             <span class="dimension-value">Dawn chorus</span>
             <span class="dimension-value">Dusk transition</span>
@@ -935,14 +934,14 @@ body::after {
       <h2 class="section-heading">Field Recording<br>Principles</h2>
     </div>
     <div>
-      <p class="principles-intro">Aurafact recordings are captured in natural listening conditions without post-processing or acoustic isolation. Each recording preserves the full acoustic relationships present at the moment of capture — the incidental, the peripheral, and the ambient included.</p>
+      <p class="principles-intro">Aurafact recordings are captured in natural listening conditions without post-processing or acoustic isolation. Each recording preserves the full acoustic relationships present at the moment of capture, the incidental, the peripheral, and the ambient included.</p>
       <br>
       <ul class="principles-list">
-        <li><p class="principle-text">Recordings are made with microphones positioned to reflect natural human listening height and orientation, unless the subject requires otherwise.</p></li>
-        <li><p class="principle-text">No noise reduction, equalisation, or dynamic processing is applied. The noise floor of the recording environment is part of the specimen.</p></li>
-        <li><p class="principle-text">Each capture is documented with precise GPS coordinates, time of capture, meteorological conditions, and equipment used.</p></li>
-        <li><p class="principle-text">Minimum duration is three minutes. Most specimens run longer to allow the acoustic environment to re-establish after the recordist's arrival.</p></li>
-        <li><p class="principle-text">Specimens are never staged or influenced. The recordist's presence should approach zero acoustic impact on the environment.</p></li>
+        <li><p class="principle-text"><b>Perspective:</b> Microphones are positioned to reflect natural human listening height and orientation.</p></li>
+        <li><p class="principle-text"><b>Purity:</b> No noise reduction, equalization, or dynamic processing is applied. The <i>noise floor</i> is treated as a vital part of the specimen.</p></li>
+        <li><p class="principle-text"><b>Documentation:</b> Every capture is anchored by precise GPS coordinates, timestamps, meteorological data, and equipment logs.</p></li>
+        <li><p class="principle-text"><b>Duration:</b> Specimens are a minimum of three minutes, allowing the environment to re-establish its natural rhythm after the recordist's arrival.</p></li>
+        <li><p class="principle-text"><b>Non-Interference:</b> The recordist’s presence is minimized to ensure zero acoustic impact on the environment.</p></li>
       </ul>
     </div>
   </div>
