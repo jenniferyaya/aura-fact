@@ -371,7 +371,6 @@ body::after {
   font-family: 'DM Mono', monospace;
   font-size: 9px;
   letter-spacing: 0.10em;
-  text-transform: uppercase;
   color: var(--text-mono);
 }
 
@@ -416,6 +415,13 @@ body::after {
   color: var(--text-accent);
   margin-bottom: 4px;
 }
+.page-h3 {
+  font-family: "Libre Baskerville", serif;
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+
 
 /* .archive-right removed */
 
@@ -577,7 +583,7 @@ body::after {
 
 /* ── Primary study ── */
 .study-primary {
-  margin-bottom: 20px;
+  margin-bottom: 32px;
 }
 
 .study-primary .study-img-frame {
@@ -647,20 +653,20 @@ body::after {
 .study-meta-id {
   display: block;
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--text-mono);
   line-height: 1;
-  margin-bottom: 5px;
+  margin-bottom: 12px;
 }
 
 .study-meta-title {
   display: block;
   font-family: 'DM Mono', monospace;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.10em;
-  color: var(--text-secondary);
+
+  text-transform: uppercase;
   line-height: 1.5;
   margin-bottom: 2px;
 }
@@ -668,9 +674,8 @@ body::after {
 .study-meta-sub {
   display: block;
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.14em;
-  text-transform: uppercase;
   color: var(--text-mono);
   line-height: 1;
 }
@@ -678,7 +683,7 @@ body::after {
 .study-divider {
   border: none;
   border-top: 1px solid #1a1a1a;
-  margin: 18px 0;
+  margin: 40px 0;
 }
 
 p {
@@ -1045,8 +1050,9 @@ tr.is-playing .sound-indicator span {
     <p class="right-quote">"A place without its sound is only half remembered."</p>
     <p class="right-quote-caption">Aurafact &nbsp;·&nbsp; Field Notes &nbsp;·&nbsp; 2024</p>
     <hr class="right-rule">
-    <h2 class="right-ecology-title">Acoustic Ecology</h2>
-    <p class="right-ecology-body">As urban and natural environments change rapidly, unique sonic identities are being lost to noise pollution and climate shifts. Aurafact treats environmental audio as a primary historical artifact — permanent, searchable, and preserved for future study.</p>
+    <h2 class="right-ecology-title">Acoustic Ecology Principles</h2>
+    <h3 class="page-h3">Audio-First Hierarchy</h3>
+    <p class="right-ecology-body">Visuals exist to support the ear, not compete with it. The interface recedes when a recording plays.</p>
   </div>
 
   <!-- Right: research display panel -->
@@ -1059,16 +1065,13 @@ tr.is-playing .sound-indicator span {
       <div class="study-img-frame">
         <img src="img/aurafact-acoustic-study-01.png" alt="Longitudinal Pressure Field"
              onerror="this.style.display='none'">
-        <div class="img-ph">img / study-01</div>
       </div>
       <div class="study-meta">
-        <span class="study-meta-id">img / study-01</span>
+        <span class="study-meta-id">IMG / STUDY-01</span>
         <span class="study-meta-title">Longitudinal Pressure Field</span>
         <span class="study-meta-sub">Simulation Model</span>
       </div>
     </div>
-
-    <hr class="study-divider">
 
     <!-- Secondary row -->
     <div class="study-secondary-row">
@@ -1077,12 +1080,11 @@ tr.is-playing .sound-indicator span {
         <div class="study-img-frame">
           <img src="img/aurafact-acoustic-study-02.png" alt="Wave Interference"
                onerror="this.style.display='none'">
-          <div class="img-ph">img / study-02</div>
         </div>
         <div class="study-meta">
           <span class="study-meta-id">img / study-02</span>
           <span class="study-meta-title">Wave Interference</span>
-          <span class="study-meta-sub">Analog propagation study</span>
+          <span class="study-meta-sub">Analog Propagation Study</span>
         </div>
       </div>
 
@@ -1090,12 +1092,11 @@ tr.is-playing .sound-indicator span {
         <div class="study-img-frame">
           <img src="img/aurafact-acoustic-study-03.png" alt="Surface Resonance"
                onerror="this.style.display='none'">
-          <div class="img-ph">img / study-03</div>
         </div>
         <div class="study-meta">
           <span class="study-meta-id">img / study-03</span>
           <span class="study-meta-title">Surface Resonance</span>
-          <span class="study-meta-sub">Cymatic ripple formation</span>
+          <span class="study-meta-sub">Cymatic Ripple Formation</span>
         </div>
       </div>
 
