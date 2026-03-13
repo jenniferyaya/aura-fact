@@ -3,54 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aurafact</title>
+<title>Archive — Aurafact</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 
-<!-- p5.js — wave simulation -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/p5.min.js"></script>
-<!-- GSAP — page transitions -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-
 <style>
-	* ============================================================
-   COLOUR TOKENS
-   All HTML/CSS colours live here.
-   Canvas colours live in the JS block marked CANVAS COLOURS.
+/* ============================================================
+   COLOUR TOKENS — exact match with index.html
    ============================================================ */
 :root {
-  --bg:              #0C0C0C;   /* page + canvas background          */
-
-  /* Intro typography */
-  --text-primary:    #EDECEA;   /* heading                           */
-  --text-secondary:  #4A4A4A;   /* subtitle                          */
-  --text-mono:       #3A3A3A;   /* wordmark / labels                 */
+  --bg:              #0C0C0C;
+  --text-primary:    #EDECEA;
+  --text-secondary:  #4A4A4A;
+  --text-mono:       #3A3A3A;
   --text-accent:     #AD472F;
-
-  /* Button */
   --btn-border:      #2E2E2E;
-  --btn-text:        #2E2E2E;
   --btn-hover-border:#777777;
   --btn-hover-text:  #EDECEA;
-
-  /* Nav */
   --nav-logo:        #EDECEA;
   --nav-link:        #EDECEA;
-  --nav-link-hover:  #EDECEA;
   --nav-rule:        #2c2c2c;
-
-  /* Header overlay text */
-  --header-title:    #EDECEA;
-  --header-sub:      #EDECEA;
-  --header-coord:    #EDECEA;
-
   --grain-opacity:   0.045;
+  --nav-h:           61px;
+
+  /* Table — from index.html */
+  --table-rule-head: #1e1e1e;
+  --table-rule-row:  #181818;
+  --row-hover-bg:    rgba(255,255,255,0.03);
+  --row-active-bg:   rgba(173,71,47,0.07);
+
+  /* Panel */
+  --panel-bg:        #0e0e0e;
+  --panel-rule:      #1e1e1e;
+  --panel-w:         360px;
+
+  /* Footer */
+  --footer-bg:       #f5f5f5;
 }
-/* ============================================================ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { width: 100%; overflow-x: hidden; }
+html, body { width: 100%; height: 100%; overflow-x: hidden; }
 
 body {
   background: var(--bg);
@@ -58,100 +51,21 @@ body {
   font-family: "Libre Baskerville", serif;
 }
 
-/* Grain */
+/* Grain — identical to index.html */
 body::after {
   content: '';
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   opacity: var(--grain-opacity);
   pointer-events: none;
   z-index: 9000;
 }
 
-
-/* ── p5 CANVAS CONTAINER ───────────────────────────────────────
-   Fixed, full viewport, behind everything.
-   The same canvas persists through intro → header.          */
-#p5-container {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-#p5-container canvas { display: block; }
-
-
-/* ── INTRO OVERLAY ─────────────────────────────────────────────
-   Centred text + button, above canvas.
-   Dissolved by GSAP on Enter.                               */
-#intro {
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  pointer-events: all;
-}
-
-.intro-wordmark {
-  font-family: 'DM Mono', monospace;
-  font-size: 18px;
-  letter-spacing: 0.30em;
-  text-transform: uppercase;
-  margin-bottom: 30px;
-  opacity: 0;
-}
-
-.intro-title {
-  font-family: "Libre Baskerville", serif;
-  font-size: clamp(58px, 9vw, 70px);
-  font-style: italic;
-  font-weight: 300;
-  line-height: 0.9;
-  color: var(--text-primary);
-  text-align: center;
-  margin-bottom: 22px;
-  letter-spacing: -0.01em;
-  opacity: 0;
-}
-
-.intro-sub {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  margin-bottom: 58px;
-  color: var(--text-primary);
-}
-
-.enter-btn {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  background: transparent;
-  border: 1px solid var(--btn-border);
-  color: var(--text-primary);
-  padding: 13px 38px;
-  cursor: pointer;
-  opacity: 0;
-  transition: border-color 0.3s, color 0.3s;
-}
-.enter-btn:hover {
-  border-color: var(--btn-hover-border);
-  color: var(--btn-hover-text);
-  background-color: var(--btn-border);
-}
-
-
-/* ── NAV ───────────────────────────────────────────────────────
-   Hidden until transition completes.                        */
+/* ── NAV ────────────────────────────────────────────────────── */
 #site-nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  z-index: 20;
+  z-index: 200;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -159,9 +73,7 @@ body::after {
   border-bottom: 1px solid var(--nav-rule);
   background: rgba(12,12,12,0.5);
   backdrop-filter: blur(14px);
-  opacity: 0;
-  transform: translateY(-10px);
-  pointer-events: none;
+  height: var(--nav-h);
 }
 
 .nav-logo {
@@ -173,11 +85,8 @@ body::after {
   text-decoration: none;
 }
 
-.nav-links {
-  display: flex;
-  gap: 36px;
-  list-style: none;
-}
+.nav-links { display: flex; gap: 36px; list-style: none; }
+
 .nav-links a {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
@@ -185,317 +94,145 @@ body::after {
   text-transform: uppercase;
   color: var(--nav-link);
   text-decoration: none;
-  transition: color 0.2s;
-}
-.nav-links a:hover { color: var(--nav-link-hover); }
-
-
-/* ── HEADER TEXT ───────────────────────────────────────────────
-   Bottom-left title block + bottom-right coords.
-   Appear after transition.                                  */
-#header-text {
-  position: absolute;
-  bottom: 56px;
-  left: 40px;
-  z-index: 20;
-  opacity: 0;
-  pointer-events: none;
+  transition: opacity 0.2s;
 }
 
-.header-title {
+.nav-links a:hover { opacity: 0.6; }
+.nav-links a.active {
+  border-bottom: 1px solid var(--text-accent);
+  padding-bottom: 2px;
+}
+
+/* ── TWO-COLUMN BODY ────────────────────────────────────────── */
+.archive-body {
+  display: flex;
+  padding-top: var(--nav-h);
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* ── LEFT: TABLE COLUMN ─────────────────────────────────────── */
+.table-col {
+  flex: 1;
+  min-width: 0;
+  border-right: 1px solid var(--table-rule-head);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Page header */
+.archive-header {
+  padding: 56px 48px 40px 80px;
+  border-bottom: 1px solid var(--table-rule-head);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.archive-header h1 {
   font-family: "Libre Baskerville", serif;
-  font-size: clamp(26px, 3.8vw, 54px);
   font-style: italic;
   font-weight: 300;
-  color: var(--header-title);
-  line-height: 1.05;
+  font-size: clamp(24px, 3.2vw, 44px);
+  color: var( --text-secondary);
+  line-height: 1.0;
   margin-bottom: 10px;
 }
 
-.header-sub {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--header-sub);
-}
-
-#header-coords {
-  position: absolute;
-  bottom: 56px;
-  right: 40px;
-  z-index: 20;
-  opacity: 0;
-  pointer-events: none;
-  text-align: right;
-}
-#header-coords span {
-  display: block;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.10em;
-  color: var(--header-coord);
-  line-height: 2.2;
-}
-
-/* ── CONTENT SECTION ─────────────────────────────────────────────── */
-.page-content{
-  position: relative;
-  z-index: 5;
-  margin-top: 100vh;
-  background-color: #f5f5f5;
-  color: var(--text-secondary)
-}
-
-/* Archive section: full width, single column */
-.archive-section {
-  width: 100%;
-  padding: 100px 80px 120px;
-  border-bottom: 1px solid #1a1a1a;
-}
-
-.archive-left {
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ── Studies section ─────────────────────────────────────────── */
-.studies-section {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  border-bottom: 1px solid #1a1a1a;
-}
-
-/* Left: quote column */
-.studies-quote-col {
-  padding: 80px 48px 80px 80px;
-  border-right: 1px solid #1a1a1a;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-/* Right: research panel */
-.studies-panel {
-  padding: 80px 80px 80px 64px;
-}
-
-/* Panel label */
-.studies-panel-label {
+.archive-header-sub {
   font-family: 'DM Mono', monospace;
   font-size: 9px;
-  font-weight: 400;
-  letter-spacing: 0.30em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--text-mono);
-  margin-bottom: 32px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #1a1a1a;
 }
 
-/* ── Image frame: shared base ─── */
-.study-img-frame {
+/* Search */
+.search-wrap {
   position: relative;
-  background: #0a0a0a;
-  border: 1px solid #1a1a1a;
-  overflow: hidden;
-  line-height: 0;
+  width: 240px;
+  flex-shrink: 0;
 }
 
-.study-img-frame img {
+.search-wrap svg {
   position: absolute;
-  inset: 0;
+  left: 11px; top: 50%;
+  transform: translateY(-50%);
+  width: 11px; height: 11px;
+  stroke: var(--text-mono);
+  fill: none;
+  pointer-events: none;
+}
+
+#searchInput {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  opacity: 0.88;
-  transition: opacity 0.4s;
+  background: transparent;
+  border: 1px solid var(--btn-border);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.10em;
+  color: var(--text-primary);
+  padding: 9px 10px 9px 30px;
+  outline: none;
+  transition: border-color 0.2s;
 }
 
-.study-img-frame img:hover { opacity: 1; }
+#searchInput::placeholder { color: var(--text-mono); }
+#searchInput:focus { border-color: var(--text-secondary); }
 
-/* Placeholder — visible only when no img present */
-.img-ph {
-  position: absolute;
-  inset: 0;
+/* Result / sort bar */
+.result-bar {
+  padding: 32px 48px 12px 80px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  background: #0a0a0a;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.result-count {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #222;
-}
-
-/* ── Row 1: two large images 3:2 ─── */
-.study-large-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 56px;
-}
-
-.study-large { display: flex; flex-direction: column; }
-
-.study-large .study-img-frame {
-  aspect-ratio: 3 / 2;
-}
-
-/* ── Divider ─── */
-.study-divider {
-  border: none;
-  border-top: 1px solid #1a1a1a;
-  margin: 0 0 24px;
-}
-
-/* ── Row 2: four thumbnails ─── */
-.study-thumb-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-.study-thumb { display: flex; flex-direction: column; }
-
-.study-thumb .study-img-frame {
-  aspect-ratio: 1 / 1;
-}
-
-/* ── Metadata block ─── */
-.study-meta {
-  padding: 8px 0 0;
-}
-
-.study-meta-id {
-  display: block;
-  font-family: 'DM Mono', monospace;
-  font-size: 7px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
   color: var(--text-mono);
-  margin-bottom: 2px;
 }
 
-.study-meta-title {
-  display: block;
+.sort-wrap { display: flex; align-items: center; gap: 8px; }
+
+.sort-label {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
-  letter-spacing: 0.06em;
-  color: var(--text-secondary);
-  margin-bottom: 1px;
-}
-
-.study-meta-sub {
-  display: block;
-  font-family: 'DM Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--text-mono);
 }
 
-/* Thumbnail meta: even more compact */
-.study-thumb .study-meta-title {
-  font-size: 8px;
-}
-
-
-
-.page-h2 {
-  font-family: 'DM Mono', monospace;
-  font-size: 16px;
-  font-weight: 400;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  color: var(--text-accent);
-  margin-bottom: 4px;
-}
-.page-h3 {
-  font-family: 'DM Mono', monospace;
-  font-size: 14px;
-  font-weight: 400;
-  margin-bottom: 4px;
-}
-
-
-/* .archive-right removed */
-
-.right-quote {
-  font-family: "Libre Baskerville", serif;
-  font-style: italic;
-  font-weight: 300;
-  font-size: clamp(15px, 1.5vw, 24px);
-  line-height: 1.55;
-  margin-bottom: 16px;
-  color: var( --text-accent);
-}
-
-.right-quote-caption {
+.sort-select {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var( --text-accent);
-  margin-bottom: 40px;
-}
-
-.right-rule {
-  border: none;
-  border-top: 1px solid #1a1a1a;
-  margin: 0 0 40px;
-}
-
-.right-ecology-title {
-  font-family: 'DM Mono', monospace;
-  font-size: 16px;
-  font-weight: 400;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  color: var(--text-accent);
-  margin-bottom: 24px;
-}
-
-.right-ecology-body {
-  font-family: "Libre Baskerville", serif;
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--text-mono);
-  margin-bottom: 24px;
-}
-
-
-
-p {
-  font-family: "Libre Baskerville", serif;
-  font-size: 14px;
-  line-height: 1.6;
+  background: transparent;
+  border: 1px solid var(--btn-border);
   color: var(--text-secondary);
-  max-width: 700px;
-  margin-bottom: 16px;
+  padding: 4px 8px;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
 }
 
-.space-after {
-  margin-bottom: 60px;
+/* Table */
+.archive-table-wrap {
+  padding: 0 0 0 80px;
+  flex: 1;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--btn-border);
 }
-.space-after-1-2 {
-  margin-bottom: 32px;
-}
-
-.space-after-24 {
-  margin-bottom: 24px;
-}
-
-
-.section-test{ padding: 80px 40px; }
 
 .archive-table {
   width: 100%;
   border-collapse: collapse;
   font-family: 'DM Mono', monospace;
-  font-size: 11.5px;
+  font-size: 11px;
   letter-spacing: 0.10em;
 }
 
@@ -504,216 +241,351 @@ p {
   letter-spacing: 0.18em;
   font-size: 12px;
   text-align: left;
-  padding: 0 24px 16px 0;
-  border-bottom: 1px solid #1e1e1e;
+  padding: 0 24px 14px 0;
+  border-bottom: 1px solid var(--table-rule-head);
+  color: var(--text-mono);
+  white-space: nowrap;
 }
 
 .archive-table tbody tr {
-  border-bottom: 1px solid #181818;
-  transition: background 0.2s;
+  border-bottom: 1px solid var(--table-rule-row);
   cursor: pointer;
+  transition: background 0.15s;
 }
 
 .archive-table tbody tr:hover {
   background: rgba(12,12,12,0.35);
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px)
 }
 
-.archive-table tbody tr.is-playing {
+.archive-table tbody tr.is-selected {
   background: rgba(255,255,255,0.03);
 }
 
-/* Sound preview indicator */
-.archive-table tbody td.sound-cell {
-  width: 28px;
-  padding-right: 0;
-}
-
-.sound-indicator {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-tr:hover .sound-indicator,
-tr.is-playing .sound-indicator {
-  opacity: 1;
-}
-
-.sound-indicator span {
-  display: block;
-  width: 2px;
-  background: var(--text-secondary);
-  border-radius: 1px;
-  animation: none;
-}
-
-tr.is-playing .sound-indicator span {
-  animation: bar-bounce 0.6s ease-in-out infinite alternate;
-}
-
-.sound-indicator span:nth-child(1) { height: 6px;  animation-delay: 0s;    }
-.sound-indicator span:nth-child(2) { height: 10px; animation-delay: 0.1s;  }
-.sound-indicator span:nth-child(3) { height: 7px;  animation-delay: 0.2s;  }
-.sound-indicator span:nth-child(4) { height: 12px; animation-delay: 0.05s; }
-
-@keyframes bar-bounce {
-  from { transform: scaleY(0.3); }
-  to   { transform: scaleY(1.4); }
-}
-
-/* Browse button */
-.archive-cta {
-  margin-top: 32px;
-  display: inline-block;
-  align-self: flex-start;
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  background: transparent;
-  border: 1px solid var(--btn-border);
-  color: var(--btn-text);
-  padding: 13px 38px;
-  cursor: pointer;
-  text-decoration: none;
-  transition: border-color 0.3s, color 0.3s, background-color 0.3s;
-}
-.archive-cta:hover {
-  border-color: var(--btn-hover-border);
-  color: var(--btn-hover-text);
-  background-color: var(--btn-border);
-}
+.archive-table tbody tr.hidden { display: none; }
 
 .archive-table tbody td {
-  padding: 18px 24px 18px 0;
+  padding: 16px 24px 16px 0;
   color: var(--text-secondary);
   vertical-align: middle;
+  white-space: nowrap;
 }
 
-.archive-table tbody td:first-child {
+.td-id {
+  color: var(--text-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+}
+
+/* Type badge 
+.type-badge {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 7px;
   letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 6px;
+  border: 1px solid currentColor;
+  white-space: nowrap;
 }
 
+.type-badge.geo    { color: #5a8a72; }
+.type-badge.bio    { color: #7a6a9a; }
+.type-badge.anthro { color: var(--text-accent); } */
 
+/* Active row indicator — left edge bar 
+.archive-table tbody tr.is-selected td:first-child {
+  box-shadow: inset 3px 0 0 var(--text-accent);
+} */
 
-/* ============================================================
-   RESPONSIVE SYSTEM
-   Breakpoints:
-   — Desktop  : ≥1024px  (two-column, current default)
-   — Tablet   : 768–1023px
-   — Mobile   : <768px
-   ============================================================ */
-
-/* ── Tablet: 768–1023px ─────────────────────────────────────── */
-@media (max-width: 1023px) {
-
-  /* Nav: tighten padding, reduce link gap */
-  #site-nav { padding: 16px 24px; }
-  .nav-links { gap: 20px; }
-
-  /* Hero text */
-  #header-text  { left: 24px; bottom: 40px; }
-  #header-coords { right: 24px; bottom: 40px; }
-
-  /* Archive: full width, tighter padding */
-  .archive-section { padding: 64px 24px 80px; }
-  .archive-left { max-width: 100%; }
-
-  /* Studies: stack on tablet */
-  .studies-section { grid-template-columns: 1fr; }
-  .studies-quote-col {
-    padding: 48px 24px;
-    border-right: none;
-    border-bottom: 1px solid #1a1a1a;
-  }
-  .studies-panel { padding: 48px 24px 64px; }
-  .study-thumb-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-
-  /* Table: allow horizontal scroll on smaller viewports */
-  .archive-table { font-size: 9px; }
+/* Empty state */
+.empty-state { padding: 60px 80px; display: none; }
+.empty-state.visible { display: block; }
+.empty-state p {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-mono);
 }
 
-/* ── Mobile: <768px ─────────────────────────────────────────── */
-@media (max-width: 767px) {
-
-  /* Nav: hide links, show logo only */
-  .nav-links { display: none; }
-  #site-nav { padding: 14px 20px; }
-
-  /* Hero */
-  #hero { min-height: 100svh; }
-  #header-text  { left: 20px; bottom: 28px; }
-  #header-coords { display: none; }
-
-  .header-title {
-    font-size: clamp(18px, 6vw, 28px);
-  }
-
-  /* Intro overlay */
-  .intro-title {
-    font-size: clamp(36px, 10vw, 52px);
-    padding: 0 20px;
-  }
-  .intro-wordmark { font-size: 14px; }
-
-  /* Page content */
-  .page-content { margin-top: 100svh; }
-
-  .archive-section { padding: 48px 20px 56px; }
-  .archive-left { max-width: 100%; }
-
-  .studies-section { grid-template-columns: 1fr; }
-  .studies-quote-col {
-    padding: 40px 20px;
-    border-right: none;
-    border-bottom: 1px solid #1a1a1a;
-  }
-  .studies-panel { padding: 40px 20px 56px; }
-  .study-large-row { grid-template-columns: 1fr; gap: 16px; }
-  .study-thumb-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-
-  /* Table: horizontal scroll container */
-  .archive-table {
-    font-size: 8.5px;
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    white-space: nowrap;
-  }
-
-  .archive-table thead,
-  .archive-table tbody,
-  .archive-table tr { display: table-row; }
-  .archive-table th,
-  .archive-table td  { white-space: nowrap; }
-
-  /* CTA button: full width on mobile */
-  .archive-cta {
-    display: block;
-    text-align: center;
-    align-self: unset;
-    padding: 14px 20px;
-  }
-
-  /* Quote text */
-  .right-quote {
-    font-size: clamp(16px, 5vw, 22px);
-  }
-
-  /* Section test */
-  .section-test { padding: 60px 20px; }
+/* ── RIGHT: DETAIL PANEL ────────────────────────────────────── */
+.detail-col {
+  width: var(--panel-w);
+  flex-shrink: 0;
+  position: sticky;
+  top: var(--nav-h);
+  height: calc(100vh - var(--nav-h));
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #1a1a1a;
 }
 
+.detail-col::-webkit-scrollbar { width: 3px; }
+.detail-col::-webkit-scrollbar-track { background: transparent; }
+.detail-col::-webkit-scrollbar-thumb { background: var(--panel-rule); }
 
-/* ── SITE FOOTER ─────────────────────────────────────────────── */
+/* Empty state */
+.panel-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+  text-align: center;
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+
+.panel-empty.hidden { display: none; }
+
+.panel-empty-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  line-height: 2;
+}
+
+/* Loaded state */
+.panel-content { display: none; flex-direction: column; }
+.panel-content.visible { display: flex; }
+
+/* Panel header */
+.panel-head {
+  padding: 28px 28px 20px;
+  border-bottom: 1px solid var(--panel-rule);
+}
+
+.panel-spec-id {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.panel-title {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 20px;
+  color: var(--text-secondary);
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+
+.panel-location {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+}
+
+/* ── WAVEFORM / SPECTROGRAM DISPLAY ─────────────────────────── */
+.panel-viz {
+  height: 96px;
+  background: #080808;
+  border-bottom: 1px solid var(--panel-rule);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 4px 4px;
+  gap: 2px;
+}
+
+.viz-bar {
+  flex: 1;
+  background: var(--text-mono);
+  border-radius: 1px 1px 0 0;
+  transition: background 0.3s;
+  min-height: 2px;
+}
+
+/* Playing state — bars animate and colour shifts */
+.panel-viz.playing .viz-bar {
+  background: var(--text-accent);
+  animation: spec-pulse 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes spec-pulse {
+  from { opacity: 0.5; transform: scaleY(0.6); }
+  to   { opacity: 1;   transform: scaleY(1); }
+}
+
+/* Playhead line */
+.playhead {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: var(--text-accent);
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.panel-viz.playing .playhead { opacity: 0.6; }
+
+/* Freq range labels */
+.viz-label-low,
+.viz-label-high {
+  position: absolute;
+  font-family: 'DM Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 0.10em;
+  color: var(--text-mono);
+  bottom: 6px;
+}
+
+.viz-label-low  { left: 8px; }
+.viz-label-high { right: 8px; }
+
+/* ── AUDIO PLAYER ───────────────────────────────────────────── */
+.panel-player {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--panel-rule);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.play-pause-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--btn-border);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.play-pause-btn:hover { border-color: var(--btn-hover-border); background: rgba(255,255,255,0.04); }
+.play-pause-btn.playing { border-color: var(--text-accent); }
+.play-pause-btn svg { width: 10px; height: 10px; fill: var(--text-primary); }
+
+/* Progress bar */
+.player-progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+
+.progress-bar-track {
+  width: 100%;
+  height: 2px;
+  background: var(--btn-border);
+  cursor: pointer;
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--text-accent);
+  width: 0%;
+  transition: width 0.1s linear;
+  pointer-events: none;
+}
+
+.player-time {
+  display: flex;
+  justify-content: space-between;
+}
+
+.player-time span {
+  font-family: 'DM Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 0.10em;
+  color: var(--text-mono);
+}
+
+/* No audio notice */
+.no-audio-notice {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--panel-rule);
+}
+
+.no-audio-notice p {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  opacity: 0.5;
+  max-width: none;
+  margin: 0;
+}
+
+/* ── METADATA ───────────────────────────────────────────────── */
+.panel-meta {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--panel-rule);
+}
+
+.panel-section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 14px;
+  display: block;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px solid #151515;
+  gap: 12px;
+}
+
+.meta-row:last-child { border-bottom: none; }
+
+.meta-key {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  flex-shrink: 0;
+}
+
+.meta-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  text-align: right;
+  line-height: 1.4;
+}
+
+/* ── FIELD NOTES ────────────────────────────────────────────── */
+.panel-notes {
+  padding: 20px 28px 32px;
+}
+
+.panel-notes-body {
+  font-family: "Libre Baskerville", serif;
+  font-size: 12px;
+  line-height: 1.75;
+  color: #555;
+  max-width: none;
+  margin: 0;
+}
+
+/* ── FOOTER ─────────────────────────────────────────────────── */
 .site-footer {
-  background-color: #f5f5f5;
+  background-color: var(--footer-bg);
 }
 
-/* Three-column nav links row */
 .footer-nav {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -725,8 +597,7 @@ tr.is-playing .sound-indicator span {
   border-right: 1px solid #1a1a1a;
 }
 
-.footer-col:first-child { padding-left: 80px; }
-.footer-col:last-child  { border-right: none; padding-right: 80px; }
+.footer-col:last-child { border-right: none; padding-right: 80px; }
 
 .footer-col-label {
   display: block;
@@ -739,12 +610,7 @@ tr.is-playing .sound-indicator span {
   padding-bottom: 14px;
 }
 
-.footer-col ul {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
 
 .footer-col ul li a {
   font-family: 'DM Mono', monospace;
@@ -755,11 +621,8 @@ tr.is-playing .sound-indicator span {
   transition: color 0.2s;
 }
 
-.footer-col ul li a:hover {
-  color: var(--text-accent);
-}
+.footer-col ul li a:hover { color: var(--text-accent); }
 
-/* Bottom bar */
 .footer-bottom {
   padding: 28px 80px;
   display: flex;
@@ -776,115 +639,598 @@ tr.is-playing .sound-indicator span {
   line-height: 1.8;
 }
 
-/* Footer responsive */
-@media (max-width: 1023px) {
-  .footer-col:first-child { padding-left: 24px; }
-  .footer-col:last-child  { padding-right: 24px; }
-  .footer-bottom          { padding: 24px; }
+/* ── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  :root { --panel-w: 300px; }
+  .archive-header { padding: 40px 32px 32px 40px; }
+  .result-bar     { padding: 12px 32px 12px 40px; }
+  .archive-table-wrap { padding-left: 40px; }
+}
+
+@media (max-width: 900px) {
+  /* Stack: table on top, panel below */
+  .archive-body { flex-direction: column; }
+  .detail-col {
+    width: 100%;
+    position: static;
+    height: auto;
+    border-left: none;
+    border-top: 1px solid var(--panel-rule);
+  }
+  .archive-header { padding: 32px 24px 24px; }
+  .result-bar { padding: 12px 24px; }
+  .archive-table-wrap { padding-left: 24px; }
 }
 
 @media (max-width: 767px) {
-  .footer-nav {
-    grid-template-columns: 1fr;
-  }
-  .footer-col {
-    padding: 40px 20px;
-    border-right: none;
-    border-bottom: 1px solid #1a1a1a;
-  }
-  .footer-col:first-child { padding-left: 20px; }
-  .footer-col:last-child  { padding-right: 20px; border-bottom: none; }
-  .footer-bottom          { padding: 24px 20px; flex-direction: column; align-items: flex-start; gap: 8px; }
+  #site-nav { padding: 14px 20px; }
+  .nav-links { display: none; }
+  .archive-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .search-wrap { width: 100%; }
+  .archive-table { font-size: 9px; }
+  .footer-nav { grid-template-columns: 1fr; }
+  .footer-col { padding: 40px 20px; border-right: none; border-bottom: 1px solid #1a1a1a; }
+  .footer-col:last-child { border-bottom: none; }
+  .footer-bottom { padding: 24px 20px; flex-direction: column; gap: 8px; }
+  .footer-time { display: none; }
 }
-
 </style>
 </head>
 <body>
+
 <!-- Nav -->
 <nav id="site-nav">
   <a href="index.html" class="nav-logo">Aurafact</a>
   <ul class="nav-links">
-    <li><a href="archive.html">Archive</a></li>
+    <li><a href="archive.html" class="active">Archive</a></li>
     <li><a href="#">Manifesto</a></li>
   </ul>
 </nav>
 
+<div class="archive-body">
 
+  <!-- ── LEFT: TABLE ───────────────────────────────────────── -->
+  <div class="table-col">
 
+    <div class="archive-header">
+      <div>
+        <h1>Specimen Archive</h1>
+        <p class="archive-header-sub" id="specimenCount"></p>
+      </div>
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search specimens…">
+      </div>
+    </div>
 
+    <div class="result-bar">
+      <span class="result-count" id="resultCount"></span>
+      <div class="sort-wrap">
+        <span class="sort-label">Sort</span>
+        <select class="sort-select" id="sortSelect">
+          <option value="id-asc">ID ↑</option>
+          <option value="id-desc">ID ↓</option>
+          <option value="location-asc">Location A–Z</option>
+        </select>
+      </div>
+    </div>
 
+    <div class="archive-table-wrap">
+      <table class="archive-table">
+        <thead>
+          <tr>
+            <th>Specimen ID</th>
+            <th>Artifact</th>
+            <th>Location</th>
+            <th>Source Type</th>
+            <th>Subtype</th>
+            <th>Frequency Profile</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState">
+        <p>No specimens match the current search.</p>
+      </div>
+    </div>
 
-	
+  </div><!-- /table-col -->
+
+  <!-- ── RIGHT: DETAIL PANEL ──────────────────────────────── -->
+  <aside class="detail-col" id="detailCol">
+
+    <!-- Empty / prompt state -->
+    <div class="panel-empty" id="panelEmpty">
+      <p class="panel-empty-label">Select an artifact<br>to inspect</p>
+    </div>
+
+    <!-- Loaded state -->
+    <div class="panel-content" id="panelContent">
+
+      <!-- Header -->
+      <div class="panel-head">
+        <span class="panel-spec-id" id="dp-id"></span>
+        <h2 class="panel-title" id="dp-title"></h2>
+        <span class="panel-location" id="dp-location"></span>
+      </div>
+
+      <!-- Spectrogram / waveform visualisation -->
+      <div class="panel-viz" id="panelViz">
+        <div class="playhead" id="playhead"></div>
+        <span class="viz-label-low" id="vizLow"></span>
+        <span class="viz-label-high" id="vizHigh"></span>
+        <!-- bars injected by JS -->
+      </div>
+
+      <!-- Audio player -->
+      <div class="panel-player" id="panelPlayer">
+        <button class="play-pause-btn" id="playPauseBtn" aria-label="Play / pause">
+          <svg id="playPauseIcon" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg>
+        </button>
+        <div class="player-progress-wrap">
+          <div class="progress-bar-track" id="progressTrack">
+            <div class="progress-bar-fill" id="progressFill"></div>
+          </div>
+          <div class="player-time">
+            <span id="timeElapsed">0:00</span>
+            <span id="timeDuration">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- No audio notice (shown when audio: null) -->
+      <div class="no-audio-notice" id="noAudioNotice" style="display:none">
+        <p>Audio file not yet archived</p>
+      </div>
+
+      <!-- Metadata -->
+      <div class="panel-meta">
+        <span class="panel-section-label">Metadata</span>
+        <div id="dp-meta"></div>
+      </div>
+
+      <!-- Field notes -->
+      <div class="panel-notes">
+        <span class="panel-section-label">Field Notes</span>
+        <img src="img/aurafact-acoustic-study-01.png" alt="Longitudinal Pressure Field"
+               onerror="this.style.display='none'">
+        <p class="panel-notes-body" id="dp-notes"></p>
+      </div>
+
+    </div><!-- /panel-content -->
+  </aside>
+
+</div><!-- /archive-body -->
+
+<!-- Footer -->
 <footer class="site-footer">
-
-  <!-- Three nav columns -->
   <div class="footer-nav">
-
     <div class="footer-col">
       <span class="footer-col-label">Navigate</span>
       <ul>
-        <li><a href="#">Global Sound Map</a></li>
-        <li><a href="archive.html">Archive Explorer</a></li>
-        <li><a href="#">Sonic Lab</a></li>
-        <li><a href="#">Compare Tool</a></li>
+        <li><a href="#">Map</a></li>
+        <li><a href="archive.html">Archive</a></li>
+        <li><a href="#">Lab</a></li>
+        <li><a href="#">Manifesto</a></li>
       </ul>
     </div>
-
     <div class="footer-col">
       <span class="footer-col-label">About</span>
       <ul>
-        <li><a href="#">The Manifesto</a></li>
-        <li><a href="#">Recording Standards</a></li>
-        <li><a href="#">Accessibility</a></li>
-        <li><a href="#">Submit a Recording</a></li>
+        <li><a href="#">Field Methodology</a></li>
+        <li><a href="#">Equipment</a></li>
+        <li><a href="#">Contribute</a></li>
+        <li><a href="#">Contact</a></li>
       </ul>
     </div>
-
     <div class="footer-col">
       <span class="footer-col-label">Archive</span>
       <ul>
         <li><a href="#">Geophony</a></li>
         <li><a href="#">Biophony</a></li>
         <li><a href="#">Anthropophony</a></li>
-        <li><a href="#">Chronological Index</a></li>
+        <li><a href="#">Collections</a></li>
       </ul>
     </div>
-
   </div>
-
-  <!-- Bottom bar -->
   <div class="footer-bottom">
-    <p class="footer-copy">
-      © 2026 Aurafact / Environmental Sound Archive
-    </p>
+    <p class="footer-copy">© 2026 Aurafact — Environmental Sound Archive<br>Preserving Acoustic Memory</p>
     <p class="footer-time" id="footerTime"></p>
   </div>
-
 </footer>
 
 
+<script>
+/* ── SPECIMEN DATA ──────────────────────────────────────────── */
+const SPECIMENS = [
+  {
+    id: 'AF-0003',
+    artifact: 'World Cup Watch Party',
+    location: 'Ottawa, CA',
+    region: 'North America',
+    source: 'Anthropophony',
+    subtype: 'Crowd Assembly',
+    freq: '120 Hz – 5 kHz',
+    freqLow: '120 Hz',
+    freqHigh: '5 kHz',
+    date: '2022-11-25',
+    duration: '4:32',
+    audio: 'audio/AF-0003-world-cup-watch-party-ottawa-2022.mp3',
+    notes: 'Recorded at a public viewing event in downtown Ottawa during the 2022 FIFA World Cup. Dense crowd vocalisation, rhythmic chanting, ambient city noise underneath.',
+  },
+  {
+    id: 'AF-0134',
+    artifact: 'Atlantic Shore at Dusk',
+    location: 'Brittany, FR',
+    region: 'Europe',
+    source: 'Geophony',
+    subtype: 'Coastal Field',
+    freq: '20 Hz – 8 kHz',
+    freqLow: '20 Hz',
+    freqHigh: '8 kHz',
+    date: '2023-07-03',
+    duration: '6:14',
+    audio: null,
+    notes: 'Low-tide recording at the Pointe du Raz headland. Consistent wave crash with long intervals, distant foghorn, wind across the microphone capsule.',
+  },
+  {
+    id: 'AF-0208',
+    artifact: 'Boreal Interior at Dawn',
+    location: 'Quebec, CA',
+    region: 'North America',
+    source: 'Biophony',
+    subtype: 'Forest Interior',
+    freq: '200 Hz – 12 kHz',
+    freqLow: '200 Hz',
+    freqHigh: '12 kHz',
+    date: '2024-01-29',
+    duration: '8:07',
+    audio: null,
+    notes: 'Recorded 4km from the nearest road. Primary bird chorus begins approximately 38 minutes before sunrise. Woodpecker percussion audible at 1:12.',
+  },
+  {
+    id: 'AF-0312',
+    artifact: 'Steel Mill Perimeter',
+    location: 'Liège, BE',
+    region: 'Europe',
+    source: 'Anthropophony',
+    subtype: 'Industrial Margin',
+    freq: '60 Hz – 2 kHz',
+    freqLow: '60 Hz',
+    freqHigh: '2 kHz',
+    date: '2024-03-11',
+    duration: '5:50',
+    audio: null,
+    notes: 'Perimeter recording of an active rolling mill. The 120Hz fundamental and its harmonics are consistent throughout. Steam vent events at irregular intervals.',
+  },
+  {
+    id: 'AF-0447',
+    artifact: 'Saharan Plateau at Dawn',
+    location: 'Tindouf, DZ',
+    region: 'Africa',
+    source: 'Geophony',
+    subtype: 'Desert Dawn',
+    freq: '400 Hz – 10 kHz',
+    freqLow: '400 Hz',
+    freqHigh: '10 kHz',
+    date: '2024-08-22',
+    duration: '7:23',
+    audio: null,
+    notes: 'Pre-dawn silence broken by thermal wind events. Extremely low noise floor — below 12dB SPL at rest. A single bird call at 4:47AM local time.',
+  },
+  {
+    id: 'AF-0521',
+    artifact: 'Monsoon Onset',
+    location: 'Kerala, IN',
+    region: 'Asia',
+    source: 'Geophony',
+    subtype: 'Rain Event',
+    freq: '100 Hz – 14 kHz',
+    freqLow: '100 Hz',
+    freqHigh: '14 kHz',
+    date: '2023-06-04',
+    duration: '9:48',
+    audio: null,
+    notes: 'First monsoon rain of the season, recorded from an open veranda. Intensity increases sharply at 0:48. Thunder signature at 2:30 and 4:12.',
+  },
+  {
+    id: 'AF-0609',
+    artifact: 'Coral Reef Shallow',
+    location: 'Great Barrier Reef, AU',
+    region: 'Oceania',
+    source: 'Biophony',
+    subtype: 'Marine Interior',
+    freq: '50 Hz – 22 kHz',
+    freqLow: '50 Hz',
+    freqHigh: '22 kHz',
+    date: '2023-09-17',
+    duration: '12:00',
+    audio: null,
+    notes: 'Hydrophone recording at 4m depth on a healthy reef section. Snapping shrimp colony audible throughout. Fish vocalisation clusters at dawn.',
+  },
+  {
+    id: 'AF-0714',
+    artifact: 'Market at Opening',
+    location: 'Marrakech, MA',
+    region: 'Africa',
+    source: 'Anthropophony',
+    subtype: 'Market Environment',
+    freq: '80 Hz – 6 kHz',
+    freqLow: '80 Hz',
+    freqHigh: '6 kHz',
+    date: '2022-10-08',
+    duration: '3:55',
+    audio: null,
+    notes: 'Dawn opening of the Jemaa el-Fna market. Vendors calling, cart wheels on stone, calls to prayer overlapping from multiple minarets.',
+  },
+];
 
+/* ── STATE ──────────────────────────────────────────────────── */
+const state = { search: '', sort: 'id-asc', selectedId: null };
+let audioEl = null;
+let progressRaf = null;
 
-<h1>Specimen Archive</h1>
-<p>The archive catalogues environmental recordings as acoustic specimens.
-Each artifact represents a documented sonic condition of a place, preserved alongside its ecological, geographic, and technical metadata.</p>
+/* ── AUDIO HELPERS ──────────────────────────────────────────── */
+function fmtTime(s) {
+  if (!isFinite(s)) return '—';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${String(sec).padStart(2, '0')}`;
+}
 
-FILTER BY
+function stopAudio() {
+  if (audioEl) {
+    audioEl.pause();
+    audioEl.src = '';
+    audioEl = null;
+  }
+  if (progressRaf) { cancelAnimationFrame(progressRaf); progressRaf = null; }
+  setPlayingState(false);
+}
 
-Source Type
-[ All ] [ Geophony ] [ Biophony ] [ Anthropophony ]
+function setPlayingState(playing) {
+  const btn = document.getElementById('playPauseBtn');
+  const icon = document.getElementById('playPauseIcon');
+  const viz = document.getElementById('panelViz');
+  if (!btn || !icon || !viz) return;
 
-Environment
-[ Urban ] [ Forest ] [ Coastal ] [ Desert ]
+  btn.classList.toggle('playing', playing);
+  viz.classList.toggle('playing', playing);
 
-Frequency Range
-[ Low ] [ Mid ] [ High ]
+  if (playing) {
+    icon.innerHTML = '<rect x="0" y="0" width="3" height="12"/><rect x="5" y="0" width="3" height="12"/>';
+    icon.setAttribute('viewBox', '0 0 8 12');
+  } else {
+    icon.innerHTML = '<polygon points="0,0 10,6 0,12"/>';
+    icon.setAttribute('viewBox', '0 0 10 12');
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('playhead').style.left = '0';
+  }
+}
 
-Sort
-[ Most Recent ] [ Most Complex ] [ Loudest ]
+function tickProgress() {
+  if (!audioEl) return;
+  const pct = audioEl.duration ? (audioEl.currentTime / audioEl.duration) * 100 : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('playhead').style.left = pct + '%';
+  document.getElementById('timeElapsed').textContent = fmtTime(audioEl.currentTime);
+  progressRaf = requestAnimationFrame(tickProgress);
+}
 
+/* ── BUILD SPECTROGRAM BARS ─────────────────────────────────── */
+function buildViz(spec) {
+  const viz = document.getElementById('panelViz');
+  // Clear previous bars (keep labels + playhead)
+  [...viz.querySelectorAll('.viz-bar')].forEach(b => b.remove());
 
-FIELD NOTES
+  // Heights vary by source type to suggest spectral character
+  const profiles = {
+    Geophony:      [30,45,60,80,90,85,70,55,40,30,25,20,18,22,28,35,42,38,32,28,25,22,20,18,16,18,22,28,32,38],
+    Biophony:      [10,12,18,22,30,45,65,80,72,60,48,55,70,65,50,40,35,45,60,70,65,50,38,30,25,35,50,60,55,40],
+    Anthropophony: [60,75,85,90,88,82,75,68,60,55,50,48,45,42,40,45,50,55,58,52,45,38,32,28,24,22,20,18,16,14],
+  };
 
-Crowd response recorded during the 2022 FIFA World Cup watch party.
-Layered vocal reactions dominate the mid frequency band, punctuated by intermittent chants and transient bursts of cheering.
+  const heights = profiles[spec.source] || profiles.Geophony;
+  const fragment = document.createDocumentFragment();
+  heights.forEach((h, i) => {
+    const bar = document.createElement('div');
+    bar.className = 'viz-bar';
+    bar.style.height = h + '%';
+    bar.style.animationDelay = (i * 0.03) + 's';
+    fragment.appendChild(bar);
+  });
+  viz.appendChild(fragment);
+
+  document.getElementById('vizLow').textContent = spec.freqLow;
+  document.getElementById('vizHigh').textContent = spec.freqHigh;
+}
+
+/* ── OPEN DETAIL PANEL ──────────────────────────────────────── */
+function openPanel(id) {
+  const spec = SPECIMENS.find(s => s.id === id);
+  if (!spec) return;
+
+  // Stop previous audio
+  stopAudio();
+
+  // Update selected row
+  document.querySelectorAll('#tableBody tr').forEach(r => r.classList.remove('is-selected'));
+  const row = document.querySelector(`#tableBody tr[data-id="${id}"]`);
+  if (row) row.classList.add('is-selected');
+
+  state.selectedId = id;
+
+  // Populate header
+  document.getElementById('dp-id').textContent = spec.id;
+  document.getElementById('dp-title').textContent = spec.artifact;
+  document.getElementById('dp-location').textContent = `${spec.location} · ${spec.date}`;
+
+  // Spectrogram
+  buildViz(spec);
+
+  // Audio player / no-audio state
+  const playerEl = document.getElementById('panelPlayer');
+  const noAudioEl = document.getElementById('noAudioNotice');
+
+  if (spec.audio) {
+    playerEl.style.display = 'flex';
+    noAudioEl.style.display = 'none';
+    document.getElementById('timeDuration').textContent = spec.duration || '—';
+    document.getElementById('timeElapsed').textContent = '0:00';
+    document.getElementById('progressFill').style.width = '0%';
+  } else {
+    playerEl.style.display = 'none';
+    noAudioEl.style.display = 'block';
+  }
+
+  // Metadata rows
+  const metaEl = document.getElementById('dp-meta');
+  const rows = [
+    ['Source',    spec.source],
+    ['Subtype',   spec.subtype],
+    ['Region',    spec.region],
+    ['Frequency', spec.freq],
+    ['Recorded',  spec.date],
+    ['Duration',  spec.duration],
+  ];
+  metaEl.innerHTML = rows.map(([k, v]) => `
+    <div class="meta-row">
+      <span class="meta-key">${k}</span>
+      <span class="meta-val">${v}</span>
+    </div>
+  `).join('');
+
+  // Field notes
+  document.getElementById('dp-notes').textContent = spec.notes;
+
+  // Show content
+  document.getElementById('panelEmpty').classList.add('hidden');
+  document.getElementById('panelContent').classList.add('visible');
+}
+
+/* ── PLAY / PAUSE ───────────────────────────────────────────── */
+document.getElementById('playPauseBtn').addEventListener('click', () => {
+  const spec = SPECIMENS.find(s => s.id === state.selectedId);
+  if (!spec || !spec.audio) return;
+
+  if (audioEl && !audioEl.paused) {
+    audioEl.pause();
+    setPlayingState(false);
+    if (progressRaf) { cancelAnimationFrame(progressRaf); progressRaf = null; }
+    return;
+  }
+
+  if (audioEl && audioEl.paused) {
+    audioEl.play().catch(() => {});
+    setPlayingState(true);
+    progressRaf = requestAnimationFrame(tickProgress);
+    return;
+  }
+
+  // Fresh play
+  audioEl = new Audio(spec.audio);
+  audioEl.volume = 0.85;
+
+  audioEl.addEventListener('loadedmetadata', () => {
+    document.getElementById('timeDuration').textContent = fmtTime(audioEl.duration);
+  });
+
+  audioEl.addEventListener('ended', () => {
+    stopAudio();
+    setPlayingState(false);
+  });
+
+  audioEl.play().catch(() => {});
+  setPlayingState(true);
+  progressRaf = requestAnimationFrame(tickProgress);
+});
+
+/* Progress bar scrub */
+document.getElementById('progressTrack').addEventListener('click', e => {
+  if (!audioEl || !audioEl.duration) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  audioEl.currentTime = pct * audioEl.duration;
+});
+
+/* ── BUILD TABLE ROWS ───────────────────────────────────────── */
+function buildRows() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  SPECIMENS.forEach(s => {
+    const bc = s.source === 'Geophony' ? 'geo' : s.source === 'Biophony' ? 'bio' : 'anthro';
+    const tr = document.createElement('tr');
+    tr.dataset.id = s.id;
+    tr.innerHTML = `
+      <td class="td-id">${s.id}</td>
+      <td>${s.artifact}</td>
+      <td>${s.location}</td>
+      <td><span class="type-badge ${bc}">${s.source}</span></td>
+      <td>${s.subtype}</td>
+      <td>${s.freq}</td>
+    `;
+    tr.addEventListener('click', () => openPanel(s.id));
+    tbody.appendChild(tr);
+  });
+}
+
+/* ── FILTER ─────────────────────────────────────────────────── */
+function applyFilters() {
+  const q = state.search.toLowerCase();
+  let n = 0;
+  document.querySelectorAll('#tableBody tr').forEach(row => {
+    const s = SPECIMENS.find(x => x.id === row.dataset.id);
+    const hit = !q || [s.id, s.artifact, s.location, s.source, s.subtype, s.freq]
+      .join(' ').toLowerCase().includes(q);
+    row.classList.toggle('hidden', !hit);
+    if (hit) n++;
+  });
+  document.getElementById('resultCount').textContent =
+    `Showing ${n} specimen${n !== 1 ? 's' : ''}`;
+  document.getElementById('emptyState').classList.toggle('visible', n === 0);
+}
+
+/* ── SORT ───────────────────────────────────────────────────── */
+function applySort() {
+  const tbody = document.getElementById('tableBody');
+  [...tbody.querySelectorAll('tr')].sort((a, b) => {
+    const sa = SPECIMENS.find(x => x.id === a.dataset.id);
+    const sb = SPECIMENS.find(x => x.id === b.dataset.id);
+    switch (state.sort) {
+      case 'id-asc':       return sa.id.localeCompare(sb.id);
+      case 'id-desc':      return sb.id.localeCompare(sa.id);
+      case 'location-asc': return sa.location.localeCompare(sb.location);
+    }
+  }).forEach(r => tbody.appendChild(r));
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  state.search = e.target.value;
+  applyFilters();
+});
+
+document.getElementById('sortSelect').addEventListener('change', e => {
+  state.sort = e.target.value;
+  applySort();
+});
+
+/* ── CLOCK ──────────────────────────────────────────────────── */
+(function () {
+  const el = document.getElementById('footerTime');
+  const pad = n => String(n).padStart(2, '0');
+  function tick() {
+    const d = new Date();
+    el.textContent = `System Time: ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} — ${Intl.DateTimeFormat().resolvedOptions().timeZone}`;
+  }
+  tick(); setInterval(tick, 1000);
+})();
+
+/* ── INIT ───────────────────────────────────────────────────── */
+document.getElementById('specimenCount').textContent = `${SPECIMENS.length} Specimens`;
+buildRows();
+applySort();
+applyFilters();
+</script>
+
+</body>
+</html>

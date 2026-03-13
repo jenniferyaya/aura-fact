@@ -3,47 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Archive — Aurafact</title>
+<title>Aurafact</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 
+<!-- p5.js — wave simulation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/p5.min.js"></script>
+<!-- GSAP — page transitions -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
 <style>
+
 /* ============================================================
-   COLOUR TOKENS — exact match with index.html
+   COLOUR TOKENS
+   All HTML/CSS colours live here.
+   Canvas colours live in the JS block marked CANVAS COLOURS.
    ============================================================ */
 :root {
-  --bg:              #0C0C0C;
-  --text-primary:    #EDECEA;
-  --text-secondary:  #4A4A4A;
-  --text-mono:       #3A3A3A;
+  --bg:              #0C0C0C;   /* page + canvas background          */
+
+  /* Intro typography */
+  --text-primary:    #EDECEA;   /* heading                           */
+  --text-secondary:  #4A4A4A;   /* subtitle                          */
+  --text-mono:       #3A3A3A;   /* wordmark / labels                 */
   --text-accent:     #AD472F;
+
+  /* Button */
   --btn-border:      #2E2E2E;
+  --btn-text:        #2E2E2E;
   --btn-hover-border:#777777;
   --btn-hover-text:  #EDECEA;
+
+  /* Nav */
   --nav-logo:        #EDECEA;
   --nav-link:        #EDECEA;
+  --nav-link-hover:  #EDECEA;
   --nav-rule:        #2c2c2c;
+
+  /* Header overlay text */
+  --header-title:    #EDECEA;
+  --header-sub:      #EDECEA;
+  --header-coord:    #EDECEA;
+
   --grain-opacity:   0.045;
-  --nav-h:           61px;
-
-  /* Table — from index.html */
-  --table-rule-head: #1e1e1e;
-  --table-rule-row:  #181818;
-  --row-hover-bg:    rgba(255,255,255,0.03);
-  --row-active-bg:   rgba(173,71,47,0.07);
-
-  /* Panel */
-  --panel-bg:        #0e0e0e;
-  --panel-rule:      #1e1e1e;
-  --panel-w:         360px;
-
-  /* Footer */
-  --footer-bg:       #f5f5f5;
 }
+/* ============================================================ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { width: 100%; height: 100%; overflow-x: hidden; }
+html, body { width: 100%; overflow-x: hidden; }
 
 body {
   background: var(--bg);
@@ -51,21 +59,101 @@ body {
   font-family: "Libre Baskerville", serif;
 }
 
-/* Grain — identical to index.html */
+/* Grain */
 body::after {
   content: '';
-  position: fixed; inset: 0;
+  position: fixed;
+  inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   opacity: var(--grain-opacity);
   pointer-events: none;
   z-index: 9000;
 }
 
-/* ── NAV ────────────────────────────────────────────────────── */
+
+/* ── p5 CANVAS CONTAINER ───────────────────────────────────────
+   Fixed, full viewport, behind everything.
+   The same canvas persists through intro → header.          */
+#p5-container {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+#p5-container canvas { display: block; }
+
+
+/* ── INTRO OVERLAY ─────────────────────────────────────────────
+   Centred text + button, above canvas.
+   Dissolved by GSAP on Enter.                               */
+#intro {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: all;
+}
+
+.intro-wordmark {
+  font-family: 'DM Mono', monospace;
+  font-size: 18px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  opacity: 0;
+}
+
+.intro-title {
+  font-family: "Libre Baskerville", serif;
+  font-size: clamp(58px, 9vw, 70px);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 0.9;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+  opacity: 0;
+}
+
+.intro-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  margin-bottom: 58px;
+  color: var(--text-primary);
+
+}
+
+.enter-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--btn-border);
+  color: var(--text-primary);
+  padding: 13px 38px;
+  cursor: pointer;
+  opacity: 0;
+  transition: border-color 0.3s, color 0.3s;
+}
+.enter-btn:hover {
+  border-color: var(--btn-hover-border);
+  color: var(--btn-hover-text);
+  background-color: var(--btn-border);
+}
+
+
+/* ── NAV ───────────────────────────────────────────────────────
+   Hidden until transition completes.                        */
 #site-nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  z-index: 200;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -73,7 +161,9 @@ body::after {
   border-bottom: 1px solid var(--nav-rule);
   background: rgba(12,12,12,0.5);
   backdrop-filter: blur(14px);
-  height: var(--nav-h);
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
 }
 
 .nav-logo {
@@ -85,8 +175,11 @@ body::after {
   text-decoration: none;
 }
 
-.nav-links { display: flex; gap: 36px; list-style: none; }
-
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
 .nav-links a {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
@@ -94,497 +187,535 @@ body::after {
   text-transform: uppercase;
   color: var(--nav-link);
   text-decoration: none;
-  transition: opacity 0.2s;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--nav-link-hover); }
+
+
+/* ── HEADER TEXT ───────────────────────────────────────────────
+   Bottom-left title block + bottom-right coords.
+   Appear after transition.                                  */
+#header-text {
+  position: absolute;
+  bottom: 56px;
+  left: 40px;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.nav-links a:hover { opacity: 0.6; }
-.nav-links a.active {
-  border-bottom: 1px solid var(--text-accent);
-  padding-bottom: 2px;
+.header-title {
+  font-family: "Libre Baskerville", serif;
+  font-size: clamp(26px, 3.8vw, 54px);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--header-title);
+  line-height: 1.05;
+  margin-bottom: 10px;
 }
 
-/* ── TWO-COLUMN BODY ────────────────────────────────────────── */
-.archive-body {
-  display: flex;
-  padding-top: var(--nav-h);
-  min-height: 100vh;
+.header-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--header-sub);
 }
 
-/* ── LEFT: TABLE COLUMN ─────────────────────────────────────── */
-.table-col {
-  flex: 1;
-  min-width: 0;
-  border-right: 1px solid var(--table-rule-head);
+#header-coords {
+  position: absolute;
+  bottom: 56px;
+  right: 40px;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+  text-align: right;
+}
+#header-coords span {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  color: var(--header-coord);
+  line-height: 2.2;
+}
+
+/* ── CONTENT SECTION ─────────────────────────────────────────────── */
+.page-content{
+  position: relative;
+  z-index: 5;
+  margin-top: 100vh;
+  background-color: #f5f5f5;
+  color: var(--text-secondary)
+}
+
+/* Archive section: full width, single column */
+.archive-section {
+  width: 100%;
+  padding: 100px 80px 120px;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.archive-left {
+  max-width: 100%;
   display: flex;
   flex-direction: column;
 }
 
-/* Page header */
-.archive-header {
-  padding: 56px 48px 40px 80px;
-  border-bottom: 1px solid var(--table-rule-head);
+/* ── Studies section ─────────────────────────────────────────── */
+.studies-section {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+/* Left: quote column */
+.studies-quote-col {
+  padding: 80px 48px 80px 80px;
+  border-right: 1px solid #1a1a1a;
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 32px;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
-.archive-header h1 {
-  font-family: "Libre Baskerville", serif;
-  font-style: italic;
-  font-weight: 300;
-  font-size: clamp(24px, 3.2vw, 44px);
-  color: var(--text-primary);
-  line-height: 1.0;
-  margin-bottom: 10px;
+/* Right: research panel */
+.studies-panel {
+  padding: 80px 80px 80px 64px;
 }
 
-.archive-header-sub {
+/* Panel label */
+.studies-panel-label {
   font-family: 'DM Mono', monospace;
   font-size: 9px;
-  letter-spacing: 0.26em;
+  font-weight: 400;
+  letter-spacing: 0.30em;
   text-transform: uppercase;
   color: var(--text-mono);
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #1a1a1a;
 }
 
-/* Search */
-.search-wrap {
+/* ── Image frame: shared base ─── */
+.study-img-frame {
   position: relative;
-  width: 240px;
-  flex-shrink: 0;
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+  overflow: hidden;
+  line-height: 0;
 }
 
-.search-wrap svg {
+.study-img-frame img {
   position: absolute;
-  left: 11px; top: 50%;
-  transform: translateY(-50%);
-  width: 11px; height: 11px;
-  stroke: var(--text-mono);
-  fill: none;
-  pointer-events: none;
-}
-
-#searchInput {
+  inset: 0;
   width: 100%;
-  background: transparent;
-  border: 1px solid var(--btn-border);
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.10em;
-  color: var(--text-primary);
-  padding: 9px 10px 9px 30px;
-  outline: none;
-  transition: border-color 0.2s;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.88;
+  transition: opacity 0.4s;
 }
 
-#searchInput::placeholder { color: var(--text-mono); }
-#searchInput:focus { border-color: var(--text-secondary); }
+.study-img-frame img:hover { opacity: 1; }
 
-/* Result / sort bar */
-.result-bar {
-  padding: 12px 48px 12px 80px;
-  border-bottom: 1px solid var(--table-rule-head);
+/* Placeholder — visible only when no img present */
+.img-ph {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-}
-
-.result-count {
+  justify-content: center;
+  background: #0a0a0a;
   font-family: 'DM Mono', monospace;
   font-size: 8px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--text-mono);
+  color: #222;
 }
 
-.sort-wrap { display: flex; align-items: center; gap: 8px; }
+/* ── Row 1: two large images 3:2 ─── */
+.study-large-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 56px;
+}
 
-.sort-label {
+.study-large { display: flex; flex-direction: column; }
+
+.study-large .study-img-frame {
+  aspect-ratio: 3 / 2;
+}
+
+/* ── Divider ─── */
+.study-divider {
+  border: none;
+  border-top: 1px solid #1a1a1a;
+  margin: 0 0 24px;
+}
+
+/* ── Row 2: four thumbnails ─── */
+.study-thumb-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.study-thumb { display: flex; flex-direction: column; }
+
+.study-thumb .study-img-frame {
+  aspect-ratio: 1 / 1;
+}
+
+/* ── Metadata block ─── */
+.study-meta {
+  padding: 8px 0 0;
+}
+
+.study-meta-id {
+  display: block;
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 0.14em;
+  font-size: 7px;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--text-mono);
+  margin-bottom: 2px;
 }
 
-.sort-select {
+.study-meta-title {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  margin-bottom: 1px;
+}
+
+.study-meta-sub {
+  display: block;
   font-family: 'DM Mono', monospace;
   font-size: 8px;
-  background: transparent;
-  border: 1px solid var(--btn-border);
-  color: var(--text-secondary);
-  padding: 4px 8px;
-  cursor: pointer;
-  outline: none;
-  appearance: none;
+  letter-spacing: 0.10em;
+  color: var(--text-mono);
 }
 
-/* Table */
-.archive-table-wrap {
-  padding: 0 0 0 80px;
-  flex: 1;
-  overflow-x: auto;
+/* Thumbnail meta: even more compact */
+.study-thumb .study-meta-title {
+  font-size: 8px;
 }
+
+
+
+.page-h2 {
+  font-family: 'DM Mono', monospace;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-accent);
+  margin-bottom: 4px;
+}
+.page-h3 {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+
+
+/* .archive-right removed */
+
+.right-quote {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(15px, 1.5vw, 24px);
+  line-height: 1.55;
+  margin-bottom: 16px;
+  color: var( --text-accent);
+}
+
+.right-quote-caption {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var( --text-accent);
+  margin-bottom: 40px;
+}
+
+.right-rule {
+  border: none;
+  border-top: 1px solid #1a1a1a;
+  margin: 0 0 40px;
+}
+
+.right-ecology-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-accent);
+  margin-bottom: 24px;
+}
+
+.right-ecology-body {
+  font-family: "Libre Baskerville", serif;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-mono);
+  margin-bottom: 24px;
+}
+
+
+
+p {
+  font-family: "Libre Baskerville", serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 700px;
+  margin-bottom: 16px;
+}
+
+.space-after {
+  margin-bottom: 60px;
+}
+.space-after-1-2 {
+  margin-bottom: 32px;
+}
+
+.space-after-24 {
+  margin-bottom: 24px;
+}
+
+
+.section-test{ padding: 80px 40px; }
 
 .archive-table {
   width: 100%;
   border-collapse: collapse;
   font-family: 'DM Mono', monospace;
-  font-size: 11px;
+  font-size: 11.5px;
   letter-spacing: 0.10em;
 }
 
 .archive-table thead th {
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-size: 8px;
+  font-size: 12px;
   text-align: left;
-  padding: 0 24px 14px 0;
-  border-bottom: 1px solid var(--table-rule-head);
-  color: var(--text-mono);
-  white-space: nowrap;
+  padding: 0 24px 16px 0;
+  border-bottom: 1px solid #1e1e1e;
 }
 
 .archive-table tbody tr {
-  border-bottom: 1px solid var(--table-rule-row);
+  border-bottom: 1px solid #181818;
+  transition: background 0.2s;
   cursor: pointer;
-  transition: background 0.15s;
 }
 
 .archive-table tbody tr:hover {
-  background: var(--row-hover-bg);
+  background: rgba(12,12,12,0.35);
+  backdrop-filter: blur(14px);
 }
 
-.archive-table tbody tr.is-selected {
-  background: var(--row-active-bg);
+.archive-table tbody tr.is-playing {
+  background: rgba(255,255,255,0.03);
 }
 
-.archive-table tbody tr.hidden { display: none; }
+/* Sound preview indicator */
+.archive-table tbody td.sound-cell {
+  width: 28px;
+  padding-right: 0;
+}
+
+.sound-indicator {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+tr:hover .sound-indicator,
+tr.is-playing .sound-indicator {
+  opacity: 1;
+}
+
+.sound-indicator span {
+  display: block;
+  width: 2px;
+  background: var(--text-secondary);
+  border-radius: 1px;
+  animation: none;
+}
+
+tr.is-playing .sound-indicator span {
+  animation: bar-bounce 0.6s ease-in-out infinite alternate;
+}
+
+.sound-indicator span:nth-child(1) { height: 6px;  animation-delay: 0s;    }
+.sound-indicator span:nth-child(2) { height: 10px; animation-delay: 0.1s;  }
+.sound-indicator span:nth-child(3) { height: 7px;  animation-delay: 0.2s;  }
+.sound-indicator span:nth-child(4) { height: 12px; animation-delay: 0.05s; }
+
+@keyframes bar-bounce {
+  from { transform: scaleY(0.3); }
+  to   { transform: scaleY(1.4); }
+}
+
+/* Browse button */
+.archive-cta {
+  margin-top: 32px;
+  display: inline-block;
+  align-self: flex-start;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--btn-border);
+  color: var(--btn-text);
+  padding: 13px 38px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.3s, color 0.3s, background-color 0.3s;
+}
+.archive-cta:hover {
+  border-color: var(--btn-hover-border);
+  color: var(--btn-hover-text);
+  background-color: var(--btn-border);
+}
 
 .archive-table tbody td {
-  padding: 16px 24px 16px 0;
+  padding: 18px 24px 18px 0;
   color: var(--text-secondary);
   vertical-align: middle;
-  white-space: nowrap;
 }
 
-.td-id {
-  color: var(--text-mono);
-  font-size: 9px;
-  letter-spacing: 0.18em;
-}
-
-/* Type badge */
-.type-badge {
-  display: inline-block;
-  font-family: 'DM Mono', monospace;
-  font-size: 7px;
+.archive-table tbody td:first-child {
   letter-spacing: 0.14em;
-  text-transform: uppercase;
-  padding: 3px 6px;
-  border: 1px solid currentColor;
-  white-space: nowrap;
 }
 
-.type-badge.geo    { color: #5a8a72; }
-.type-badge.bio    { color: #7a6a9a; }
-.type-badge.anthro { color: var(--text-accent); }
 
-/* Active row indicator — left edge bar */
-.archive-table tbody tr.is-selected td:first-child {
-  box-shadow: inset 3px 0 0 var(--text-accent);
+
+/* ============================================================
+   RESPONSIVE SYSTEM
+   Breakpoints:
+   — Desktop  : ≥1024px  (two-column, current default)
+   — Tablet   : 768–1023px
+   — Mobile   : <768px
+   ============================================================ */
+
+/* ── Tablet: 768–1023px ─────────────────────────────────────── */
+@media (max-width: 1023px) {
+
+  /* Nav: tighten padding, reduce link gap */
+  #site-nav { padding: 16px 24px; }
+  .nav-links { gap: 20px; }
+
+  /* Hero text */
+  #header-text  { left: 24px; bottom: 40px; }
+  #header-coords { right: 24px; bottom: 40px; }
+
+  /* Archive: full width, tighter padding */
+  .archive-section { padding: 64px 24px 80px; }
+  .archive-left { max-width: 100%; }
+
+  /* Studies: stack on tablet */
+  .studies-section { grid-template-columns: 1fr; }
+  .studies-quote-col {
+    padding: 48px 24px;
+    border-right: none;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .studies-panel { padding: 48px 24px 64px; }
+  .study-thumb-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+  /* Table: allow horizontal scroll on smaller viewports */
+  .archive-table { font-size: 9px; }
 }
 
-/* Empty state */
-.empty-state { padding: 60px 80px; display: none; }
-.empty-state.visible { display: block; }
-.empty-state p {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-mono);
+/* ── Mobile: <768px ─────────────────────────────────────────── */
+@media (max-width: 767px) {
+
+  /* Nav: hide links, show logo only */
+  .nav-links { display: none; }
+  #site-nav { padding: 14px 20px; }
+
+  /* Hero */
+  #hero { min-height: 100svh; }
+  #header-text  { left: 20px; bottom: 28px; }
+  #header-coords { display: none; }
+
+  .header-title {
+    font-size: clamp(18px, 6vw, 28px);
+  }
+
+  /* Intro overlay */
+  .intro-title {
+    font-size: clamp(36px, 10vw, 52px);
+    padding: 0 20px;
+  }
+  .intro-wordmark { font-size: 14px; }
+
+  /* Page content */
+  .page-content { margin-top: 100svh; }
+
+  .archive-section { padding: 48px 20px 56px; }
+  .archive-left { max-width: 100%; }
+
+  .studies-section { grid-template-columns: 1fr; }
+  .studies-quote-col {
+    padding: 40px 20px;
+    border-right: none;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .studies-panel { padding: 40px 20px 56px; }
+  .study-large-row { grid-template-columns: 1fr; gap: 16px; }
+  .study-thumb-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+  /* Table: horizontal scroll container */
+  .archive-table {
+    font-size: 8.5px;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  .archive-table thead,
+  .archive-table tbody,
+  .archive-table tr { display: table-row; }
+  .archive-table th,
+  .archive-table td  { white-space: nowrap; }
+
+  /* CTA button: full width on mobile */
+  .archive-cta {
+    display: block;
+    text-align: center;
+    align-self: unset;
+    padding: 14px 20px;
+  }
+
+  /* Quote text */
+  .right-quote {
+    font-size: clamp(16px, 5vw, 22px);
+  }
+
+  /* Section test */
+  .section-test { padding: 60px 20px; }
 }
 
-/* ── RIGHT: DETAIL PANEL ────────────────────────────────────── */
-.detail-col {
-  width: var(--panel-w);
-  flex-shrink: 0;
-  position: sticky;
-  top: var(--nav-h);
-  height: calc(100vh - var(--nav-h));
-  overflow-y: auto;
-  border-left: 1px solid var(--panel-rule);
-  background: var(--panel-bg);
-  display: flex;
-  flex-direction: column;
-}
 
-.detail-col::-webkit-scrollbar { width: 3px; }
-.detail-col::-webkit-scrollbar-track { background: transparent; }
-.detail-col::-webkit-scrollbar-thumb { background: var(--panel-rule); }
-
-/* Empty state */
-.panel-empty {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 32px;
-  text-align: center;
-  opacity: 1;
-  transition: opacity 0.2s;
-}
-
-.panel-empty.hidden { display: none; }
-
-.panel-empty-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-  line-height: 2;
-}
-
-/* Loaded state */
-.panel-content { display: none; flex-direction: column; }
-.panel-content.visible { display: flex; }
-
-/* Panel header */
-.panel-head {
-  padding: 28px 28px 20px;
-  border-bottom: 1px solid var(--panel-rule);
-}
-
-.panel-spec-id {
-  font-family: 'DM Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-  margin-bottom: 6px;
-  display: block;
-}
-
-.panel-title {
-  font-family: "Libre Baskerville", serif;
-  font-style: italic;
-  font-weight: 300;
-  font-size: 20px;
-  color: var(--text-primary);
-  line-height: 1.15;
-  margin-bottom: 6px;
-}
-
-.panel-location {
-  font-family: 'DM Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-}
-
-/* ── WAVEFORM / SPECTROGRAM DISPLAY ─────────────────────────── */
-.panel-viz {
-  height: 96px;
-  background: #080808;
-  border-bottom: 1px solid var(--panel-rule);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-  padding: 0 4px 4px;
-  gap: 2px;
-}
-
-.viz-bar {
-  flex: 1;
-  background: var(--text-mono);
-  border-radius: 1px 1px 0 0;
-  transition: background 0.3s;
-  min-height: 2px;
-}
-
-/* Playing state — bars animate and colour shifts */
-.panel-viz.playing .viz-bar {
-  background: var(--text-accent);
-  animation: spec-pulse 0.9s ease-in-out infinite alternate;
-}
-
-@keyframes spec-pulse {
-  from { opacity: 0.5; transform: scaleY(0.6); }
-  to   { opacity: 1;   transform: scaleY(1); }
-}
-
-/* Playhead line */
-.playhead {
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 1px;
-  background: var(--text-accent);
-  left: 0;
-  opacity: 0;
-  transition: opacity 0.2s;
-  pointer-events: none;
-}
-
-.panel-viz.playing .playhead { opacity: 0.6; }
-
-/* Freq range labels */
-.viz-label-low,
-.viz-label-high {
-  position: absolute;
-  font-family: 'DM Mono', monospace;
-  font-size: 7px;
-  letter-spacing: 0.10em;
-  color: var(--text-mono);
-  bottom: 6px;
-}
-
-.viz-label-low  { left: 8px; }
-.viz-label-high { right: 8px; }
-
-/* ── AUDIO PLAYER ───────────────────────────────────────────── */
-.panel-player {
-  padding: 20px 28px;
-  border-bottom: 1px solid var(--panel-rule);
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.play-pause-btn {
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--btn-border);
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: border-color 0.2s, background 0.2s;
-}
-
-.play-pause-btn:hover { border-color: var(--btn-hover-border); background: rgba(255,255,255,0.04); }
-.play-pause-btn.playing { border-color: var(--text-accent); }
-.play-pause-btn svg { width: 10px; height: 10px; fill: var(--text-primary); }
-
-/* Progress bar */
-.player-progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-
-.progress-bar-track {
-  width: 100%;
-  height: 2px;
-  background: var(--btn-border);
-  cursor: pointer;
-  position: relative;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background: var(--text-accent);
-  width: 0%;
-  transition: width 0.1s linear;
-  pointer-events: none;
-}
-
-.player-time {
-  display: flex;
-  justify-content: space-between;
-}
-
-.player-time span {
-  font-family: 'DM Mono', monospace;
-  font-size: 7px;
-  letter-spacing: 0.10em;
-  color: var(--text-mono);
-}
-
-/* No audio notice */
-.no-audio-notice {
-  padding: 20px 28px;
-  border-bottom: 1px solid var(--panel-rule);
-}
-
-.no-audio-notice p {
-  font-family: 'DM Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-  opacity: 0.5;
-  max-width: none;
-  margin: 0;
-}
-
-/* ── METADATA ───────────────────────────────────────────────── */
-.panel-meta {
-  padding: 20px 28px;
-  border-bottom: 1px solid var(--panel-rule);
-}
-
-.panel-section-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 7px;
-  letter-spacing: 0.30em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-  margin-bottom: 14px;
-  display: block;
-}
-
-.meta-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 8px 0;
-  border-bottom: 1px solid #151515;
-  gap: 12px;
-}
-
-.meta-row:last-child { border-bottom: none; }
-
-.meta-key {
-  font-family: 'DM Mono', monospace;
-  font-size: 7px;
-  letter-spacing: 0.20em;
-  text-transform: uppercase;
-  color: var(--text-mono);
-  flex-shrink: 0;
-}
-
-.meta-val {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.06em;
-  color: var(--text-secondary);
-  text-align: right;
-  line-height: 1.4;
-}
-
-/* ── FIELD NOTES ────────────────────────────────────────────── */
-.panel-notes {
-  padding: 20px 28px 32px;
-}
-
-.panel-notes-body {
-  font-family: "Libre Baskerville", serif;
-  font-style: italic;
-  font-size: 12px;
-  line-height: 1.75;
-  color: #555;
-  max-width: none;
-  margin: 0;
-}
-
-/* ── FOOTER ─────────────────────────────────────────────────── */
+/* ── SITE FOOTER ─────────────────────────────────────────────── */
 .site-footer {
-  background-color: var(--footer-bg);
+  background-color: #f5f5f5;
 }
 
+/* Three-column nav links row */
 .footer-nav {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -596,7 +727,8 @@ body::after {
   border-right: 1px solid #1a1a1a;
 }
 
-.footer-col:last-child { border-right: none; padding-right: 80px; }
+.footer-col:first-child { padding-left: 80px; }
+.footer-col:last-child  { border-right: none; padding-right: 80px; }
 
 .footer-col-label {
   display: block;
@@ -609,7 +741,12 @@ body::after {
   padding-bottom: 14px;
 }
 
-.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
 .footer-col ul li a {
   font-family: 'DM Mono', monospace;
@@ -620,8 +757,11 @@ body::after {
   transition: color 0.2s;
 }
 
-.footer-col ul li a:hover { color: var(--text-accent); }
+.footer-col ul li a:hover {
+  color: var(--text-accent);
+}
 
+/* Bottom bar */
 .footer-bottom {
   padding: 28px 80px;
   display: flex;
@@ -629,7 +769,7 @@ body::after {
   justify-content: space-between;
 }
 
-.footer-copy, .footer-time {
+.footer-copy {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.16em;
@@ -638,598 +778,856 @@ body::after {
   line-height: 1.8;
 }
 
-/* ── RESPONSIVE ─────────────────────────────────────────────── */
-@media (max-width: 1100px) {
-  :root { --panel-w: 300px; }
-  .archive-header { padding: 40px 32px 32px 40px; }
-  .result-bar     { padding: 12px 32px 12px 40px; }
-  .archive-table-wrap { padding-left: 40px; }
-}
-
-@media (max-width: 900px) {
-  /* Stack: table on top, panel below */
-  .archive-body { flex-direction: column; }
-  .detail-col {
-    width: 100%;
-    position: static;
-    height: auto;
-    border-left: none;
-    border-top: 1px solid var(--panel-rule);
-  }
-  .archive-header { padding: 32px 24px 24px; }
-  .result-bar { padding: 12px 24px; }
-  .archive-table-wrap { padding-left: 24px; }
+/* Footer responsive */
+@media (max-width: 1023px) {
+  .footer-col:first-child { padding-left: 24px; }
+  .footer-col:last-child  { padding-right: 24px; }
+  .footer-bottom          { padding: 24px; }
 }
 
 @media (max-width: 767px) {
-  #site-nav { padding: 14px 20px; }
-  .nav-links { display: none; }
-  .archive-header { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .search-wrap { width: 100%; }
-  .archive-table { font-size: 9px; }
-  .footer-nav { grid-template-columns: 1fr; }
-  .footer-col { padding: 40px 20px; border-right: none; border-bottom: 1px solid #1a1a1a; }
-  .footer-col:last-child { border-bottom: none; }
-  .footer-bottom { padding: 24px 20px; flex-direction: column; gap: 8px; }
-  .footer-time { display: none; }
+  .footer-nav {
+    grid-template-columns: 1fr;
+  }
+  .footer-col {
+    padding: 40px 20px;
+    border-right: none;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .footer-col:first-child { padding-left: 20px; }
+  .footer-col:last-child  { padding-right: 20px; border-bottom: none; }
+  .footer-bottom          { padding: 24px 20px; flex-direction: column; align-items: flex-start; gap: 8px; }
 }
+
 </style>
 </head>
 <body>
+
+<!-- p5 canvas mounts here -->
+<div id="p5-container"></div>
+
+<!-- Intro -->
+<div id="intro">
+  <div class="intro-wordmark">Aurafact</div>
+  <h1 class="intro-title">Archiving the Acoustic Memory of Place</h1>
+  <p class="intro-sub">Environmental Sound Archive</p>
+  <button class="enter-btn" id="enterBtn" aria-label="Enter the Aurafact sound archive">Enter Archive</button>
+</div>
 
 <!-- Nav -->
 <nav id="site-nav">
   <a href="index.html" class="nav-logo">Aurafact</a>
   <ul class="nav-links">
     <li><a href="#">Map</a></li>
-    <li><a href="archive.html" class="active">Archive</a></li>
+    <li><a href="archive.html">Archive</a></li>
     <li><a href="#">Lab</a></li>
     <li><a href="#">Manifesto</a></li>
-    <li><a href="index.html">Enter</a></li>
+    <li><a href="#">Enter</a></li>
   </ul>
 </nav>
 
-<div class="archive-body">
+<!-- Header text overlay -->
+<div id="header-text">
+  <h2 class="header-title">Archiving the Acoustic Memory of Place</h2>
+  <p class="header-sub">847 artifacts &nbsp;·&nbsp; 63 regions &nbsp;·&nbsp; Since 2019</p>
+</div>
+<div id="header-coords">
+  <span>43.2965°N · 5.3698°E</span>
+  <span>Marseille Vieux-Port</span>
+  <span>Active Artifact</span>
+</div>
 
-  <!-- ── LEFT: TABLE ───────────────────────────────────────── -->
-  <div class="table-col">
+<main class="page-content">
 
-    <div class="archive-header">
-      <div>
-        <h1>Specimen Archive</h1>
-        <p class="archive-header-sub" id="specimenCount"></p>
-      </div>
-      <div class="search-wrap">
-        <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="searchInput" placeholder="Search specimens…">
-      </div>
-    </div>
+<!-- ── Archive: full width ──────────────────────────────── -->
+<section class="archive-section">
+  <div class="archive-left">
 
-    <div class="result-bar">
-      <span class="result-count" id="resultCount"></span>
-      <div class="sort-wrap">
-        <span class="sort-label">Sort</span>
-        <select class="sort-select" id="sortSelect">
-          <option value="id-asc">ID ↑</option>
-          <option value="id-desc">ID ↓</option>
-          <option value="location-asc">Location A–Z</option>
-        </select>
-      </div>
-    </div>
+    <h2 class="page-h2">Acoustic Preservation</h2>
+    <p>Every environment possesses a sonic fingerprint, a shifting composition of biological, geological, and human sound. Yet while landscapes are photographed and mapped with precision, their acoustic identity is rarely documented.</p>
+    <p class="space-after"><i>Aurafact</i> approaches environmental recordings as archival specimens. Each capture preserves a moment in the sonic evolution of a place, transforming sound into a permanent, searchable record for research, reflection, and cultural memory.</p>
 
-    <div class="archive-table-wrap">
-      <table class="archive-table">
-        <thead>
-          <tr>
-            <th>Specimen ID</th>
-            <th>Artifact</th>
-            <th>Location</th>
-            <th>Source Type</th>
-            <th>Subtype</th>
-            <th>Frequency Profile</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-      <div class="empty-state" id="emptyState">
-        <p>No specimens match the current search.</p>
-      </div>
-    </div>
+    <h2 class="space-after-1-2 page-h2">Archive / Recent Additions</h2>
 
-  </div><!-- /table-col -->
+    <table class="archive-table" id="archiveTable">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Specimen ID</th>
+          <th>Artifact</th>
+          <th>Location</th>
+          <th>Source Type</th>
+          <th>Subtype</th>
+          <th>Frequency Profile</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-sound="urban" data-audio="audio/AF-0003-world-cup-watch-party-ottawa-2022.mp3">
+          <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
+          <td>AF-0003</td>
+          <td>World Cup Watch Party</td>
+          <td>Ottawa, CA</td>
+          <td>Anthropophony</td>
+          <td>Crowd Assembly</td>
+          <td>120 Hz – 5 kHz · layered human chorus</td>
+        </tr>
+        <tr data-sound="coastal" data-audio="audio/AF-0005-petrie-sland-ottawa-2023.mp3">
+          <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
+          <td>AF-0005</td>
+          <td>River Edge Flow</td>
+          <td>Ottawa, CA</td>
+          <td>Geophony</td>
+          <td>River Current</td>
+          <td>60 Hz – 5 kHz · continuous hydrodynamic noise</td>
+        </tr>
+        <tr data-sound="city green" data-audio="audio/AF-0006-birdsong-donaldst-ottawa-2023.mp3">
+          <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
+          <td>AF-0006</td>
+          <td>Spring Canopy Chorus</td>
+          <td>Ottawa, CA</td>
+          <td>Biophony</td>
+          <td>Avian Chorus</td>
+          <td>300 Hz – 14 kHz · intermittent birdsong activity</td>
+        </tr>
+        <tr data-sound="industrial">
+          <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
+          <td>AF-0312</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>Industrial Margin</td>
+          <td>60 Hz – 2 kHz · sustained harmonic drone</td>
+        </tr>
+        <tr data-sound="desert">
+          <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
+          <td>AF-0447</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>Desert Dawn</td>
+          <td>400 Hz – 10 kHz · sparse, high transients</td>
+        </tr>
+      </tbody>
+    </table>
 
-  <!-- ── RIGHT: DETAIL PANEL ──────────────────────────────── -->
-  <aside class="detail-col" id="detailCol">
+    <a href="archive.html" class="archive-cta">Browse full archive →</a>
+  </div>
+</section>
 
-    <!-- Empty / prompt state -->
-    <div class="panel-empty" id="panelEmpty">
-      <p class="panel-empty-label">Select an artifact<br>to inspect</p>
-    </div>
+<!-- ── Studies: 1/3 quote + 2/3 research panel ──────────────── -->
+<section class="studies-section">
 
-    <!-- Loaded state -->
-    <div class="panel-content" id="panelContent">
+  <!-- Left: quote -->
+  <div class="studies-quote-col">
+    <p class="right-quote">"A place without its sound is only half remembered."</p>
+    <p class="right-quote-caption">Aurafact &nbsp;·&nbsp; Field Notes &nbsp;·&nbsp; 2026</p>
+    <hr class="right-rule">
+    <h2 class="right-ecology-title">Principles of Acoustic Archiving</h2>
+    
+    <h3 class="page-h3">Audio-First Hierarchy</h3>
+    <p class="right-ecology-body">Sound is the primary artifact; visual elements exist only to frame the recording. When audio is active, the interface yields, allowing the listener to experience the environment before interpreting it.</p>
+    
+    <h3 class="page-h3">Semantic Transparency</h3>
+    <p class="right-ecology-body">Metadata is never decorative. Every attribute—frequency range, atmospheric state, microphone model—is a vital layer of the specimen. We expose data clearly so the recording is understood as a document, not merely a file.</p>
 
-      <!-- Header -->
-      <div class="panel-head">
-        <span class="panel-spec-id" id="dp-id"></span>
-        <h2 class="panel-title" id="dp-title"></h2>
-        <span class="panel-location" id="dp-location"></span>
-      </div>
+    <h3 class="page-h3">Variable Density</h3>
+    <p class="right-ecology-body">The interface respects the intent of the listener. Whether a researcher seeking technical detail or an artist seeking atmosphere, the UI adapts its informational depth, revealing data layers without crowding the sensory experience.</p>
 
-      <!-- Spectrogram / waveform visualisation -->
-      <div class="panel-viz" id="panelViz">
-        <div class="playhead" id="playhead"></div>
-        <span class="viz-label-low" id="vizLow"></span>
-        <span class="viz-label-high" id="vizHigh"></span>
-        <!-- bars injected by JS -->
-      </div>
+    <h3 class="page-h3">Temporal Integrity</h3>
+    <p class="right-ecology-body">A recording is inseparable from its moment. Geographic location, ecological conditions, and human presence shape every soundscape. <i>Aurafact</i> reats each capture as a spatial and temporal anchor—preserving the intersection of geography, ecology, and human presence at a specific point in time.</p>
 
-      <!-- Audio player -->
-      <div class="panel-player" id="panelPlayer">
-        <button class="play-pause-btn" id="playPauseBtn" aria-label="Play / pause">
-          <svg id="playPauseIcon" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg>
-        </button>
-        <div class="player-progress-wrap">
-          <div class="progress-bar-track" id="progressTrack">
-            <div class="progress-bar-fill" id="progressFill"></div>
-          </div>
-          <div class="player-time">
-            <span id="timeElapsed">0:00</span>
-            <span id="timeDuration">—</span>
-          </div>
+    <h3 class="page-h3">Sonic Artifacts</h3>
+    <p class="right-ecology-body">Environmental recordings are treated as artifacts rather than media files. Each capture represents a unique acoustic state of a place — shaped by geography, ecology, atmosphere, and human activity — and is preserved as part of a growing acoustic archive.</p>
+  </div>
+
+  <!-- Right: research display panel -->
+  <div class="studies-panel">
+
+    <h2 class="page-h2 space-after-24">Acoustic Studies</h2>
+
+    <!-- Row 1: two large 3:2 images -->
+    <div class="study-large-row">
+
+      <div class="study-large">
+        <div class="study-img-frame">
+          <img src="img/aurafact-acoustic-study-01.png" alt="Longitudinal Pressure Field"
+               onerror="this.style.display='none'">
+        </div>
+        <div class="study-meta">
+          <span class="study-meta-id">img / study-01</span>
+          <span class="study-meta-title">Longitudinal Pressure Field</span>
+          <span class="study-meta-sub">Simulation Model</span>
         </div>
       </div>
 
-      <!-- No audio notice (shown when audio: null) -->
-      <div class="no-audio-notice" id="noAudioNotice" style="display:none">
-        <p>Audio file not yet archived</p>
+      <div class="study-large">
+        <div class="study-img-frame">
+          <img src="img/aurafact-acoustic-study-02.png" alt="Wave Interference"
+               onerror="this.style.display='none'">
+        </div>
+        <div class="study-meta">
+          <span class="study-meta-id">img / study-02</span>
+          <span class="study-meta-title">Wave Interference Lattice</span>
+          <span class="study-meta-sub">Analog Propagation Study</span>
+        </div>
       </div>
 
-      <!-- Metadata -->
-      <div class="panel-meta">
-        <span class="panel-section-label">Metadata</span>
-        <div id="dp-meta"></div>
+    </div>
+
+    <!-- Row 2: four thumbnails -->
+    <div class="study-thumb-row">
+
+      <div class="study-thumb">
+        <div class="study-img-frame">
+          <img src="img/aurafact-acoustic-study-03.png" alt="Surface Resonance"
+               onerror="this.style.display='none'">
+        </div>
+        <div class="study-meta">
+          <span class="study-meta-id">study-03</span>
+          <span class="study-meta-title">Surface Resonance</span>
+          <span class="study-meta-sub">Cymatic Ripple Formation</span>
+        </div>
       </div>
 
-      <!-- Field notes -->
-      <div class="panel-notes">
-        <span class="panel-section-label">Field Notes</span>
-        <p class="panel-notes-body" id="dp-notes"></p>
+      <div class="study-thumb">
+        <div class="study-img-frame">
+          <img src="img/aurafact-acoustic-study-04.png" alt="Pressure Mapping"
+               onerror="this.style.display='none'">
+        </div>
+        <div class="study-meta">
+          <span class="study-meta-id">study-04</span>
+          <span class="study-meta-title">Radial Pressure Mapping</span>
+          <span class="study-meta-sub">Fluid Surface Field Analysis</span>
+        </div>
       </div>
 
-    </div><!-- /panel-content -->
-  </aside>
+      <div class="study-thumb">
+        <div class="study-img-frame">
+          <img src="img/aurafact-acoustic-study-05.png" alt="Frequency Decay"
+               onerror="this.style.display='none'">
+        </div>
+        <div class="study-meta">
+          <span class="study-meta-id">study-05</span>
+          <span class="study-meta-title">Frequency Decay Profile</span>
+          <span class="study-meta-sub">Spectral Plate Experiment</span>
+        </div>
+      </div>
 
-</div><!-- /archive-body -->
+      <div class="study-thumb">
+        <div class="study-img-frame">
+          <img src="img/aurafact-acoustic-study-06.png" alt="Resonant Chamber"
+               onerror="this.style.display='none'">
+        </div>
+        <div class="study-meta">
+          <span class="study-meta-id">study-06</span>
+          <span class="study-meta-title">Resonant Chamber Geometry</span>
+          <span class="study-meta-sub">Acoustic Absorption Study</span>
+        </div>
+      </div>
 
-<!-- Footer -->
+    </div>
+  </div>
+
+</section>
+
+</main>
+
 <footer class="site-footer">
+
+  <!-- Three nav columns -->
   <div class="footer-nav">
+
     <div class="footer-col">
       <span class="footer-col-label">Navigate</span>
       <ul>
-        <li><a href="#">Map</a></li>
-        <li><a href="archive.html">Archive</a></li>
-        <li><a href="#">Lab</a></li>
-        <li><a href="#">Manifesto</a></li>
+        <li><a href="#">Global Sound Map</a></li>
+        <li><a href="archive.html">Archive Explorer</a></li>
+        <li><a href="#">Sonic Lab</a></li>
+        <li><a href="#">Compare Tool</a></li>
       </ul>
     </div>
+
     <div class="footer-col">
       <span class="footer-col-label">About</span>
       <ul>
-        <li><a href="#">Field Methodology</a></li>
-        <li><a href="#">Equipment</a></li>
-        <li><a href="#">Contribute</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><a href="#">The Manifesto</a></li>
+        <li><a href="#">Recording Standards</a></li>
+        <li><a href="#">Accessibility</a></li>
+        <li><a href="#">Submit a Recording</a></li>
       </ul>
     </div>
+
     <div class="footer-col">
       <span class="footer-col-label">Archive</span>
       <ul>
         <li><a href="#">Geophony</a></li>
         <li><a href="#">Biophony</a></li>
         <li><a href="#">Anthropophony</a></li>
-        <li><a href="#">Collections</a></li>
+        <li><a href="#">Chronological Index</a></li>
       </ul>
     </div>
+
   </div>
+
+  <!-- Bottom bar -->
   <div class="footer-bottom">
-    <p class="footer-copy">© 2026 Aurafact — Environmental Sound Archive<br>Preserving Acoustic Memory</p>
+    <p class="footer-copy">
+      © 2026 Aurafact — Environmental Sound Archive<br>
+      Preserving Acoustic Memory
+    </p>
     <p class="footer-time" id="footerTime"></p>
   </div>
+
 </footer>
 
 
 <script>
-/* ── SPECIMEN DATA ──────────────────────────────────────────── */
-const SPECIMENS = [
-  {
-    id: 'AF-0003',
-    artifact: 'World Cup Watch Party',
-    location: 'Ottawa, CA',
-    region: 'North America',
-    source: 'Anthropophony',
-    subtype: 'Crowd Assembly',
-    freq: '120 Hz – 5 kHz',
-    freqLow: '120 Hz',
-    freqHigh: '5 kHz',
-    date: '2022-11-25',
-    duration: '4:32',
-    audio: 'audio/AF-0003-world-cup-watch-party-ottawa-2022.mp3',
-    notes: 'Recorded at a public viewing event in downtown Ottawa during the 2022 FIFA World Cup. Dense crowd vocalisation, rhythmic chanting, ambient city noise underneath.',
-  },
-  {
-    id: 'AF-0134',
-    artifact: 'Atlantic Shore at Dusk',
-    location: 'Brittany, FR',
-    region: 'Europe',
-    source: 'Geophony',
-    subtype: 'Coastal Field',
-    freq: '20 Hz – 8 kHz',
-    freqLow: '20 Hz',
-    freqHigh: '8 kHz',
-    date: '2023-07-03',
-    duration: '6:14',
-    audio: null,
-    notes: 'Low-tide recording at the Pointe du Raz headland. Consistent wave crash with long intervals, distant foghorn, wind across the microphone capsule.',
-  },
-  {
-    id: 'AF-0208',
-    artifact: 'Boreal Interior at Dawn',
-    location: 'Quebec, CA',
-    region: 'North America',
-    source: 'Biophony',
-    subtype: 'Forest Interior',
-    freq: '200 Hz – 12 kHz',
-    freqLow: '200 Hz',
-    freqHigh: '12 kHz',
-    date: '2024-01-29',
-    duration: '8:07',
-    audio: null,
-    notes: 'Recorded 4km from the nearest road. Primary bird chorus begins approximately 38 minutes before sunrise. Woodpecker percussion audible at 1:12.',
-  },
-  {
-    id: 'AF-0312',
-    artifact: 'Steel Mill Perimeter',
-    location: 'Liège, BE',
-    region: 'Europe',
-    source: 'Anthropophony',
-    subtype: 'Industrial Margin',
-    freq: '60 Hz – 2 kHz',
-    freqLow: '60 Hz',
-    freqHigh: '2 kHz',
-    date: '2024-03-11',
-    duration: '5:50',
-    audio: null,
-    notes: 'Perimeter recording of an active rolling mill. The 120Hz fundamental and its harmonics are consistent throughout. Steam vent events at irregular intervals.',
-  },
-  {
-    id: 'AF-0447',
-    artifact: 'Saharan Plateau at Dawn',
-    location: 'Tindouf, DZ',
-    region: 'Africa',
-    source: 'Geophony',
-    subtype: 'Desert Dawn',
-    freq: '400 Hz – 10 kHz',
-    freqLow: '400 Hz',
-    freqHigh: '10 kHz',
-    date: '2024-08-22',
-    duration: '7:23',
-    audio: null,
-    notes: 'Pre-dawn silence broken by thermal wind events. Extremely low noise floor — below 12dB SPL at rest. A single bird call at 4:47AM local time.',
-  },
-  {
-    id: 'AF-0521',
-    artifact: 'Monsoon Onset',
-    location: 'Kerala, IN',
-    region: 'Asia',
-    source: 'Geophony',
-    subtype: 'Rain Event',
-    freq: '100 Hz – 14 kHz',
-    freqLow: '100 Hz',
-    freqHigh: '14 kHz',
-    date: '2023-06-04',
-    duration: '9:48',
-    audio: null,
-    notes: 'First monsoon rain of the season, recorded from an open veranda. Intensity increases sharply at 0:48. Thunder signature at 2:30 and 4:12.',
-  },
-  {
-    id: 'AF-0609',
-    artifact: 'Coral Reef Shallow',
-    location: 'Great Barrier Reef, AU',
-    region: 'Oceania',
-    source: 'Biophony',
-    subtype: 'Marine Interior',
-    freq: '50 Hz – 22 kHz',
-    freqLow: '50 Hz',
-    freqHigh: '22 kHz',
-    date: '2023-09-17',
-    duration: '12:00',
-    audio: null,
-    notes: 'Hydrophone recording at 4m depth on a healthy reef section. Snapping shrimp colony audible throughout. Fish vocalisation clusters at dawn.',
-  },
-  {
-    id: 'AF-0714',
-    artifact: 'Market at Opening',
-    location: 'Marrakech, MA',
-    region: 'Africa',
-    source: 'Anthropophony',
-    subtype: 'Market Environment',
-    freq: '80 Hz – 6 kHz',
-    freqLow: '80 Hz',
-    freqHigh: '6 kHz',
-    date: '2022-10-08',
-    duration: '3:55',
-    audio: null,
-    notes: 'Dawn opening of the Jemaa el-Fna market. Vendors calling, cart wheels on stone, calls to prayer overlapping from multiple minarets.',
-  },
-];
+/* ============================================================
+   CANVAS COLOURS
+   These control everything p5 draws.
 
-/* ── STATE ──────────────────────────────────────────────────── */
-const state = { search: '', sort: 'id-asc', selectedId: null };
-let audioEl = null;
-let progressRaf = null;
+   LINE        vertical line at rest  [R, G, B]
+   LINE_HI     compressed zone (bright)
+   LINE_LO     rarefied zone (dark)
+   RING        concentric wave-front rings
+   SOURCE      centre source dot
+   BG          canvas background — keep in sync with --bg above
+   ============================================================ */
+const COLS = {
+  BG:       '#0C0C0C',
+  LINE:     [72,  72,  70],    // resting
+  LINE_HI:  [205, 204, 200],   // compression  ← brighten for colour accent
+  LINE_LO:  [18,  18,  17],    // rarefaction  ← darken for colour accent
+  RING:     [60,  60,  58],    // wave-front rings
+  SOURCE:   [150, 148, 144],   // source glow + dot
+};
+/* ============================================================ */
 
-/* ── AUDIO HELPERS ──────────────────────────────────────────── */
-function fmtTime(s) {
-  if (!isFinite(s)) return '—';
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return `${m}:${String(sec).padStart(2, '0')}`;
-}
 
-function stopAudio() {
-  if (audioEl) {
-    audioEl.pause();
-    audioEl.src = '';
-    audioEl = null;
-  }
-  if (progressRaf) { cancelAnimationFrame(progressRaf); progressRaf = null; }
-  setPlayingState(false);
-}
+/* ── SIMULATION PARAMETERS ─────────────────────────────────────
+   Tweak these to change the feel of the animation.
 
-function setPlayingState(playing) {
-  const btn = document.getElementById('playPauseBtn');
-  const icon = document.getElementById('playPauseIcon');
-  const viz = document.getElementById('panelViz');
-  if (!btn || !icon || !viz) return;
+   INTRO values are active on load.
+   HEADER values are what the sim eases toward after Enter.   */
+const SIM = {
+  LINE_COUNT:   36,     // number of vertical lines across width
+  SEGMENTS:     70,     // points per line (vertical resolution)
+  DECAY:        0.0022, // amplitude falloff with distance from source
+  BAND_SIGMA:   42,     // width of pressure band in px (Gaussian)
+  RING_COUNT:   3,      // trailing rings per pulse
+  RING_SPACING: 78,     // px between trailing rings
 
-  btn.classList.toggle('playing', playing);
-  viz.classList.toggle('playing', playing);
+  // ── Live values (lerped at runtime) ──
+  // Intro state
+  WAVE_SPEED:   2.8,    // px/frame the wave front travels outward
+  AMPLITUDE:    26,     // max horizontal line displacement in px
+  PULSE_EVERY:  150,    // frames between auto-pulses
 
-  if (playing) {
-    icon.innerHTML = '<rect x="0" y="0" width="3" height="12"/><rect x="5" y="0" width="3" height="12"/>';
-    icon.setAttribute('viewBox', '0 0 8 12');
-  } else {
-    icon.innerHTML = '<polygon points="0,0 10,6 0,12"/>';
-    icon.setAttribute('viewBox', '0 0 10 12');
-    document.getElementById('progressFill').style.width = '0%';
-    document.getElementById('playhead').style.left = '0';
-  }
-}
+  // Header state targets — edit these to tune the calm mode
+  HEADER_WAVE_SPEED:  0.9,   // slower propagation
+  HEADER_AMPLITUDE:   6,     // subtler line displacement
+  HEADER_PULSE_EVERY: 600,   // much longer interval between pulses
 
-function tickProgress() {
-  if (!audioEl) return;
-  const pct = audioEl.duration ? (audioEl.currentTime / audioEl.duration) * 100 : 0;
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('playhead').style.left = pct + '%';
-  document.getElementById('timeElapsed').textContent = fmtTime(audioEl.currentTime);
-  progressRaf = requestAnimationFrame(tickProgress);
-}
+  // Lerp speed: how quickly it eases between intro and header (0–1)
+  // Lower = slower, dreamier transition. 0.012 ≈ ~5 second ease.
+  LERP_SPEED: 0.012,
+};
+/* ============================================================ */
 
-/* ── BUILD SPECTROGRAM BARS ─────────────────────────────────── */
-function buildViz(spec) {
-  const viz = document.getElementById('panelViz');
-  // Clear previous bars (keep labels + playhead)
-  [...viz.querySelectorAll('.viz-bar')].forEach(b => b.remove());
 
-  // Heights vary by source type to suggest spectral character
-  const profiles = {
-    Geophony:      [30,45,60,80,90,85,70,55,40,30,25,20,18,22,28,35,42,38,32,28,25,22,20,18,16,18,22,28,32,38],
-    Biophony:      [10,12,18,22,30,45,65,80,72,60,48,55,70,65,50,40,35,45,60,70,65,50,38,30,25,35,50,60,55,40],
-    Anthropophony: [60,75,85,90,88,82,75,68,60,55,50,48,45,42,40,45,50,55,58,52,45,38,32,28,24,22,20,18,16,14],
+const sketch = p => {
+
+  const waves = [];
+  let srcX, srcY;
+  let fc = 0;  // own frame counter (avoids p.frameCount drift)
+
+  // Live lerp state — these are what the draw loop actually reads.
+  // They glide toward their targets each frame.
+  let liveSpeed     = SIM.WAVE_SPEED;
+  let liveAmplitude = SIM.AMPLITUDE;
+  let livePulseEvery = SIM.PULSE_EVERY;
+
+  // Targets start at intro values; updated by the transition.
+  let targetSpeed     = SIM.WAVE_SPEED;
+  let targetAmplitude = SIM.AMPLITUDE;
+  let targetPulseEvery = SIM.PULSE_EVERY;
+
+  // Expose target setter to the transition script.
+  window._simCalm = () => {
+    targetSpeed      = SIM.HEADER_WAVE_SPEED;
+    targetAmplitude  = SIM.HEADER_AMPLITUDE;
+    targetPulseEvery = SIM.HEADER_PULSE_EVERY;
   };
 
-  const heights = profiles[spec.source] || profiles.Geophony;
-  const fragment = document.createDocumentFragment();
-  heights.forEach((h, i) => {
-    const bar = document.createElement('div');
-    bar.className = 'viz-bar';
-    bar.style.height = h + '%';
-    bar.style.animationDelay = (i * 0.03) + 's';
-    fragment.appendChild(bar);
-  });
-  viz.appendChild(fragment);
+  // ── Setup ─────────────────────────────────────────────────
+  p.setup = () => {
+    const cnv = p.createCanvas(p.windowWidth, p.windowHeight);
+    cnv.parent('p5-container');
+    p.frameRate(60);
+    p.noFill();
+    srcX = p.width  * 0.5;
+    srcY = p.height * 0.5;
+    emit();
+  };
 
-  document.getElementById('vizLow').textContent = spec.freqLow;
-  document.getElementById('vizHigh').textContent = spec.freqHigh;
-}
+  p.windowResized = () => {
+    p.resizeCanvas(p.windowWidth, p.windowHeight);
+  };
 
-/* ── OPEN DETAIL PANEL ──────────────────────────────────────── */
-function openPanel(id) {
-  const spec = SPECIMENS.find(s => s.id === id);
-  if (!spec) return;
-
-  // Stop previous audio
-  stopAudio();
-
-  // Update selected row
-  document.querySelectorAll('#tableBody tr').forEach(r => r.classList.remove('is-selected'));
-  const row = document.querySelector(`#tableBody tr[data-id="${id}"]`);
-  if (row) row.classList.add('is-selected');
-
-  state.selectedId = id;
-
-  // Populate header
-  document.getElementById('dp-id').textContent = spec.id;
-  document.getElementById('dp-title').textContent = spec.artifact;
-  document.getElementById('dp-location').textContent = `${spec.location} · ${spec.date}`;
-
-  // Spectrogram
-  buildViz(spec);
-
-  // Audio player / no-audio state
-  const playerEl = document.getElementById('panelPlayer');
-  const noAudioEl = document.getElementById('noAudioNotice');
-
-  if (spec.audio) {
-    playerEl.style.display = 'flex';
-    noAudioEl.style.display = 'none';
-    document.getElementById('timeDuration').textContent = spec.duration || '—';
-    document.getElementById('timeElapsed').textContent = '0:00';
-    document.getElementById('progressFill').style.width = '0%';
-  } else {
-    playerEl.style.display = 'none';
-    noAudioEl.style.display = 'block';
+  // ── Emit a wave pulse ──────────────────────────────────────
+  function emit() {
+    waves.push({ ox: srcX, oy: srcY, born: fc });
   }
 
-  // Metadata rows
-  const metaEl = document.getElementById('dp-meta');
-  const rows = [
-    ['Source',    spec.source],
-    ['Subtype',   spec.subtype],
-    ['Region',    spec.region],
-    ['Frequency', spec.freq],
-    ['Recorded',  spec.date],
-    ['Duration',  spec.duration],
-  ];
-  metaEl.innerHTML = rows.map(([k, v]) => `
-    <div class="meta-row">
-      <span class="meta-key">${k}</span>
-      <span class="meta-val">${v}</span>
-    </div>
-  `).join('');
+  // ── Horizontal displacement at canvas point (px, py) ──────
+  // Sums contributions from all active waves.
+  // Positive = rightward push (compression)
+  // Negative = leftward pull (rarefaction)
+  function disp(px, py) {
+    let total = 0;
+    for (const w of waves) {
+      const age   = fc - w.born;
+      const dist  = Math.hypot(px - w.ox, py - w.oy);
+      const front = age * liveSpeed;
+      const diff  = dist - front;
 
-  // Field notes
-  document.getElementById('dp-notes').textContent = spec.notes;
+      // Gaussian bell centred on the wave front
+      const env  = Math.exp(-(diff * diff) / (2 * SIM.BAND_SIGMA * SIM.BAND_SIGMA));
+      const atten = Math.exp(-SIM.DECAY * dist);
 
-  // Show content
-  document.getElementById('panelEmpty').classList.add('hidden');
-  document.getElementById('panelContent').classList.add('visible');
-}
-
-/* ── PLAY / PAUSE ───────────────────────────────────────────── */
-document.getElementById('playPauseBtn').addEventListener('click', () => {
-  const spec = SPECIMENS.find(s => s.id === state.selectedId);
-  if (!spec || !spec.audio) return;
-
-  if (audioEl && !audioEl.paused) {
-    audioEl.pause();
-    setPlayingState(false);
-    if (progressRaf) { cancelAnimationFrame(progressRaf); progressRaf = null; }
-    return;
-  }
-
-  if (audioEl && audioEl.paused) {
-    audioEl.play().catch(() => {});
-    setPlayingState(true);
-    progressRaf = requestAnimationFrame(tickProgress);
-    return;
-  }
-
-  // Fresh play
-  audioEl = new Audio(spec.audio);
-  audioEl.volume = 0.85;
-
-  audioEl.addEventListener('loadedmetadata', () => {
-    document.getElementById('timeDuration').textContent = fmtTime(audioEl.duration);
-  });
-
-  audioEl.addEventListener('ended', () => {
-    stopAudio();
-    setPlayingState(false);
-  });
-
-  audioEl.play().catch(() => {});
-  setPlayingState(true);
-  progressRaf = requestAnimationFrame(tickProgress);
-});
-
-/* Progress bar scrub */
-document.getElementById('progressTrack').addEventListener('click', e => {
-  if (!audioEl || !audioEl.duration) return;
-  const rect = e.currentTarget.getBoundingClientRect();
-  const pct = (e.clientX - rect.left) / rect.width;
-  audioEl.currentTime = pct * audioEl.duration;
-});
-
-/* ── BUILD TABLE ROWS ───────────────────────────────────────── */
-function buildRows() {
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = '';
-  SPECIMENS.forEach(s => {
-    const bc = s.source === 'Geophony' ? 'geo' : s.source === 'Biophony' ? 'bio' : 'anthro';
-    const tr = document.createElement('tr');
-    tr.dataset.id = s.id;
-    tr.innerHTML = `
-      <td class="td-id">${s.id}</td>
-      <td>${s.artifact}</td>
-      <td>${s.location}</td>
-      <td><span class="type-badge ${bc}">${s.source}</span></td>
-      <td>${s.subtype}</td>
-      <td>${s.freq}</td>
-    `;
-    tr.addEventListener('click', () => openPanel(s.id));
-    tbody.appendChild(tr);
-  });
-}
-
-/* ── FILTER ─────────────────────────────────────────────────── */
-function applyFilters() {
-  const q = state.search.toLowerCase();
-  let n = 0;
-  document.querySelectorAll('#tableBody tr').forEach(row => {
-    const s = SPECIMENS.find(x => x.id === row.dataset.id);
-    const hit = !q || [s.id, s.artifact, s.location, s.source, s.subtype, s.freq]
-      .join(' ').toLowerCase().includes(q);
-    row.classList.toggle('hidden', !hit);
-    if (hit) n++;
-  });
-  document.getElementById('resultCount').textContent =
-    `Showing ${n} specimen${n !== 1 ? 's' : ''}`;
-  document.getElementById('emptyState').classList.toggle('visible', n === 0);
-}
-
-/* ── SORT ───────────────────────────────────────────────────── */
-function applySort() {
-  const tbody = document.getElementById('tableBody');
-  [...tbody.querySelectorAll('tr')].sort((a, b) => {
-    const sa = SPECIMENS.find(x => x.id === a.dataset.id);
-    const sb = SPECIMENS.find(x => x.id === b.dataset.id);
-    switch (state.sort) {
-      case 'id-asc':       return sa.id.localeCompare(sb.id);
-      case 'id-desc':      return sb.id.localeCompare(sa.id);
-      case 'location-asc': return sa.location.localeCompare(sb.location);
+      // One full sine cycle per wavefront → one compression + one rarefaction band
+      total += liveAmplitude * env * atten * Math.sin(diff * 0.095 * Math.PI);
     }
-  }).forEach(r => tbody.appendChild(r));
-}
-
-document.getElementById('searchInput').addEventListener('input', e => {
-  state.search = e.target.value;
-  applyFilters();
-});
-
-document.getElementById('sortSelect').addEventListener('change', e => {
-  state.sort = e.target.value;
-  applySort();
-});
-
-/* ── CLOCK ──────────────────────────────────────────────────── */
-(function () {
-  const el = document.getElementById('footerTime');
-  const pad = n => String(n).padStart(2, '0');
-  function tick() {
-    const d = new Date();
-    el.textContent = `System Time: ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} — ${Intl.DateTimeFormat().resolvedOptions().timeZone}`;
+    return total;
   }
-  tick(); setInterval(tick, 1000);
-})();
 
-/* ── INIT ───────────────────────────────────────────────────── */
-document.getElementById('specimenCount').textContent = `${SPECIMENS.length} Specimens`;
-buildRows();
-applySort();
-applyFilters();
+  // ── Linear interpolate two RGB arrays ─────────────────────
+  function lerpRGB(a, b, t) {
+    t = Math.max(0, Math.min(1, t));
+    return [
+      a[0] + (b[0] - a[0]) * t,
+      a[1] + (b[1] - a[1]) * t,
+      a[2] + (b[2] - a[2]) * t,
+    ];
+  }
+
+  // ── Draw ──────────────────────────────────────────────────
+  p.draw = () => {
+    fc++;
+
+    // Ease live values toward their targets each frame
+    const k = SIM.LERP_SPEED;
+    liveSpeed      += (targetSpeed      - liveSpeed)      * k;
+    liveAmplitude  += (targetAmplitude  - liveAmplitude)  * k;
+    livePulseEvery += (targetPulseEvery - livePulseEvery) * k;
+
+    if (fc % Math.round(livePulseEvery) === 0) emit();
+
+    p.background(p.color(COLS.BG));
+
+    // 1 ── Vertical lines ────────────────────────────────────
+    for (let i = 0; i <= SIM.LINE_COUNT; i++) {
+      const baseX = p.map(i, 0, SIM.LINE_COUNT, 0, p.width);
+
+      p.beginShape();
+      for (let j = 0; j <= SIM.SEGMENTS; j++) {
+        const baseY = p.map(j, 0, SIM.SEGMENTS, 0, p.height);
+        const d     = disp(baseX, baseY);
+        const x     = baseX + d;
+
+        // Normalised displacement −1 … +1
+        const t = Math.max(-1, Math.min(1, d / liveAmplitude));
+
+        // Colour
+        const rgb = t >= 0
+          ? lerpRGB(COLS.LINE, COLS.LINE_HI,  t)
+          : lerpRGB(COLS.LINE, COLS.LINE_LO, -t);
+
+        // Opacity: dim at rest, brighter at pressure extremes
+        const alpha = p.map(Math.abs(t), 0, 1, 38, 188);
+
+        p.stroke(rgb[0], rgb[1], rgb[2], alpha);
+        p.strokeWeight(0.75);
+        p.vertex(x, baseY);
+      }
+      p.endShape();
+    }
+
+    // 2 ── Concentric rings ───────────────────────────────────
+    const maxD = Math.hypot(p.width, p.height);
+    for (const w of waves) {
+      const age   = fc - w.born;
+      const front = age * liveSpeed;
+
+      for (let k = 0; k < SIM.RING_COUNT; k++) {
+        const r = front - k * SIM.RING_SPACING;
+        if (r <= 0 || r > maxD + 50) continue;
+
+        // Alpha: fades with distance and with harmonic index
+        const distFade = p.map(r, 0, maxD * 0.9, 1, 0);
+        const harmFade = p.map(k, 0, SIM.RING_COUNT - 1, 1, 0.2);
+        const alpha    = Math.max(0, distFade * harmFade * 160);
+
+        p.noFill();
+        p.stroke(COLS.RING[0], COLS.RING[1], COLS.RING[2], alpha);
+        p.strokeWeight(k === 0 ? 0.9 : 0.45);
+        p.ellipse(w.ox, w.oy, r * 2, r * 2);
+      }
+    }
+
+    // 3 ── Source dot ─────────────────────────────────────────
+    // Soft radial glow
+    for (let g = 5; g >= 0; g--) {
+      const gr = g * 8 + 5;
+      const ga = p.map(g, 0, 5, 90, 0);
+      p.noStroke();
+      p.fill(COLS.SOURCE[0], COLS.SOURCE[1], COLS.SOURCE[2], ga);
+      p.ellipse(srcX, srcY, gr * 2);
+    }
+    // Core
+    p.noStroke();
+    p.fill(COLS.SOURCE[0], COLS.SOURCE[1], COLS.SOURCE[2], 210);
+    p.ellipse(srcX, srcY, 5, 5);
+
+    // 4 ── Cull dead waves ────────────────────────────────────
+    for (let i = waves.length - 1; i >= 0; i--) {
+      if ((fc - waves[i].born) * liveSpeed > maxD + 300) {
+        waves.splice(i, 1);
+      }
+    }
+  };
+
+  // ── Click: move source, fire pulse ────────────────────────
+  p.mousePressed = () => {
+    if (!window._interactive) return;
+    srcX = p.mouseX;
+    srcY = p.mouseY;
+    emit();
+  };
+
+  // Expose controls to the transition script
+  window._emit      = emit;
+  window._setSource = (x, y) => { srcX = x; srcY = y; };
+};
+
+new p5(sketch);
+
+
+
+
+
+/* ── INTRO TEXT: staggered entrance ─────────────────────────── */
+gsap.fromTo('.intro-wordmark',
+  { opacity: 0, y: 10 },
+  { opacity: 1, y: 0, duration: 1.0, ease: 'power2.out', delay: 0.9 }
+);
+gsap.fromTo('.intro-title',
+  { opacity: 0, y: 18 },
+  { opacity: 1, y: 0, duration: 1.2, ease: 'power2.out', delay: 1.4 }
+);
+gsap.fromTo('.intro-sub',
+  { opacity: 0 },
+  { opacity: 1,        duration: 1.0, ease: 'power2.out', delay: 2.0 }
+);
+gsap.fromTo('.enter-btn',
+  { opacity: 0 },
+  { opacity: 1,        duration: 0.9, ease: 'power2.out', delay: 2.5 }
+);
+
+
+/* ── TRANSITION: Enter Archive ────────────────────────────────
+   The canvas keeps running — we only animate the HTML layers.*/
+document.getElementById('enterBtn').addEventListener('click', () => {
+
+  // Extra pulse from centre as the screen clears,
+  // then begin easing the sim toward its calm state.
+  if (window._emit)    window._emit();
+  if (window._simCalm) window._simCalm();
+
+  const tl = gsap.timeline({ defaults: { ease: 'power2.inOut' } });
+
+  // Dissolve intro text
+  tl.to(['.intro-title', '.intro-wordmark', '.intro-sub'], {
+    opacity: 0,
+    y: -12,
+    duration: 0.5,
+    stagger: 0.05,
+  });
+  tl.to('.enter-btn', { opacity: 0, duration: 0.35 }, '<0.08');
+
+  // Remove pointer events from intro
+  tl.set('#intro', { pointerEvents: 'none' });
+
+  // Slide nav in from top
+  tl.to('#site-nav', {
+    opacity: 1,
+    y: 0,
+    duration: 0.65,
+    ease: 'power3.out',
+    onStart: () => {
+      document.getElementById('site-nav').style.pointerEvents = 'all';
+    }
+  }, '-=0.15');
+
+  // Fade header text and coords
+  tl.to('#header-text', {
+    opacity: 1,
+    duration: 0.8,
+    ease: 'power2.out',
+  }, '-=0.25');
+
+  tl.to('#header-coords', {
+    opacity: 1,
+    duration: 0.8,
+    ease: 'power2.out',
+  }, '-=0.55');
+
+  // Enable click-to-reposition on the canvas
+  tl.call(() => { window._interactive = true; });
+
+});
+</script>
+
+
+
+
+
+
+<script>
+/* ── SOUND PREVIEW — Web Audio API ────────────────────────────
+   Synthesises a 3-second textural preview for each soundscape
+   type using oscillators + noise shaped to the frequency
+   profile of each specimen.                                  */
+
+const SOUND_PROFILES = {
+  urban: {
+    // Low-mid rumble: two detuned saws + filtered noise
+    build(ctx) {
+      const out = ctx.createGain();
+      out.gain.setValueAtTime(0, ctx.currentTime);
+      out.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.4);
+      out.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 2.4);
+      out.gain.linearRampToValueAtTime(0, ctx.currentTime + 3.0);
+
+      [110, 113, 220].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const g   = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.value = freq;
+        g.gain.value = i === 2 ? 0.06 : 0.12;
+        osc.connect(g); g.connect(out);
+        osc.start(); osc.stop(ctx.currentTime + 3.1);
+      });
+
+      // Band-pass noise for city texture
+      const buf  = ctx.createBuffer(1, ctx.sampleRate * 3, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      const ns  = ctx.createBufferSource();
+      const bp  = ctx.createBiquadFilter();
+      bp.type = 'bandpass'; bp.frequency.value = 800; bp.Q.value = 0.6;
+      ns.buffer = buf;
+      ns.connect(bp); bp.connect(out);
+      ns.start(); ns.stop(ctx.currentTime + 3.1);
+
+      out.connect(ctx.destination);
+      return out;
+    }
+  },
+  coastal: {
+    // Broadband crash: filtered white noise with slow LFO swell
+    build(ctx) {
+      const out = ctx.createGain();
+      out.gain.setValueAtTime(0, ctx.currentTime);
+      out.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 0.8);
+      out.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 2.0);
+      out.gain.linearRampToValueAtTime(0, ctx.currentTime + 3.0);
+
+      const buf  = ctx.createBuffer(1, ctx.sampleRate * 3, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      const ns  = ctx.createBufferSource();
+      const lp  = ctx.createBiquadFilter();
+      lp.type = 'lowpass'; lp.frequency.value = 3000;
+      const lfo = ctx.createOscillator();
+      const lfg = ctx.createGain();
+      lfo.frequency.value = 0.3; lfg.gain.value = 1200;
+      lfo.connect(lfg); lfg.connect(lp.frequency);
+      ns.buffer = buf;
+      ns.connect(lp); lp.connect(out); out.connect(ctx.destination);
+      lfo.start(); ns.start(); lfo.stop(ctx.currentTime + 3.1); ns.stop(ctx.currentTime + 3.1);
+      return out;
+    }
+  },
+  forest: {
+    // Layered birdsong: sparse high sine chirps over soft noise bed
+    build(ctx) {
+      const out = ctx.createGain();
+      out.gain.setValueAtTime(0, ctx.currentTime);
+      out.gain.linearRampToValueAtTime(0.14, ctx.currentTime + 0.5);
+      out.gain.linearRampToValueAtTime(0.14, ctx.currentTime + 2.5);
+      out.gain.linearRampToValueAtTime(0, ctx.currentTime + 3.0);
+
+      // Soft noise bed
+      const buf  = ctx.createBuffer(1, ctx.sampleRate * 3, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      const ns = ctx.createBufferSource();
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass'; hp.frequency.value = 1200;
+      const ng = ctx.createGain(); ng.gain.value = 0.08;
+      ns.buffer = buf; ns.connect(hp); hp.connect(ng); ng.connect(out);
+      ns.start(); ns.stop(ctx.currentTime + 3.1);
+
+      // Chirps
+      [[0.2, 3200], [0.6, 4800], [1.1, 3600], [1.8, 5200], [2.4, 4100]].forEach(([t, f]) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.frequency.value = f; o.type = 'sine';
+        g.gain.setValueAtTime(0, ctx.currentTime + t);
+        g.gain.linearRampToValueAtTime(0.09, ctx.currentTime + t + 0.03);
+        g.gain.linearRampToValueAtTime(0, ctx.currentTime + t + 0.12);
+        o.connect(g); g.connect(out);
+        o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.15);
+      });
+
+      out.connect(ctx.destination);
+      return out;
+    }
+  },
+  industrial: {
+    // Sustained drone: low fundamentals + heavy harmonic stack
+    build(ctx) {
+      const out = ctx.createGain();
+      out.gain.setValueAtTime(0, ctx.currentTime);
+      out.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.6);
+      out.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 2.4);
+      out.gain.linearRampToValueAtTime(0, ctx.currentTime + 3.0);
+
+      [60, 120, 180, 240].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const g   = ctx.createGain();
+        osc.type = i % 2 === 0 ? 'square' : 'sawtooth';
+        osc.frequency.value = freq;
+        g.gain.value = 0.12 / (i + 1);
+        const lp = ctx.createBiquadFilter();
+        lp.type = 'lowpass'; lp.frequency.value = 900;
+        osc.connect(g); g.connect(lp); lp.connect(out);
+        osc.start(); osc.stop(ctx.currentTime + 3.1);
+      });
+
+      out.connect(ctx.destination);
+      return out;
+    }
+  },
+  desert: {
+    // Sparse highs: wind shimmer + distant transients
+    build(ctx) {
+      const out = ctx.createGain();
+      out.gain.setValueAtTime(0, ctx.currentTime);
+      out.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 1.0);
+      out.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 2.2);
+      out.gain.linearRampToValueAtTime(0, ctx.currentTime + 3.0);
+
+      // Wind shimmer
+      const buf  = ctx.createBuffer(1, ctx.sampleRate * 3, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      const ns  = ctx.createBufferSource();
+      const bp  = ctx.createBiquadFilter();
+      bp.type = 'bandpass'; bp.frequency.value = 5000; bp.Q.value = 1.2;
+      const ng = ctx.createGain(); ng.gain.value = 0.15;
+      ns.buffer = buf; ns.connect(bp); bp.connect(ng); ng.connect(out);
+      ns.start(); ns.stop(ctx.currentTime + 3.1);
+
+      // Sparse high transients
+      [[0.4, 6000], [1.2, 8000], [2.1, 7200]].forEach(([t, f]) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.frequency.value = f; o.type = 'sine';
+        g.gain.setValueAtTime(0, ctx.currentTime + t);
+        g.gain.linearRampToValueAtTime(0.06, ctx.currentTime + t + 0.01);
+        g.gain.linearRampToValueAtTime(0, ctx.currentTime + t + 0.08);
+        o.connect(g); g.connect(out);
+        o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.1);
+      });
+
+      out.connect(ctx.destination);
+      return out;
+    }
+  }
+};
+
+(function initSoundPreviews() {
+  let activeTimer = null;
+  let activeRow   = null;
+  let activeAudio = null;
+
+  function stopCurrent() {
+    if (activeTimer) { clearTimeout(activeTimer); activeTimer = null; }
+    if (activeRow)   { activeRow.classList.remove('is-playing'); activeRow = null; }
+    if (activeAudio) {
+      activeAudio.pause();
+      activeAudio.currentTime = 0;
+      activeAudio = null;
+    }
+  }
+
+  document.querySelectorAll('#archiveTable tbody tr').forEach(row => {
+    let hoverTimer = null;
+
+    row.addEventListener('mouseenter', () => {
+      hoverTimer = setTimeout(() => {
+        stopCurrent();
+
+        const audioSrc = row.dataset.audio;
+
+        if (audioSrc) {
+          // Real audio file — play 3-second preview
+          const audio = new Audio(audioSrc);
+          audio.volume = 0.85;
+          audio.currentTime = 0;
+          audio.play().catch(err => console.warn('Audio play blocked:', err));
+          activeAudio = audio;
+        }
+        // No file: silence — bar animation still shows
+
+        row.classList.add('is-playing');
+        activeRow = row;
+        activeTimer = setTimeout(stopCurrent, 3000);
+
+      }, 120);
+    });
+
+    row.addEventListener('mouseleave', () => {
+      clearTimeout(hoverTimer);
+      if (activeRow === row) stopCurrent();
+    });
+  });
+})();
+</script>
+
+
+<script>
+/* ── SYSTEM CLOCK ────────────────────────────────────────────── */
+(function() {
+  const el = document.getElementById('footerTime');
+  if (!el) return;
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const now = new Date();
+    const h   = pad(now.getHours());
+    const m   = pad(now.getMinutes());
+    const s   = pad(now.getSeconds());
+    const tz  = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    el.textContent = `System Time: ${h}:${m}:${s} — ${tz}`;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
 </script>
 
 </body>
