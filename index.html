@@ -256,7 +256,7 @@ body::after {
 }
 
 .archive-left {
-  max-width: 860px;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -301,8 +301,6 @@ body::after {
 }
 
 .study-img-frame {
-  background: #0a0a0a;
-  border: 1px solid #1a1a1a;
   overflow: hidden;
   line-height: 0;
   display: flex;
@@ -586,7 +584,6 @@ body::after {
   outline: 1px solid #1a1a1a;
   overflow: hidden;
   line-height: 0;
-  background: #0e0e0e;
 }
 
 .study-primary .study-img-frame img {
@@ -611,7 +608,6 @@ body::after {
   outline: 1px solid #1a1a1a;
   overflow: hidden;
   line-height: 0;
-  background: #0e0e0e;
 }
 
 .study-secondary .study-img-frame img {
@@ -690,7 +686,7 @@ p {
   font-size: 14px;
   line-height: 1.6;
   color: var(--text-secondary);
-  max-width: 580px;
+  max-width: 700px;
   margin-bottom: 16px;
 }
 
@@ -1056,12 +1052,14 @@ tr.is-playing .sound-indicator span {
   <!-- Right: research display panel -->
   <div class="studies-panel">
 
-    <p class="studies-panel-label">Acoustic Studies</p>
+    <h2 class="page-h2 space-after-1-2">Acoustic Studies</h2>
 
     <!-- Primary image -->
     <div class="study-primary">
       <div class="study-img-frame">
-        <div class="img-ph" style="aspect-ratio:16/7">img / study-01</div>
+        <img src="img/aurafact-acoustic-study-01.png" alt="Longitudinal Pressure Field"
+             onerror="this.style.display='none'">
+        <div class="img-ph">img / study-01</div>
       </div>
       <div class="study-meta">
         <span class="study-meta-id">img / study-01</span>
@@ -1077,7 +1075,9 @@ tr.is-playing .sound-indicator span {
 
       <div class="study-secondary">
         <div class="study-img-frame">
-          <div class="img-ph" style="aspect-ratio:4/3">img / study-02</div>
+          <img src="img/aurafact-acoustic-study-02.png" alt="Wave Interference"
+               onerror="this.style.display='none'">
+          <div class="img-ph">img / study-02</div>
         </div>
         <div class="study-meta">
           <span class="study-meta-id">img / study-02</span>
@@ -1088,7 +1088,9 @@ tr.is-playing .sound-indicator span {
 
       <div class="study-secondary">
         <div class="study-img-frame">
-          <div class="img-ph" style="aspect-ratio:4/3">img / study-03</div>
+          <img src="img/aurafact-acoustic-study-03.png" alt="Surface Resonance"
+               onerror="this.style.display='none'">
+          <div class="img-ph">img / study-03</div>
         </div>
         <div class="study-meta">
           <span class="study-meta-id">img / study-03</span>
