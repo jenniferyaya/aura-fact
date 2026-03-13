@@ -337,7 +337,7 @@ body::after {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 56px;
 }
 
 .study-large .study-img-frame {
@@ -391,7 +391,6 @@ body::after {
   font-family: 'DM Mono', monospace;
   font-size: 8px;
   letter-spacing: 0.10em;
-  text-transform: uppercase;
   color: var(--text-mono);
 }
 
@@ -460,8 +459,8 @@ body::after {
   font-weight: 400;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--text-secondary);
-  margin-bottom: 18px;
+  color: var(--text-accent);
+  margin-bottom: 24px;
 }
 
 .right-ecology-body {
@@ -704,6 +703,10 @@ p {
 }
 .space-after-1-2 {
   margin-bottom: 32px;
+}
+
+.space-after-24 {
+  margin-bottom: 24px;
 }
 
 
@@ -979,7 +982,7 @@ tr.is-playing .sound-indicator span {
     <p>Every environment possesses a sonic fingerprint, a shifting composition of biological, geological, and human sound. Yet while landscapes are photographed and mapped with precision, their acoustic identity is rarely documented.</p>
     <p class="space-after"><i>Aurafact</i> approaches environmental recordings as archival specimens. Each capture preserves a moment in the sonic evolution of a place, transforming sound into a permanent, searchable record for research, reflection, and cultural memory.</p>
 
-    <h2 class="space-after-1-2 page-h2">Archive — Recent Additions</h2>
+    <h2 class="space-after-1-2 page-h2">Archive / Recent Additions</h2>
 
     <table class="archive-table" id="archiveTable">
       <thead>
@@ -1057,16 +1060,16 @@ tr.is-playing .sound-indicator span {
     <h2 class="right-ecology-title">Principles of Acoustic Archiving</h2>
     
     <h3 class="page-h3">Audio-First Hierarchy</h3>
-    <p class="right-ecology-body">Sound is the primary artifact. Visual elements exist only to reveal, frame, or contextualize the recording. When audio is active, the interface recedes, allowing the listener to experience the environment before interpreting it.</p>
+    <p class="right-ecology-body">Sound is the primary artifact; visual elements exist only to frame the recording. When audio is active, the interface yields, allowing the listener to experience the environment before interpreting it.</p>
     
     <h3 class="page-h3">Semantic Transparency</h3>
-    <p class="right-ecology-body">Metadata is not decorative. Each attribute — frequency range, recording conditions, location, microphone model, atmospheric state — contributes to understanding the acoustic character of the environment. The interface exposes this information clearly so the recording can be interpreted as a document, not merely a file.</p>
+    <p class="right-ecology-body">Metadata is never decorative. Every attribute—frequency range, atmospheric state, microphone model—is a vital layer of the specimen. We expose data clearly so the recording is understood as a document, not merely a file.</p>
 
     <h3 class="page-h3">Variable Density</h3>
-    <p class="right-ecology-body">Different listeners approach environmental sound with different intentions. Researchers may seek technical detail, while artists or casual listeners may seek atmosphere. The interface adapts its informational density, revealing deeper layers of data without overwhelming the initial listening experience.</p>
+    <p class="right-ecology-body">The interface respects the intent of the listener. Whether a researcher seeking technical detail or an artist seeking atmosphere, the UI adapts its informational depth, revealing data layers without crowding the sensory experience.</p>
 
-    <h3 class="page-h3">Environmental Context</h3>
-    <p class="right-ecology-body">A recording is inseparable from its environment. Geographic location, ecological conditions, and human presence shape every soundscape. Aurafact treats each recording as a spatial and temporal artifact, preserving the sonic identity of a place at a specific moment in time.</p>
+    <h3 class="page-h3">Temporal Integrity</h3>
+    <p class="right-ecology-body">A recording is inseparable from its moment. Geographic location, ecological conditions, and human presence shape every soundscape. <i>Aurafact</i> reats each capture as a spatial and temporal anchor—preserving the intersection of geography, ecology, and human presence at a specific point in time.</p>
 
     <h3 class="page-h3">Sonic Artifacts</h3>
     <p class="right-ecology-body">Environmental recordings are treated as artifacts rather than media files. Each capture represents a unique acoustic state of a place — shaped by geography, ecology, atmosphere, and human activity — and is preserved as part of a growing acoustic archive.</p>
@@ -1075,7 +1078,7 @@ tr.is-playing .sound-indicator span {
   <!-- Right: research display panel -->
   <div class="studies-panel">
 
-    <p class="studies-panel-label">Acoustic Studies</p>
+    <h2 class="page-h2 space-after-24">Acoustic Studies</h2>
 
     <!-- Row 1: two large 3:2 images -->
     <div class="study-large-row">
@@ -1084,7 +1087,6 @@ tr.is-playing .sound-indicator span {
         <div class="study-img-frame">
           <img src="img/aurafact-acoustic-study-01.png" alt="Longitudinal Pressure Field"
                onerror="this.style.display='none'">
-          <div class="img-ph">img / study-01</div>
         </div>
         <div class="study-meta">
           <span class="study-meta-id">img / study-01</span>
@@ -1097,7 +1099,6 @@ tr.is-playing .sound-indicator span {
         <div class="study-img-frame">
           <img src="img/aurafact-acoustic-study-02.png" alt="Wave Interference"
                onerror="this.style.display='none'">
-          <div class="img-ph">img / study-02</div>
         </div>
         <div class="study-meta">
           <span class="study-meta-id">img / study-02</span>
@@ -1108,8 +1109,6 @@ tr.is-playing .sound-indicator span {
 
     </div>
 
-    <hr class="study-divider">
-
     <!-- Row 2: four thumbnails -->
     <div class="study-thumb-row">
 
@@ -1117,7 +1116,6 @@ tr.is-playing .sound-indicator span {
         <div class="study-img-frame">
           <img src="img/aurafact-acoustic-study-03.png" alt="Surface Resonance"
                onerror="this.style.display='none'">
-          <div class="img-ph">03</div>
         </div>
         <div class="study-meta">
           <span class="study-meta-id">study-03</span>
@@ -1130,7 +1128,6 @@ tr.is-playing .sound-indicator span {
         <div class="study-img-frame">
           <img src="img/aurafact-acoustic-study-04.png" alt="Pressure Mapping"
                onerror="this.style.display='none'">
-          <div class="img-ph">04</div>
         </div>
         <div class="study-meta">
           <span class="study-meta-id">study-04</span>
@@ -1143,7 +1140,6 @@ tr.is-playing .sound-indicator span {
         <div class="study-img-frame">
           <img src="img/aurafact-acoustic-study-05.png" alt="Frequency Decay"
                onerror="this.style.display='none'">
-          <div class="img-ph">05</div>
         </div>
         <div class="study-meta">
           <span class="study-meta-id">study-05</span>
@@ -1156,7 +1152,6 @@ tr.is-playing .sound-indicator span {
         <div class="study-img-frame">
           <img src="img/aurafact-acoustic-study-06.png" alt="Resonant Chamber"
                onerror="this.style.display='none'">
-          <div class="img-ph">06</div>
         </div>
         <div class="study-meta">
           <span class="study-meta-id">study-06</span>
