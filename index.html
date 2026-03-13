@@ -665,6 +665,138 @@ tr.is-playing .sound-indicator span {
   letter-spacing: 0.14em;
 }
 
+
+
+/* ============================================================
+   RESPONSIVE SYSTEM
+   Breakpoints:
+   — Desktop  : ≥1024px  (two-column, current default)
+   — Tablet   : 768–1023px
+   — Mobile   : <768px
+   ============================================================ */
+
+/* ── Tablet: 768–1023px ─────────────────────────────────────── */
+@media (max-width: 1023px) {
+
+  /* Nav: tighten padding, reduce link gap */
+  #site-nav { padding: 16px 24px; }
+  .nav-links { gap: 20px; }
+
+  /* Hero text */
+  #header-text  { left: 24px; bottom: 40px; }
+  #header-coords { right: 24px; bottom: 40px; }
+
+  /* Archive section: stack columns vertically */
+  .archive-section {
+    grid-template-columns: 1fr;
+    min-height: unset;
+  }
+
+  .archive-left {
+    padding: 64px 24px 48px;
+  }
+
+  /* Right column: remove left border, add top border instead */
+  .archive-right {
+    border-left: none;
+    border-top: 1px solid #1a1a1a;
+    padding: 48px 24px 64px;
+  }
+
+  /* Image block: reset negative margins */
+  .right-image-block {
+    margin-left: -24px;
+    margin-right: -24px;
+  }
+
+  /* Table: allow horizontal scroll on smaller viewports */
+  .archive-table {
+    font-size: 9px;
+  }
+
+  /* Intro text: full width */
+  .archive-intro { max-width: 100%; }
+}
+
+/* ── Mobile: <768px ─────────────────────────────────────────── */
+@media (max-width: 767px) {
+
+  /* Nav: hide links, show logo only */
+  .nav-links { display: none; }
+  #site-nav { padding: 14px 20px; }
+
+  /* Hero */
+  #hero { min-height: 100svh; }
+  #header-text  { left: 20px; bottom: 28px; }
+  #header-coords { display: none; }
+
+  .header-title {
+    font-size: clamp(18px, 6vw, 28px);
+  }
+
+  /* Intro overlay */
+  .intro-title {
+    font-size: clamp(36px, 10vw, 52px);
+    padding: 0 20px;
+  }
+  .intro-wordmark { font-size: 14px; }
+
+  /* Page content */
+  .page-content { margin-top: 100svh; }
+
+  .archive-section {
+    grid-template-columns: 1fr;
+    min-height: unset;
+  }
+
+  .archive-left {
+    padding: 48px 20px 40px;
+  }
+
+  .archive-right {
+    border-left: none;
+    border-top: 1px solid #1a1a1a;
+    padding: 40px 20px 56px;
+  }
+
+  /* Image block: full bleed */
+  .right-image-block {
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+
+  /* Table: horizontal scroll container */
+  .archive-table {
+    font-size: 8.5px;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  .archive-table thead,
+  .archive-table tbody,
+  .archive-table tr { display: table-row; }
+  .archive-table th,
+  .archive-table td  { white-space: nowrap; }
+
+  /* CTA button: full width on mobile */
+  .archive-cta {
+    display: block;
+    text-align: center;
+    align-self: unset;
+    padding: 14px 20px;
+  }
+
+  /* Quote text */
+  .right-quote {
+    font-size: clamp(16px, 5vw, 22px);
+  }
+
+  /* Section test */
+  .section-test { padding: 60px 20px; }
+}
+
 </style>
 </head>
 <body>
@@ -725,12 +857,12 @@ tr.is-playing .sound-indicator span {
         </tr>
       </thead>
       <tbody>
-        <tr data-sound="urban">
+        <tr data-sound="urban" data-audio="audio/AF-0091-world-cup-watch-party-ottawa-2022.mp3">
           <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
-          <td>AF-0091</td>
-          <td>2023-04-17 · 06:12</td>
-          <td>Urban Ambient</td>
-          <td>80 Hz – 4.2 kHz · dense low-mid</td>
+          <td>AF-0001</td>
+          <td>2022-11-25 · 16:09</td>
+          <td>Crowd Assembly</td>
+          <td>120 Hz – 5 kHz · urban</td>
         </tr>
         <tr data-sound="coastal">
           <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
@@ -752,20 +884,6 @@ tr.is-playing .sound-indicator span {
           <td>2024-03-11 · 22:05</td>
           <td>Industrial Margin</td>
           <td>60 Hz – 2 kHz · sustained harmonic drone</td>
-        </tr>
-        <tr data-sound="desert">
-          <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
-          <td>AF-0447</td>
-          <td>2024-08-22 · 05:30</td>
-          <td>Desert Dawn</td>
-          <td>400 Hz – 10 kHz · sparse, high transients</td>
-        </tr>
-        <tr data-sound="desert">
-          <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
-          <td>AF-0447</td>
-          <td>2024-08-22 · 05:30</td>
-          <td>Desert Dawn</td>
-          <td>400 Hz – 10 kHz · sparse, high transients</td>
         </tr>
         <tr data-sound="desert">
           <td class="sound-cell"><div class="sound-indicator"><span></span><span></span><span></span><span></span></div></td>
