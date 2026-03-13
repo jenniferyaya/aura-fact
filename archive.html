@@ -779,50 +779,54 @@ body::after {
 
 </div><!-- /archive-body -->
 
-<!-- Footer -->
 <footer class="site-footer">
+
+  <!-- Three nav columns -->
   <div class="footer-nav">
+
     <div class="footer-col">
       <span class="footer-col-label">Navigate</span>
       <ul>
-        <li><a href="#">Map</a></li>
-        <li><a href="archive.html">Archive</a></li>
-        <li><a href="#">Lab</a></li>
-        <li><a href="#">Manifesto</a></li>
+        <li><a href="archive.html">Archive Explorer</a></li>
       </ul>
     </div>
+
     <div class="footer-col">
       <span class="footer-col-label">About</span>
       <ul>
-        <li><a href="#">Field Methodology</a></li>
-        <li><a href="#">Equipment</a></li>
-        <li><a href="#">Contribute</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><a href="fieldguide.html">Field Guide</a></li>
+        <li><a href="mailto:yayafalanga@gmail.com">Submit a Recording</a></li>
       </ul>
     </div>
+
     <div class="footer-col">
       <span class="footer-col-label">Archive</span>
       <ul>
-        <li><a href="#">Geophony</a></li>
-        <li><a href="#">Biophony</a></li>
-        <li><a href="#">Anthropophony</a></li>
-        <li><a href="#">Collections</a></li>
+        <li><a href="archive.hmtl">Chronological Index</a></li>
       </ul>
     </div>
+
   </div>
+
+  <!-- Bottom bar -->
   <div class="footer-bottom">
-    <p class="footer-copy">© 2026 Aurafact — Environmental Sound Archive<br>Preserving Acoustic Memory</p>
+    <p class="footer-copy">
+      © 2026 Aurafact — Environmental Sound Archive<br>
+      Preserving Acoustic Memory
+    </p>
     <p class="footer-time" id="footerTime"></p>
   </div>
+
 </footer>
+
 
 
 <script>
 /* ── SPECIMEN DATA ──────────────────────────────────────────── */
 const SPECIMENS = [
   {
-    id: 'AF-0003',
-    artifact: 'World Cup Watch Party',
+    id: 'AF-0001',
+    artifact: '2022 World Cup Watch Party',
     location: 'Ottawa, CA',
     region: 'North America',
     source: 'Anthropophony',
@@ -832,121 +836,169 @@ const SPECIMENS = [
     freqHigh: '5 kHz',
     date: '2022-11-25',
     duration: '0:26',
-    audio: 'audio/AF-0003-world-cup-watch-party-ottawa-2022.mp3',
+    audio: 'audio/AF-0001-world-cup-watch-party-ottawa-2022.mp3',
     image: 'img/aurafact-acoustic-study-12.png',
     notes: 'Recorded at a public viewing event in downtown Ottawa during the 2022 FIFA World Cup. Dense crowd vocalisation, rhythmic chanting, ambient city noise underneath.',
   },
   {
-    id: 'AF-0134',
-    artifact: 'Atlantic Shore at Dusk',
-    location: 'Brittany, FR',
+    id: 'AF-0002',
+    artifact: '2022 World Cup Watch Party',
+    location: 'Ottawa, CA',
+    region: 'North America',
+    source: 'Anthropophony',
+    subtype: 'Crowd Assembly',
+    freq: '120 Hz – 5 kHz',
+    freqLow: '120 Hz',
+    freqHigh: '5 kHz',
+    date: '2022-11-25',
+    duration: '0:20',
+    audio: 'audio/AF-0002-world-cup-watch-party-ottawa-2022.mp3',
+    image: 'img/aurafact-acoustic-study-14.png',
+    notes: 'Recorded at a public viewing event in downtown Ottawa during the 2022 FIFA World Cup. Dense crowd vocalisation, rhythmic chanting, ambient city noise underneath.',
+  },
+  {
+    id: 'AF-0003',
+    artifact: '2022 World Cup Watch Party',
+    location: 'Ottawa, CA',
+    region: 'North America',
+    source: 'Anthropophony',
+    subtype: 'Crowd Assembly',
+    freq: '120 Hz – 5 kHz',
+    freqLow: '120 Hz',
+    freqHigh: '5 kHz',
+    date: '2022-11-25',
+    duration: '0:20',
+    audio: 'audio/AF-0003-world-cup-watch-party-ottawa-2022.mp3',
+    image: 'img/aurafact-acoustic-study-15.png',
+    notes: 'Recorded at a public viewing event in downtown Ottawa during the 2022 FIFA World Cup. Dense crowd vocalisation, rhythmic chanting, ambient city noise underneath.',
+  },
+ {
+    id: 'AF-0004',
+    artifact: 'Evening Motorcycle Passage',
+    location: 'Marseille, FR',
     region: 'Europe',
-    source: 'Geophony',
-    subtype: 'Coastal Field',
+    source: 'Anthropophony',
+    subtype: 'Crowd Assembly',
+    freq: '120 Hz – 5 kHz',
+    freqLow: '120 Hz',
+    freqHigh: '5 kHz',
+    date: '2023-09-05',
+    duration: '0:08',
+    audio: 'audio/AF-0004-evening-motorcycle-marseille-2023.mp3',
+    image: 'img/aurafact-acoustic-study-13.png',
+    notes: 'Single motorcycle passing along a Marseille street at dusk; sustained engine hum with brief acceleration and distant urban ambience.',
+  },
+  {
+    id: 'AF-0005',
+    artifact: 'River Edge Flow',
+    location: 'Ottawa, CA',
+    region: 'North America',
+    source: 'Biophony',
+    subtype: 'River Current',
+    freq: '60 Hz – 5 kHz',
+    freqLow: '60 Hz',
+    freqHigh: '5 kHz',
+    date: '2023-07-01',
+    duration: '0:11',
+    audio: 'audio/AF-0005-petrie-island-ottawa-2023.mp3',
+    image: 'img/aurafact-acoustic-study-16.png',
+    notes: 'Slow river movement along the Petrie Island shoreline, with continuous water flow and soft surface ripples forming a steady geophonic sound field.',
+  },
+  {
+    id: 'AF-0006',
+    artifact: 'Spring Canopy Chorus',
+    location: 'Ottawa, CA',
+    region: 'North America',
+    source: 'Biophony',
+    subtype: 'Avian Chorus',
+    freq: '300 Hz – 14 kHz',
+    freqLow: '300 Hz',
+    freqHigh: '14 kHz',
+    date: '2024-05-31',
+    duration: '0:22',
+    audio: 'audio/AF-0006-birdsong-donaldst-ottawa-2023.mp3',
+    image: 'img/aurafact-acoustic-study-11.png',
+    notes: 'Early spring green space atmosphere characterized by isolated bird vocalisations and gentle wind movement through foliage.',
+  },
+  {
+    id: 'AF-0007',
+    artifact: 'Marché Street Corridor',
+    location: 'Kinshasa, DRC',
+    region: 'Africa',
+    source: 'Anthropophony',
+    subtype: 'Market Activity',
     freq: '20 Hz – 8 kHz',
     freqLow: '20 Hz',
     freqHigh: '8 kHz',
-    date: '2023-07-03',
-    duration: '6:14',
-    audio: 'audio/AF-0003-world-cup-watch-party-ottawa-2022.mp3',
-    image: 'img/AF-0134-brittany.jpg',
-    notes: 'Low-tide recording at the Pointe du Raz headland. Consistent wave crash with long intervals, distant foghorn, wind across the microphone capsule.',
+    date: '2014-08-03',
+    duration: '0:11',
+    audio: 'audio/AF-0007-market-kinshasa-2021.mp3',
+    image: 'img/aurafact-acoustic-study-10.png',
+    notes: 'Dense marketplace activity characterized by overlapping speech, movement of goods, and continuous pedestrian flow within an open street market environment.',
   },
   {
-    id: 'AF-0208',
-    artifact: 'Boreal Interior at Dawn',
-    location: 'Quebec, CA',
-    region: 'North America',
-    source: 'Biophony',
-    subtype: 'Forest Interior',
-    freq: '200 Hz – 12 kHz',
-    freqLow: '200 Hz',
-    freqHigh: '12 kHz',
-    date: '2024-01-29',
-    duration: '8:07',
-    audio: null,
-    image: 'img/AF-0208-quebec-boreal.jpg',
-    notes: 'Recorded 4km from the nearest road. Primary bird chorus begins approximately 38 minutes before sunrise. Woodpecker percussion audible at 1:12.',
+    id: 'AF-0008',
+    artifact: '2014 World Cup Watch Party',
+    location: 'Kinshasa, DRC',
+    region: 'Africa',
+    source: 'Anthropophony',
+    subtype: 'Crowd Assembly',
+    freq: '20 Hz – 8 kHz',
+    freqLow: '20 Hz',
+    freqHigh: '8 kHz',
+    date: '2014-08-03',
+    duration: '0:16',
+    audio: 'audio/AF-0008-worldcup-kinshasa-2021.mp3',
+    image: 'img/aurafact-acoustic-study-17.png',
+    notes: 'Dense marketplace activity characterized by overlapping speech, movement of goods, and continuous pedestrian flow within an open street market environment.',
   },
   {
-    id: 'AF-0312',
-    artifact: 'Steel Mill Perimeter',
-    location: 'Liège, BE',
+    id: 'AF-0009',
+    artifact: 'Stockholm City Tram',
+    location: 'Stockholm, SE',
     region: 'Europe',
     source: 'Anthropophony',
-    subtype: 'Industrial Margin',
-    freq: '60 Hz – 2 kHz',
-    freqLow: '60 Hz',
-    freqHigh: '2 kHz',
-    date: '2024-03-11',
-    duration: '5:50',
-    audio: null,
-    image: 'img/AF-0312-liege-steelmill.jpg',
-    notes: 'Perimeter recording of an active rolling mill. The 120Hz fundamental and its harmonics are consistent throughout. Steam vent events at irregular intervals.',
+    subtype: 'Transit Corridor',
+    freq: '70 Hz – 4.5 kHz',
+    freqLow: '70 Hz',
+    freqHigh: '4.5 kHz',
+    date: '2022-01-06',
+    duration: '0:09',
+    audio: 'audio/AF-0009-citytram-stockholm-2022.mp3',
+    image: 'img/aurafact-acoustic-study-18.png',
+    notes: 'Urban tram departure in central Stockholm with rolling rail noise, electric motor acceleration, and a brief onboard public address announcement within a winter street corridor.',
   },
   {
-    id: 'AF-0447',
-    artifact: 'Saharan Plateau at Dawn',
-    location: 'Tindouf, DZ',
-    region: 'Africa',
-    source: 'Geophony',
-    subtype: 'Desert Dawn',
-    freq: '400 Hz – 10 kHz',
-    freqLow: '400 Hz',
-    freqHigh: '10 kHz',
-    date: '2024-08-22',
-    duration: '7:23',
-    audio: null,
-    image: 'img/AF-0447-tindouf-sahara.jpg',
-    notes: 'Pre-dawn silence broken by thermal wind events. Extremely low noise floor — below 12dB SPL at rest. A single bird call at 4:47AM local time.',
-  },
-  {
-    id: 'AF-0521',
-    artifact: 'Monsoon Onset',
-    location: 'Kerala, IN',
-    region: 'Asia',
-    source: 'Geophony',
-    subtype: 'Rain Event',
-    freq: '100 Hz – 14 kHz',
-    freqLow: '100 Hz',
-    freqHigh: '14 kHz',
-    date: '2023-06-04',
-    duration: '9:48',
-    audio: null,
-    image: 'img/AF-0521-kerala-monsoon.jpg',
-    notes: 'First monsoon rain of the season, recorded from an open veranda. Intensity increases sharply at 0:48. Thunder signature at 2:30 and 4:12.',
-  },
-  {
-    id: 'AF-0609',
-    artifact: 'Coral Reef Shallow',
-    location: 'Great Barrier Reef, AU',
-    region: 'Oceania',
-    source: 'Biophony',
-    subtype: 'Marine Interior',
-    freq: '50 Hz – 22 kHz',
-    freqLow: '50 Hz',
-    freqHigh: '22 kHz',
-    date: '2023-09-17',
-    duration: '12:00',
-    audio: null,
-    image: 'img/AF-0609-gbr-reef.jpg',
-    notes: 'Hydrophone recording at 4m depth on a healthy reef section. Snapping shrimp colony audible throughout. Fish vocalisation clusters at dawn.',
-  },
-  {
-    id: 'AF-0714',
-    artifact: 'Market at Opening',
-    location: 'Marrakech, MA',
-    region: 'Africa',
+    id: 'AF-0010',
+    artifact: 'Stockholm New Years Night',
+    location: 'Stockholm, SE',
+    region: 'Europe',
     source: 'Anthropophony',
-    subtype: 'Market Environment',
-    freq: '80 Hz – 6 kHz',
-    freqLow: '80 Hz',
-    freqHigh: '6 kHz',
-    date: '2022-10-08',
-    duration: '3:55',
-    audio: null,
-    image: 'img/AF-0714-marrakech-market.jpg',
-    notes: 'Dawn opening of the Jemaa el-Fna market. Vendors calling, cart wheels on stone, calls to prayer overlapping from multiple minarets.',
+    subtype: 'Crowd Assembly',
+    freq: '90 Hz – 7 kHz',
+    freqLow: '90 Hz',
+    freqHigh: '7 kHz',
+    date: '2023-01-01',
+    duration: '0:10',
+    audio: 'audio/AF-0010-newyearsparty-stockholm-2022.mp3',
+    image: 'img/aurafact-acoustic-study-19.png',
+    notes: 'New Year’s Eve fireworks over Stockholm producing sharp explosive bursts followed by brief crackling decay within a winter urban night soundscape.',
+  },
+    {
+    id: 'AF-0011',
+    artifact: 'Lyon vs PSG Match',
+    location: 'Lyon, FR',
+    region: 'Europe',
+    source: 'Anthropophony',
+    subtype: 'Crowd Assembly',
+    freq: '120 Hz – 5 kHz',
+    freqLow: '120 Hz',
+    freqHigh: '5 kHz',
+    date: '2023-09-03',
+    duration: '0:15',
+    audio: 'audio/AF-0011-soccer-psg-lyon-2023.mp3',
+    image: 'img/aurafact-acoustic-study-09.png',
+    notes: 'Stadium crowd during coordinated supporter choreography; sustained chanting, percussion, and mass vocal resonance dominate the sound environment.',
   },
 ];
 

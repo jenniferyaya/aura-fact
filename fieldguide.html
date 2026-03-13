@@ -410,7 +410,6 @@ body::after {
     color: var(--text-mono);
     display: block;
 }
-}
 
 .dimension-def {
   font-family: "Libre Baskerville", serif;
@@ -439,10 +438,6 @@ body::after {
 /* ── SECTION 04: FIELD RECORDING PRINCIPLES ─────────────────── */
 
 /* Single-column full-width layout for this section */
-.principles-section {
-  border-bottom: 1px solid var(--rule);
-}
-
 .principles-header {
   padding: 80px 80px 0;
   display: grid;
@@ -571,19 +566,19 @@ body::after {
 
 /* ── SITE FOOTER ─────────────────────────────────────────────── */
 .site-footer {
-  background-color: #f5f5f5;
+  background-color: var(--page-bg);
+  border-top: 1px solid var(--rule);
 }
 
-/* Three-column nav links row */
 .footer-nav {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border-bottom: 1px solid #1a1a1a;
+  border-bottom: 1px solid var(--rule);
 }
 
 .footer-col {
   padding: 64px 48px 64px 80px;
-  border-right: 1px solid #1a1a1a;
+  border-right: 1px solid var(--rule);
 }
 
 .footer-col:first-child { padding-left: 80px; }
@@ -616,11 +611,8 @@ body::after {
   transition: color 0.2s;
 }
 
-.footer-col ul li a:hover {
-  color: var(--text-accent);
-}
+.footer-col ul li a:hover { color: var(--text-accent); }
 
-/* Bottom bar */
 .footer-bottom {
   padding: 28px 80px;
   display: flex;
@@ -648,42 +640,18 @@ body::after {
 }
 
 /* Footer responsive */
-@media (max-width: 1023px) {
-  .footer-col:first-child { padding-left: 24px; }
-  .footer-col:last-child  { padding-right: 24px; }
-  .footer-bottom          { padding: 24px; }
+@media (max-width: 1099px) {
+  .footer-col:first-child { padding-left: 40px; }
+  .footer-col:last-child  { padding-right: 40px; }
+  .footer-bottom          { padding: 24px 40px; }
 }
 
 @media (max-width: 767px) {
-  .footer-nav {
-    grid-template-columns: 1fr;
-  }
+  .footer-nav { grid-template-columns: 1fr; }
   .footer-col {
     padding: 40px 20px;
     border-right: none;
-    border-bottom: 1px solid #1a1a1a;
-  }
-  .footer-col:first-child { padding-left: 20px; }
-  .footer-col:last-child  { padding-right: 20px; border-bottom: none; }
-  .footer-bottom          { padding: 24px 20px; flex-direction: column; align-items: flex-start; gap: 8px; }
-}
-
-
-/* Footer responsive */
-@media (max-width: 1023px) {
-  .footer-col:first-child { padding-left: 24px; }
-  .footer-col:last-child  { padding-right: 24px; }
-  .footer-bottom          { padding: 24px; }
-}
-
-@media (max-width: 767px) {
-  .footer-nav {
-    grid-template-columns: 1fr;
-  }
-  .footer-col {
-    padding: 40px 20px;
-    border-right: none;
-    border-bottom: 1px solid #1a1a1a;
+    border-bottom: 1px solid var(--rule);
   }
   .footer-col:first-child { padding-left: 20px; }
   .footer-col:last-child  { padding-right: 20px; border-bottom: none; }
@@ -1001,25 +969,22 @@ body::after {
 
 <footer class="site-footer">
 
-  <!-- Three nav columns -->
   <div class="footer-nav">
 
     <div class="footer-col">
       <span class="footer-col-label">Navigate</span>
       <ul>
-        <li><a href="#">Global Sound Map</a></li>
         <li><a href="archive.html">Archive Explorer</a></li>
-        <li><a href="#">Sonic Lab</a></li>
-        <li><a href="#">Compare Tool</a></li>
+        <li><a href="acousticstudies.html">Acoustic Studies</a></li>
+        <li><a href="fieldguide.html">Field Guide</a></li>
       </ul>
     </div>
 
     <div class="footer-col">
       <span class="footer-col-label">About</span>
       <ul>
-        <li><a href="#">The Manifesto</a></li>
-        <li><a href="#">Recording Standards</a></li>
-        <li><a href="#">Accessibility</a></li>
+        <li><a href="fieldguide.html">Field Guide</a></li>
+        <li><a href="fieldguide.html#principles">Recording Standards</a></li>
         <li><a href="#">Submit a Recording</a></li>
       </ul>
     </div>
@@ -1027,16 +992,15 @@ body::after {
     <div class="footer-col">
       <span class="footer-col-label">Archive</span>
       <ul>
-        <li><a href="#">Geophony</a></li>
-        <li><a href="#">Biophony</a></li>
-        <li><a href="#">Anthropophony</a></li>
-        <li><a href="#">Chronological Index</a></li>
+        <li><a href="archive.html">Chronological Index</a></li>
+        <li><a href="archive.html">Geophony</a></li>
+        <li><a href="archive.html">Biophony</a></li>
+        <li><a href="archive.html">Anthropophony</a></li>
       </ul>
     </div>
 
   </div>
 
-  <!-- Bottom bar -->
   <div class="footer-bottom">
     <p class="footer-copy">
       © 2026 Aurafact — Environmental Sound Archive<br>
@@ -1047,11 +1011,10 @@ body::after {
 
 </footer>
 
+
 <script>
-/* ── FOOTER CLOCK ──────────────────────────────────────────────
-   Live UTC timestamp + local time, styled to match the mono
-   label system used throughout the archive.                  */
-(function initFooterClock() {
+/* ── FOOTER CLOCK ────────────────────────────────────────────── */
+(function() {
   const el = document.getElementById('footerTime');
   if (!el) return;
 
