@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acoustic Studies — Aurafact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+
+/* ============================================================
+   COLOUR TOKENS — matches index.html + archive.html
+   ============================================================ */
+:root {
+  --bg:              #0C0C0C;
+  --text-primary:    #EDECEA;
+  --text-secondary:  #4A4A4A;
+  --text-mono:       #3A3A3A;
+  --text-accent:     #AD472F;
+  --btn-border:      #2E2E2E;
+  --btn-hover-border:#777777;
+  --btn-hover-text:  #EDECEA;
+  --nav-logo:        #EDECEA;
+  --nav-link:        #EDECEA;
+  --nav-rule:        #2c2c2c;
+  --grain-opacity:   0.045;
+  --nav-h:           61px;
+
+  /* Page-specific */
+  --page-bg:         #f5f5f5;
+  --card-bg:         #eae9e6;
+  --card-border:     #1e1e1e;
+  --rule:            #1e1e1e;
+  --tag-geo:         #4a7a62;
+  --tag-bio:         #6a5a8a;
+  --tag-anthro:      #AD472F;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; min-height: 100%; overflow-x: hidden; }
+
+body {
+  background: var(--page-bg);
+  color: var(--text-secondary);
+  font-family: "Libre Baskerville", serif;
+}
+
+/* Grain */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: var(--grain-opacity);
+  pointer-events: none;
+  z-index: 9000;
+}
+
+/* ── NAV ─────────────────────────────────────────────────────── */
+#site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  border-bottom: 1px solid var(--nav-rule);
+  background: rgba(12,12,12,0.5);
+  backdrop-filter: blur(14px);
+  height: var(--nav-h);
+}
+
+.nav-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--nav-logo);
+  text-decoration: none;
+}
+
+.nav-links { display: flex; gap: 36px; list-style: none; }
+
+.nav-links a {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--nav-link);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.nav-links a:hover { opacity: 0.6; }
+.nav-links a.active {
+  border-bottom: 1px solid var(--text-accent);
+  padding-bottom: 2px;
+}
+
+/* ── PAGE HEADER ─────────────────────────────────────────────── */
+.page-header {
+  padding-top: calc(var(--nav-h) + 56px);
+  padding-bottom: 48px;
+  padding-left: 80px;
+  padding-right: 80px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.page-header-left {}
+
+.page-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--text-accent);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.page-title {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(32px, 4.5vw, 58px);
+  color: var(--text-secondary);
+  line-height: 1.0;
+  margin-bottom: 14px;
+}
+
+.page-desc {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  line-height: 1.8;
+  color: var(--text-mono);
+  max-width: 480px;
+}
+
+.page-header-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.header-count {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 300;
+  color: var(--text-accent);
+  line-height: 1;
+  display: block;
+}
+
+.header-count-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  display: block;
+  margin-top: 6px;
+}
+
+/* ── FILTER BAR ──────────────────────────────────────────────── */
+.filter-bar {
+  padding: 0 80px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  position: sticky;
+  top: var(--nav-h);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+}
+
+.filter-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--rule);
+  color: var(--text-mono);
+  padding: 18px 24px;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
+  position: relative;
+}
+
+.filter-btn:first-child {
+  padding-left: 0;
+  border-left: none;
+}
+
+.filter-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--text-accent);
+  transform: scaleX(0);
+  transition: transform 0.2s;
+}
+
+.filter-btn:hover { color: var(--text-accent); }
+
+.filter-btn.active {
+  color: var(--text-accent);
+  font-weight: 400;
+}
+
+
+.filter-count {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 10px;
+  opacity: 0.65;
+}
+
+.filter-bar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-left: 1px solid var(--rule);
+}
+
+.view-toggle-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--rule);
+  color: var(--text-mono);
+  padding: 18px 18px;
+  cursor: pointer;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.view-toggle-btn:last-child { border-right: none; }
+.view-toggle-btn:hover,
+.view-toggle-btn.active { color: var(--text-secondary); }
+
+.view-toggle-btn svg {
+  width: 12px; height: 12px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+}
+
+/* ── GRID ────────────────────────────────────────────────────── */
+.studies-grid-wrap {
+  padding: 48px 80px 120px;
+}
+
+.studies-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+
+/* List view override */
+.studies-grid.view-list {
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+/* ── CARD ────────────────────────────────────────────────────── */
+.study-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.2s;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.35s ease, transform 0.35s ease, background 0.2s;
+}
+
+.study-card:hover { background: #e4e3e0; }
+
+.study-card.hidden {
+  display: none;
+}
+
+/* Image frame */
+.card-img-frame {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #1a1a1a;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.card-img-frame img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.88;
+  transition: opacity 0.45s, transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.study-card:hover .card-img-frame img {
+  opacity: 1;
+  transform: scale(1.03);
+}
+
+/* Placeholder when no image */
+.card-img-placeholder {
+  position: absolute; inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card-img-placeholder span {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #2a2a2a;
+}
+
+.card-img-placeholder .ph-id {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #222;
+}
+
+/* Source type tag — overlaid on image */
+.card-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border: 1px solid currentColor;
+  backdrop-filter: blur(8px);
+  background: rgba(12,12,12,0.55);
+}
+
+.card-tag.geo    { color: #72b894; }
+.card-tag.bio    { color: #a08ac8; }
+.card-tag.anthro { color: #d4705a; }
+
+/* Card body */
+.card-body {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-top: 1px solid var(--card-border);
+}
+
+.card-id {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 6px;
+}
+
+.card-title {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  flex: 1;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+}
+
+.card-location {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+}
+
+.card-subtype {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.10em;
+  color: var(--text-mono);
+  opacity: 0.6;
+}
+
+/* ── LIST VIEW CARD ──────────────────────────────────────────── */
+.view-list .study-card {
+  flex-direction: row;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
+
+.view-list .study-card:first-child {
+  border-top: 1px solid var(--card-border);
+}
+
+.view-list .card-img-frame {
+  width: 160px;
+  aspect-ratio: 4 / 3;
+  flex-shrink: 0;
+}
+
+.view-list .card-body {
+  flex-direction: row;
+  align-items: center;
+  padding: 20px 28px;
+  border-top: none;
+  border-left: 1px solid var(--card-border);
+  gap: 32px;
+}
+
+.view-list .card-title {
+  margin-bottom: 0;
+  font-size: 14px;
+  min-width: 200px;
+}
+
+.view-list .card-footer {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+  gap: 24px;
+}
+
+.view-list .card-tag {
+  position: static;
+  backdrop-filter: none;
+  background: transparent;
+}
+
+.view-list .card-tag.geo    { color: var(--tag-geo); }
+.view-list .card-tag.bio    { color: var(--tag-bio); }
+.view-list .card-tag.anthro { color: var(--tag-anthro); }
+
+
+
+/* ── EMPTY STATE ─────────────────────────────────────────────── */
+.grid-empty {
+  grid-column: 1 / -1;
+  padding: 80px 0;
+  text-align: center;
+  display: none;
+}
+
+.grid-empty.visible { display: block; }
+
+.grid-empty p {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  max-width: none;
+}
+
+/* ── LIGHTBOX ────────────────────────────────────────────────── */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.lightbox.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.lb-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(8,8,8,0.92);
+  backdrop-filter: blur(6px);
+}
+
+.lb-panel {
+  position: relative;
+  z-index: 1;
+  width: min(880px, 92vw);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(14px);
+  transition: transform 0.3s ease;
+}
+
+.lightbox.open .lb-panel {
+  transform: translateY(0);
+}
+
+.lb-panel::-webkit-scrollbar { width: 3px; }
+.lb-panel::-webkit-scrollbar-track { background: transparent; }
+.lb-panel::-webkit-scrollbar-thumb { background: #2a2a2a; }
+
+.lb-img-frame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #080808;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.lb-img-frame img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lb-img-placeholder {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.lb-img-placeholder span {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #222;
+}
+
+.lb-body {
+  padding: 32px 40px 40px;
+}
+
+.lb-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 20px;
+}
+
+.lb-header-left {}
+
+.lb-id {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #444;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.lb-title {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 26px;
+  color: var(--text-primary);
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.lb-location {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #444;
+}
+
+.lb-close {
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  color: #555;
+  width: 36px; height: 36px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.lb-close:hover { border-color: #555; color: var(--text-primary); }
+
+.lb-rule {
+  border: none;
+  border-top: 1px solid #1e1e1e;
+  margin: 0 0 24px;
+}
+
+.lb-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin-bottom: 28px;
+}
+
+.lb-meta-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.lb-meta-item:nth-child(odd) {
+  padding-right: 32px;
+  border-right: 1px solid #1a1a1a;
+}
+
+.lb-meta-item:nth-child(even) {
+  padding-left: 32px;
+}
+
+.lb-meta-key {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #333;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.lb-meta-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: #666;
+}
+
+.lb-notes-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #333;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.lb-notes {
+  font-family: "Libre Baskerville", serif;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #666;
+}
+
+.lb-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #1a1a1a;
+}
+
+.lb-nav-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  color: #555;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.lb-nav-btn:hover { border-color: #555; color: var(--text-primary); }
+.lb-nav-btn:disabled { opacity: 0.2; cursor: default; }
+
+/* ── FOOTER ──────────────────────────────────────────────────── */
+.site-footer {
+  background-color: #f5f5f5;
+  border-top: 1px solid var(--rule);
+}
+
+.footer-nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--rule);
+}
+
+.footer-col {
+  padding: 64px 48px 64px 80px;
+  border-right: 1px solid var(--rule);
+}
+
+.footer-col:last-child { border-right: none; padding-right: 80px; }
+
+.footer-col-label {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+
+.footer-col ul li a {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-col ul li a:hover { color: var(--text-accent); }
+
+.footer-bottom {
+  padding: 28px 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  line-height: 1.8;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .page-header { padding-left: 40px; padding-right: 40px; }
+  .filter-bar  { padding-left: 40px; }
+  .studies-grid-wrap { padding-left: 40px; padding-right: 40px; }
+  .studies-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 767px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: calc(var(--nav-h) + 32px) 20px 32px;
+  }
+  .page-header-right { text-align: left; }
+  .filter-bar { padding: 0 20px; overflow-x: auto; }
+  .studies-grid-wrap { padding: 24px 20px 80px; }
+  .studies-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .footer-nav { grid-template-columns: 1fr; }
+  .footer-col { padding: 40px 20px; border-right: none; border-bottom: 1px solid var(--rule); }
+  .footer-bottom { padding: 24px 20px; flex-direction: column; gap: 8px; }
+  .lb-panel { width: 100vw; max-height: 100vh; }
+  .lb-body { padding: 24px 20px 32px; }
+  .lb-meta-grid { grid-template-columns: 1fr; }
+  .lb-meta-item:nth-child(odd) { border-right: none; padding-right: 0; }
+  .lb-meta-item:nth-child(even) { padding-left: 0; }
+  .view-list .card-img-frame { width: 100px; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav id="site-nav">
+  <a href="index.html" class="nav-logo">Aurafact</a>
+  <ul class="nav-links">
+    <li><a href="archive.html">Archive</a></li>
+    <li><a href="acousticstudies.html" class="active">Acoustic Studies</a></li>
+    <li><a href="fieldguide.html">Field Guide</a></li>
+  </ul>
+</nav>
+
+<!-- Page Header -->
+<header class="page-header">
+  <div class="page-header-left">
+    <h1 class="page-title">Acoustic Studies</h1>
+    <p class="page-desc">Photographs, field sketches, and environmental portraits made alongside each recording. The image that precedes the sound.</p>
+  </div>
+  <div class="page-header-right">
+    <span class="header-count" id="totalCount">—</span>
+    <span class="header-count-label">Studies archived</span>
+  </div>
+</header>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">
+    All <span class="filter-count" id="fc-all"></span>
+  </button>
+  <button class="filter-btn" data-filter="Geophony">
+    Geophony <span class="filter-count" id="fc-geo"></span>
+  </button>
+  <button class="filter-btn" data-filter="Biophony">
+    Biophony <span class="filter-count" id="fc-bio"></span>
+  </button>
+  <button class="filter-btn" data-filter="Anthropophony">
+    Anthropophony <span class="filter-count" id="fc-anthro"></span>
+  </button>
+
+  <div class="filter-bar-right">
+    <button class="view-toggle-btn active" id="viewGrid" title="Grid view">
+      <svg viewBox="0 0 14 14"><rect x="0" y="0" width="6" height="6"/><rect x="8" y="0" width="6" height="6"/><rect x="0" y="8" width="6" height="6"/><rect x="8" y="8" width="6" height="6"/></svg>
+    </button>
+    <button class="view-toggle-btn" id="viewList" title="List view">
+      <svg viewBox="0 0 14 14"><line x1="0" y1="2" x2="14" y2="2" stroke-width="1.5"/><line x1="0" y1="7" x2="14" y2="7" stroke-width="1.5"/><line x1="0" y1="12" x2="14" y2="12" stroke-width="1.5"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Grid -->
+<main class="studies-grid-wrap">
+  <div class="studies-grid" id="studiesGrid">
+
+    <!-- Cards injected by JS -->
+    <div class="grid-empty" id="gridEmpty">
+      <p>No studies in this category yet.</p>
+    </div>
+
+  </div>
+</main>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <div class="lb-backdrop" id="lbBackdrop"></div>
+  <div class="lb-panel">
+
+    <div class="lb-img-frame">
+      <img src="" alt="" id="lb-img" style="display:none;">
+      <div class="lb-img-placeholder" id="lb-img-ph">
+        <span>No image on file</span>
+      </div>
+    </div>
+
+    <div class="lb-body">
+      <div class="lb-header">
+        <div class="lb-header-left">
+          <span class="lb-id" id="lb-id"></span>
+          <h2 class="lb-title" id="lb-title"></h2>
+          <span class="lb-location" id="lb-location"></span>
+        </div>
+        <button class="lb-close" id="lbClose" aria-label="Close">✕</button>
+      </div>
+
+      <hr class="lb-rule">
+
+      <div class="lb-meta-grid" id="lb-meta"></div>
+
+      <span class="lb-notes-label">Field Notes</span>
+      <p class="lb-notes" id="lb-notes"></p>
+
+      <div class="lb-nav">
+        <button class="lb-nav-btn" id="lbPrev">← Previous</button>
+        <button class="lb-nav-btn" id="lbNext">Next →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-nav">
+    <div class="footer-col">
+      <span class="footer-col-label">Navigate</span>
+      <ul>
+        <li><a href="#">Map</a></li>
+        <li><a href="archive.html">Archive</a></li>
+        <li><a href="acousticstudies.html">Acoustic Studies</a></li>
+        <li><a href="#">Manifesto</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-label">About</span>
+      <ul>
+        <li><a href="#">Field Methodology</a></li>
+        <li><a href="#">Equipment</a></li>
+        <li><a href="#">Contribute</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-label">Archive</span>
+      <ul>
+        <li><a href="#">Geophony</a></li>
+        <li><a href="#">Biophony</a></li>
+        <li><a href="#">Anthropophony</a></li>
+        <li><a href="#">Collections</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 Aurafact — Environmental Sound Archive<br>Preserving Acoustic Memory</p>
+  </div>
+</footer>
+
+
+<script>
+/* ============================================================
+   STUDIES DATA
+   To add a study: copy one object, update the fields.
+   image: path to your file, or null for placeholder.
+   featured: true makes the card span 2 columns (use sparingly).
+   ============================================================ */
+const STUDIES = [
+  {
+    id: 'AF-0003',
+    title: 'World Cup Watch Party',
+    location: 'Ottawa, CA',
+    region: 'North America',
+    source: 'Anthropophony',
+    subtype: 'Crowd Assembly',
+    freq: '120 Hz – 5 kHz',
+    date: '2022-11-25',
+    duration: '4:32',
+    image: 'img/AF-0003-ottawa.jpg',
+    featured: false,
+    notes: 'Recorded at a public viewing event in downtown Ottawa during the 2022 FIFA World Cup. Dense crowd vocalisation, rhythmic chanting, ambient city noise underneath.',
+  },
+  {
+    id: 'AF-0134',
+    title: 'Atlantic Shore at Dusk',
+    location: 'Brittany, FR',
+    region: 'Europe',
+    source: 'Geophony',
+    subtype: 'Coastal Field',
+    freq: '20 Hz – 8 kHz',
+    date: '2023-07-03',
+    duration: '6:14',
+    image: 'img/AF-0134-brittany.jpg',
+    featured: true,
+    notes: 'Low-tide recording at the Pointe du Raz headland. Consistent wave crash with long intervals, distant foghorn, wind across the microphone capsule.',
+  },
+  {
+    id: 'AF-0208',
+    title: 'Boreal Interior at Dawn',
+    location: 'Quebec, CA',
+    region: 'North America',
+    source: 'Biophony',
+    subtype: 'Forest Interior',
+    freq: '200 Hz – 12 kHz',
+    date: '2024-01-29',
+    duration: '8:07',
+    image: 'img/AF-0208-quebec-boreal.jpg',
+    featured: false,
+    notes: 'Recorded 4km from the nearest road. Primary bird chorus begins approximately 38 minutes before sunrise. Woodpecker percussion audible at 1:12.',
+  },
+  {
+    id: 'AF-0312',
+    title: 'Steel Mill Perimeter',
+    location: 'Liège, BE',
+    region: 'Europe',
+    source: 'Anthropophony',
+    subtype: 'Industrial Margin',
+    freq: '60 Hz – 2 kHz',
+    date: '2024-03-11',
+    duration: '5:50',
+    image: 'img/AF-0312-liege-steelmill.jpg',
+    featured: false,
+    notes: 'Perimeter recording of an active rolling mill. The 120Hz fundamental and its harmonics are consistent throughout. Steam vent events at irregular intervals.',
+  },
+  {
+    id: 'AF-0447',
+    title: 'Saharan Plateau at Dawn',
+    location: 'Tindouf, DZ',
+    region: 'Africa',
+    source: 'Geophony',
+    subtype: 'Desert Dawn',
+    freq: '400 Hz – 10 kHz',
+    date: '2024-08-22',
+    duration: '7:23',
+    image: 'img/AF-0447-tindouf-sahara.jpg',
+    featured: true,
+    notes: 'Pre-dawn silence broken by thermal wind events. Extremely low noise floor — below 12dB SPL at rest. A single bird call at 4:47AM local time.',
+  },
+  {
+    id: 'AF-0521',
+    title: 'Monsoon Onset',
+    location: 'Kerala, IN',
+    region: 'Asia',
+    source: 'Geophony',
+    subtype: 'Rain Event',
+    freq: '100 Hz – 14 kHz',
+    date: '2023-06-04',
+    duration: '9:48',
+    image: 'img/AF-0521-kerala-monsoon.jpg',
+    featured: false,
+    notes: 'First monsoon rain of the season, recorded from an open veranda. Intensity increases sharply at 0:48. Thunder signature at 2:30 and 4:12.',
+  },
+  {
+    id: 'AF-0609',
+    title: 'Coral Reef Shallow',
+    location: 'Great Barrier Reef, AU',
+    region: 'Oceania',
+    source: 'Biophony',
+    subtype: 'Marine Interior',
+    freq: '50 Hz – 22 kHz',
+    date: '2023-09-17',
+    duration: '12:00',
+    image: 'img/AF-0609-gbr-reef.jpg',
+    featured: false,
+    notes: 'Hydrophone recording at 4m depth on a healthy reef section. Snapping shrimp colony audible throughout. Fish vocalisation clusters at dawn.',
+  },
+  {
+    id: 'AF-0714',
+    title: 'Market at Opening',
+    location: 'Marrakech, MA',
+    region: 'Africa',
+    source: 'Anthropophony',
+    subtype: 'Market Environment',
+    freq: '80 Hz – 6 kHz',
+    date: '2022-10-08',
+    duration: '3:55',
+    image: 'img/AF-0714-marrakech-market.jpg',
+    featured: false,
+    notes: 'Dawn opening of the Jemaa el-Fna market. Vendors calling, cart wheels on stone, calls to prayer overlapping from multiple minarets.',
+  },
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const state = {
+  filter: 'all',
+  view: 'grid',
+  lightboxIndex: null,   // index into VISIBLE array
+};
+
+let visibleStudies = [...STUDIES]; // filtered set
+
+/* ============================================================
+   TAG CLASS HELPER
+   ============================================================ */
+function tagClass(source) {
+  if (source === 'Geophony')      return 'geo';
+  if (source === 'Biophony')      return 'bio';
+  if (source === 'Anthropophony') return 'anthro';
+  return '';
+}
+
+/* ============================================================
+   BUILD CARDS
+   ============================================================ */
+function buildCards() {
+  const grid = document.getElementById('studiesGrid');
+  const empty = document.getElementById('gridEmpty');
+
+  // Remove existing cards (keep empty state el)
+  grid.querySelectorAll('.study-card').forEach(c => c.remove());
+
+  visibleStudies = STUDIES.filter(s =>
+    state.filter === 'all' || s.source === state.filter
+  );
+
+  // Empty state
+  empty.classList.toggle('visible', visibleStudies.length === 0);
+
+  visibleStudies.forEach((s, idx) => {
+    const tc = tagClass(s.source);
+    const card = document.createElement('div');
+    card.className = 'study-card';
+    card.dataset.index = idx;
+
+    card.innerHTML = `
+      <div class="card-img-frame">
+        ${s.image
+          ? `<img src="${s.image}" alt="${s.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+          : ''}
+        <div class="card-img-placeholder" style="display:${s.image ? 'none' : 'flex'}">
+          <span class="ph-id">${s.id}</span>
+          <span>No image on file</span>
+        </div>
+        <span class="card-tag ${tc}">${s.source}</span>
+      </div>
+      <div class="card-body">
+        <span class="card-id">${s.id}</span>
+        <h2 class="card-title">${s.title}</h2>
+        <div class="card-footer">
+          <span class="card-location">${s.location}</span>
+          <span class="card-subtype">${s.subtype}</span>
+        </div>
+      </div>
+    `;
+
+    card.addEventListener('click', () => openLightbox(idx));
+    grid.insertBefore(card, empty);
+  });
+
+  // Update filter counts
+  updateCounts();
+}
+
+/* ============================================================
+   FILTER COUNTS
+   ============================================================ */
+function updateCounts() {
+  document.getElementById('fc-all').textContent   = STUDIES.length;
+  document.getElementById('fc-geo').textContent   = STUDIES.filter(s => s.source === 'Geophony').length;
+  document.getElementById('fc-bio').textContent   = STUDIES.filter(s => s.source === 'Biophony').length;
+  document.getElementById('fc-anthro').textContent = STUDIES.filter(s => s.source === 'Anthropophony').length;
+  document.getElementById('totalCount').textContent = STUDIES.length;
+}
+
+/* ============================================================
+   FILTER BUTTONS
+   ============================================================ */
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.filter = btn.dataset.filter;
+    buildCards();
+  });
+});
+
+/* ============================================================
+   VIEW TOGGLE
+   ============================================================ */
+document.getElementById('viewGrid').addEventListener('click', () => {
+  state.view = 'grid';
+  document.getElementById('studiesGrid').classList.remove('view-list');
+  document.getElementById('viewGrid').classList.add('active');
+  document.getElementById('viewList').classList.remove('active');
+  buildCards();
+});
+
+document.getElementById('viewList').addEventListener('click', () => {
+  state.view = 'list';
+  document.getElementById('studiesGrid').classList.add('view-list');
+  document.getElementById('viewList').classList.add('active');
+  document.getElementById('viewGrid').classList.remove('active');
+  buildCards();
+});
+
+/* ============================================================
+   LIGHTBOX
+   ============================================================ */
+function openLightbox(idx) {
+  state.lightboxIndex = idx;
+  populateLightbox(idx);
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function populateLightbox(idx) {
+  const s = visibleStudies[idx];
+  if (!s) return;
+
+  // Image
+  const imgEl = document.getElementById('lb-img');
+  const phEl  = document.getElementById('lb-img-ph');
+  if (s.image) {
+    imgEl.src = s.image;
+    imgEl.alt = s.title;
+    imgEl.style.display = 'block';
+    phEl.style.display  = 'none';
+  } else {
+    imgEl.style.display = 'none';
+    phEl.style.display  = 'flex';
+  }
+
+  // Header
+  document.getElementById('lb-id').textContent       = s.id;
+  document.getElementById('lb-title').textContent    = s.title;
+  document.getElementById('lb-location').textContent = `${s.location} · ${s.date}`;
+
+  // Meta grid
+  const metaItems = [
+    ['Source',    s.source],
+    ['Subtype',   s.subtype],
+    ['Region',    s.region],
+    ['Frequency', s.freq],
+    ['Recorded',  s.date],
+    ['Duration',  s.duration],
+  ];
+  document.getElementById('lb-meta').innerHTML = metaItems.map(([k, v]) => `
+    <div class="lb-meta-item">
+      <span class="lb-meta-key">${k}</span>
+      <span class="lb-meta-val">${v}</span>
+    </div>
+  `).join('');
+
+  // Notes
+  document.getElementById('lb-notes').textContent = s.notes;
+
+  // Nav buttons
+  document.getElementById('lbPrev').disabled = idx === 0;
+  document.getElementById('lbNext').disabled = idx === visibleStudies.length - 1;
+}
+
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lbBackdrop').addEventListener('click', closeLightbox);
+
+document.getElementById('lbPrev').addEventListener('click', () => {
+  if (state.lightboxIndex > 0) {
+    state.lightboxIndex--;
+    populateLightbox(state.lightboxIndex);
+  }
+});
+
+document.getElementById('lbNext').addEventListener('click', () => {
+  if (state.lightboxIndex < visibleStudies.length - 1) {
+    state.lightboxIndex++;
+    populateLightbox(state.lightboxIndex);
+  }
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('lightbox');
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape')      closeLightbox();
+  if (e.key === 'ArrowLeft')   document.getElementById('lbPrev').click();
+  if (e.key === 'ArrowRight')  document.getElementById('lbNext').click();
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+buildCards();
+</script>
+
+</body>
+</html>
