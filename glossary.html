@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossary — Aurafact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+
+/* ============================================================
+   COLOUR TOKENS — exact match with index.html
+   ============================================================ */
+:root {
+  --bg:              #0C0C0C;
+  --text-primary:    #EDECEA;
+  --text-secondary:  #4A4A4A;
+  --text-mono:       #3A3A3A;
+  --text-accent:     #AD472F;
+  --btn-border:      #2E2E2E;
+  --btn-text:        #2E2E2E;
+  --btn-hover-border:#777777;
+  --btn-hover-text:  #EDECEA;
+  --nav-logo:        #EDECEA;
+  --nav-link:        #EDECEA;
+  --nav-rule:        #2c2c2c;
+  --nav-h:           61px;
+  --grain-opacity:   0.045;
+
+  /* Page */
+  --page-bg:         #f5f5f5;
+  --rule:            #1a1a1a;
+  --rule-light:      #e0dfdc;
+
+  /* Taxonomy colours */
+  --geo:             #4a7a62;
+  --bio:             #6a5a8a;
+  --anthro:          #AD472F;
+}
+/* ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; min-height: 100%; overflow-x: hidden; }
+
+body {
+  background: var(--page-bg);
+  color: var(--text-secondary);
+  font-family: "Libre Baskerville", serif;
+}
+
+/* Grain */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: var(--grain-opacity);
+  pointer-events: none;
+  z-index: 9000;
+}
+
+/* ── NAV ─────────────────────────────────────────────────────── */
+#site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  border-bottom: 1px solid var(--nav-rule);
+  background: rgba(12,12,12,0.5);
+  backdrop-filter: blur(14px);
+  height: var(--nav-h);
+}
+
+.nav-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--nav-logo);
+  text-decoration: none;
+}
+
+.nav-links { display: flex; gap: 36px; list-style: none; }
+
+.nav-links a {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--nav-link);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.nav-links a:hover { opacity: 0.6; }
+.nav-links a.active {
+  border-bottom: 1px solid var(--text-accent);
+  padding-bottom: 2px;
+}
+
+/* ── PAGE HEADER ─────────────────────────────────────────────── */
+.page-header {
+  padding-top: calc(var(--nav-h) + 80px);
+  padding-bottom: 64px;
+  padding-left: 80px;
+  padding-right: 80px;
+  border-bottom: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 80px;
+  align-items: end;
+}
+
+.page-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--text-accent);
+  margin-bottom: 16px;
+  display: block;
+}
+
+.page-title {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(32px, 4.5vw, 58px);
+  color: var(--text-secondary);
+  line-height: 1.0;
+  margin-bottom: 14px;
+}
+
+.page-desc {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  color: var(--text-mono);
+  max-width: 520px;
+}
+
+.page-header-right {
+  padding-bottom: 4px;
+  text-align: right;
+}
+
+.header-count {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 300;
+  color: var(--text-accent);
+  line-height: 1;
+  display: block;
+}
+
+.header-count-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  display: block;
+  margin-top: 6px;
+}
+
+/* ── ALPHABET JUMP NAV ───────────────────────────────────────── */
+.alpha-nav {
+  position: sticky;
+  top: var(--nav-h);
+  z-index: 100;
+  background: rgba(245,245,245,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--rule);
+  padding: 0 80px;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.alpha-nav::-webkit-scrollbar { display: none; }
+
+.alpha-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--rule-light);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.alpha-btn:first-child { border-left: none; }
+.alpha-btn:hover { color: var(--text-accent); background: rgba(173,71,47,0.04); }
+.alpha-btn.has-entries { color: var(--text-secondary); }
+.alpha-btn.empty { opacity: 0.28; pointer-events: none; cursor: default; }
+
+/* ── MAIN BODY: two-column ───────────────────────────────────── */
+.glossary-body {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+}
+
+/* ── LEFT: sticky letter index ─────────────────────────────────  */
+.letter-index {
+  position: sticky;
+  top: calc(var(--nav-h) + 49px); /* nav + alpha-nav height */
+  align-self: start;
+  padding: 56px 32px 56px 80px;
+  border-right: 1px solid var(--rule);
+}
+
+.letter-index-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 20px;
+  display: block;
+}
+
+.letter-index-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.letter-index-list li a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule-light);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.letter-index-list li a:hover { color: var(--text-accent); }
+
+.letter-index-count {
+  font-size: 9px;
+  opacity: 0.55;
+}
+
+/* ── RIGHT: entries ──────────────────────────────────────────── */
+.glossary-entries {
+  padding: 0;
+}
+
+/* ── LETTER GROUP ────────────────────────────────────────────── */
+.letter-group-header {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  border-bottom: 1px solid var(--rule-light);
+}
+
+.letter-heading {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(48px, 6vw, 80px);
+  color: var(--text-accent);
+  line-height: 1;
+  padding: 32px 24px 32px 40px;
+  opacity: 0.35;
+}
+
+.letter-group-meta {
+  padding: 32px 80px 32px 40px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.letter-group-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+}
+
+/* ── ENTRY ───────────────────────────────────────────────────── */
+.glossary-entry {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  transition: background 0.15s;
+}
+
+.glossary-entry:last-child { border-bottom: none; }
+.glossary-entry:hover { background: rgba(0,0,0,0.025); }
+
+.entry-term-col {
+  padding: 32px 24px 32px 40px;
+  border-right: 1px solid var(--rule-light);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.entry-term {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+.entry-term-abbr {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+}
+
+.entry-def-col {
+  padding: 32px 80px 32px 40px;
+}
+
+.entry-def {
+  font-family: "Libre Baskerville", serif;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  max-width: 640px;
+}
+
+.entry-def em {
+  font-style: italic;
+  color: var(--text-accent);
+}
+
+/* Pull quote — used for Soundmark which has the Schafer attribution */
+.entry-attribution {
+  margin-top: 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+}
+
+/* ── SITE FOOTER ─────────────────────────────────────────────── */
+.site-footer {
+  background-color: var(--page-bg);
+  border-top: 1px solid var(--rule);
+}
+
+.footer-nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--rule);
+}
+
+.footer-col {
+  padding: 64px 48px 64px 80px;
+  border-right: 1px solid var(--rule);
+}
+
+.footer-col:first-child { padding-left: 80px; }
+.footer-col:last-child  { border-right: none; padding-right: 80px; }
+
+.footer-col-label {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 24px;
+  padding-bottom: 14px;
+}
+
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-col ul li a {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.10em;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-col ul li a:hover { color: var(--text-accent); }
+
+.footer-bottom {
+  padding: 28px 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  line-height: 1.8;
+}
+
+.footer-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  line-height: 1.8;
+  text-align: right;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 1099px) {
+  .page-header    { padding: calc(var(--nav-h) + 56px) 40px 56px; gap: 48px; }
+  .alpha-nav      { padding: 0 40px; }
+  .letter-index   { padding: 48px 24px 48px 40px; }
+  .letter-heading { padding: 28px 20px 28px 24px; }
+  .letter-group-meta { padding: 28px 40px 28px 24px; }
+  .glossary-entry { grid-template-columns: 200px 1fr; }
+  .entry-term-col { padding: 28px 20px 28px 24px; }
+  .entry-def-col  { padding: 28px 40px 28px 24px; }
+  .footer-col:first-child { padding-left: 40px; }
+  .footer-col:last-child  { padding-right: 40px; }
+  .footer-bottom          { padding: 24px 40px; }
+}
+
+@media (max-width: 900px) {
+  .page-header { grid-template-columns: 1fr; gap: 32px; }
+  .page-header-right { text-align: left; }
+  .glossary-body { grid-template-columns: 1fr; }
+  .letter-index {
+    display: none; /* hidden on tablet/mobile — alpha-nav covers navigation */
+  }
+  .glossary-entry { grid-template-columns: 1fr; }
+  .entry-term-col {
+    padding: 24px 24px 12px;
+    border-right: none;
+    border-bottom: 1px solid var(--rule-light);
+  }
+  .entry-def-col { padding: 16px 24px 28px; }
+  .letter-heading { padding: 24px 20px; }
+  .letter-group-meta { padding: 24px 24px; }
+}
+
+@media (max-width: 767px) {
+  #site-nav { padding: 14px 20px; }
+  .nav-links { display: none; }
+  .page-header { padding: calc(var(--nav-h) + 32px) 20px 40px; }
+  .alpha-nav { padding: 0 20px; }
+  .alpha-btn { padding: 12px 12px; font-size: 10px; }
+  .letter-heading { font-size: clamp(36px, 8vw, 56px); }
+  .entry-term-col { padding: 20px 20px 10px; }
+  .entry-def-col  { padding: 12px 20px 24px; }
+  .footer-nav { grid-template-columns: 1fr; }
+  .footer-col {
+    padding: 40px 20px;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+  }
+  .footer-col:first-child { padding-left: 20px; }
+  .footer-col:last-child  { padding-right: 20px; border-bottom: none; }
+  .footer-bottom { padding: 24px 20px; flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav id="site-nav">
+  <a href="index.html" class="nav-logo">Aurafact</a>
+  <ul class="nav-links">
+    <li><a href="archive.html">Archive</a></li>
+    <li><a href="acousticstudies.html">Acoustic Studies</a></li>
+    <li><a href="fieldguide.html">Field Guide</a></li>
+    <li><a href="glossary.html" class="active">Glossary</a></li>
+  </ul>
+</nav>
+
+<!-- ── PAGE HEADER ────────────────────────────────────────────── -->
+<header class="page-header">
+  <div>
+    <h1 class="page-title">The Language of<br>Soundscape Ecology</h1>
+    <p class="page-desc">This lexicon defines the technical and conceptual framework used by Aurafact to categorize, analyze, and preserve environmental audio.</p>
+  </div>
+  <div class="page-header-right">
+    <span class="header-count">17</span>
+    <span class="header-count-label">Terms defined</span>
+  </div>
+</header>
+
+<!-- ── ALPHABET JUMP NAV ──────────────────────────────────────── -->
+<nav class="alpha-nav" aria-label="Jump to letter">
+  <a href="#letter-A" class="alpha-btn has-entries">A</a>
+  <a href="#" class="alpha-btn empty">B</a>
+  <a href="#" class="alpha-btn empty">C</a>
+  <a href="#letter-D" class="alpha-btn has-entries">D</a>
+  <a href="#" class="alpha-btn empty">E</a>
+  <a href="#letter-F" class="alpha-btn has-entries">F</a>
+  <a href="#" class="alpha-btn empty">G</a>
+  <a href="#letter-H" class="alpha-btn has-entries">H</a>
+  <a href="#" class="alpha-btn empty">I</a>
+  <a href="#" class="alpha-btn empty">J</a>
+  <a href="#" class="alpha-btn empty">K</a>
+  <a href="#letter-L" class="alpha-btn has-entries">L</a>
+  <a href="#letter-M" class="alpha-btn has-entries">M</a>
+  <a href="#" class="alpha-btn empty">N</a>
+  <a href="#" class="alpha-btn empty">O</a>
+  <a href="#letter-P" class="alpha-btn has-entries">P</a>
+  <a href="#" class="alpha-btn empty">Q</a>
+  <a href="#letter-R" class="alpha-btn has-entries">R</a>
+  <a href="#letter-S" class="alpha-btn has-entries">S</a>
+  <a href="#letter-T" class="alpha-btn has-entries">T</a>
+  <a href="#" class="alpha-btn empty">U</a>
+  <a href="#" class="alpha-btn empty">V</a>
+  <a href="#" class="alpha-btn empty">W</a>
+  <a href="#" class="alpha-btn empty">X</a>
+  <a href="#" class="alpha-btn empty">Y</a>
+  <a href="#" class="alpha-btn empty">Z</a>
+</nav>
+
+<!-- ── MAIN BODY ─────────────────────────────────────────────── -->
+<div class="glossary-body">
+
+  <!-- Left: sticky letter index -->
+  <aside class="letter-index">
+    <span class="letter-index-label">Index</span>
+    <ul class="letter-index-list">
+      <li><a href="#letter-A"><span>A</span><span class="letter-index-count">4</span></a></li>
+      <li><a href="#letter-D"><span>D</span><span class="letter-index-count">2</span></a></li>
+      <li><a href="#letter-F"><span>F</span><span class="letter-index-count">1</span></a></li>
+      <li><a href="#letter-H"><span>H</span><span class="letter-index-count">1</span></a></li>
+      <li><a href="#letter-L"><span>L</span><span class="letter-index-count">1</span></a></li>
+      <li><a href="#letter-M"><span>M</span><span class="letter-index-count">1</span></a></li>
+      <li><a href="#letter-P"><span>P</span><span class="letter-index-count">2</span></a></li>
+      <li><a href="#letter-R"><span>R</span><span class="letter-index-count">1</span></a></li>
+      <li><a href="#letter-S"><span>S</span><span class="letter-index-count">3</span></a></li>
+      <li><a href="#letter-T"><span>T</span><span class="letter-index-count">1</span></a></li>
+    </ul>
+  </aside>
+
+  <!-- Right: all entries -->
+  <main class="glossary-entries">
+
+    <!-- ── A ── -->
+    <section class="letter-group" id="letter-A">
+      <div class="letter-group-header">
+        <h2 class="letter-heading">A</h2>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Acoustic Ecology</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">The study of the relationship, mediated through sound, between living organisms and their environment. It explores how soundscapes affect the biological and social health of an ecosystem.</p>
+        </div>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Acoustic Niche Hypothesis</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">The theory that species in a healthy ecosystem evolve to communicate in specific frequency bands or time slots to avoid "masking" each other — much like instruments in an orchestra occupying distinct registers to remain audible within the ensemble.</p>
+        </div>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Ambient Noise Floor</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">The collective sound of all distant, non-identifiable sources in an environment. In archiving, the noise floor is not "static" to be removed, but a vital indicator of a location's spatial scale and acoustic health.</p>
+        </div>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Attenuation</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">The gradual loss of intensity as sound travels through a medium. High frequencies attenuate faster than low frequencies — which is why a distant thunderstorm sounds like a low rumble even when its source is intense broadband noise.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── D ── -->
+    <section class="letter-group" id="letter-D">
+      <div class="letter-group-header">
+        <h2 class="letter-heading">D</h2>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Diffraction</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">The bending of sound waves around obstacles or through openings. This explains why you can hear a bird behind a thick tree trunk even if you cannot see it — the wave bends around the obstacle, carrying acoustic information across the obstruction.</p>
+        </div>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Dynamic Range</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">The ratio between the quietest and loudest sounds in a recording or environment. A desert at dawn has a vastly different dynamic range than a coastal cliffside during a gale — and preserving this contrast is central to archival integrity.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── F ── -->
+    <section class="letter-group" id="letter-F">
+      <div class="letter-group-header">
+        <h2 class="letter-heading">F</h2>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Foley</span>
+          <span class="entry-term-abbr">Incidental</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">In a field recording context, sounds created by the physical movement of the recordist or their equipment — clothing rustle, footfall, cable noise. Aurafact principles dictate that these must be minimized to achieve <em>Zero Acoustic Impact</em> on the specimen.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── H ── -->
+    <section class="letter-group" id="letter-H">
+      <div class="letter-group-header">
+        <h2 class="letter-heading">H</h2>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Hi-Fi Soundscape</span>
+          <span class="entry-term-abbr">High Fidelity</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">An environment where the signal-to-noise ratio is high, allowing individual sounds to be heard clearly without overlapping or masking. Typically found in remote or protected natural areas where anthropophonic interference is minimal or absent.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── L ── -->
+    <section class="letter-group" id="letter-L">
+      <div class="letter-group-header">
+        <h2 class="letter-heading">L</h2>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Lo-Fi Soundscape</span>
+          <span class="entry-term-abbr">Low Fidelity</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">An environment where individual sounds are obscured by a dense, overlapping wash of noise — often anthropophonic in origin. In a Lo-Fi soundscape, perspective is lost and the "acoustic horizon" is significantly narrowed, compressing the listener's sense of spatial depth.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── M ── -->
+    <section class="letter-group" id="letter-M">
+      <div class="letter-group-header">
+        <h2 class="letter-heading">M</h2>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Masking</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">A biological or technical phenomenon where one sound interferes with the perception of another. For example, the sustained drone of a highway "masking" the subtle frequency signature of a nearby stream — rendering the quieter signal imperceptible without altering it physically.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── P ── -->
+    <section class="letter-group" id="letter-P">
+      <div class="letter-group-header">
+        <h2 class="letter-heading">P</h2>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Propagation</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">The way sound travels through a specific environment. Factors like humidity, temperature, and topography — a canyon versus a meadow — fundamentally alter how a sound propagates, determining its reach, timbre, and the reflections it accumulates along the way.</p>
+        </div>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Psychoacoustics</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">The scientific study of sound perception — how humans psychologically and physiologically respond to various frequencies, rhythms, and volumes. Psychoacoustics informs the design of listening interfaces and the annotation of archive specimens.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── R ── -->
+    <section class="letter-group" id="letter-R">
+      <div class="letter-group-header">
+        <h2 class="letter-heading">R</h2>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Reflection</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">The "bouncing" of sound waves off hard surfaces. The timing and character of reflections — echoes — provide the listener with an intuitive sense of the physical size and material composition of a space, encoding spatial information into the waveform itself.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── S ── -->
+    <section class="letter-group" id="letter-S">
+      <div class="letter-group-header">
+        <h2 class="letter-heading">S</h2>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Signal-to-Noise Ratio</span>
+          <span class="entry-term-abbr">SNR</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">A measure used to compare the level of a desired signal — such as a specific bird call — to the level of background noise. A high SNR indicates a clean, intelligible recording; a low SNR indicates the signal is buried within the ambient noise floor.</p>
+        </div>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Soundmark</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">A sound that is unique to a specific community or location — an acoustic landmark. Examples include a particular lighthouse foghorn or a historic town bell whose character is inseparable from the identity of the place that produces it.</p>
+          <p class="entry-attribution">Term coined by R. Murray Schafer · World Soundscape Project</p>
+        </div>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Spectrogram</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">A visual representation of the spectrum of frequencies in a sound as they vary with time. It is the primary tool used by researchers to "see" the layers of an archive — revealing the simultaneous presence of biophonic, geophonic, and anthropophonic elements at a glance.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── T ── -->
+    <section class="letter-group" id="letter-T">
+      <div class="letter-group-header">
+        <h2 class="letter-heading">T</h2>
+      </div>
+
+      <div class="glossary-entry">
+        <div class="entry-term-col">
+          <span class="entry-term">Transient</span>
+        </div>
+        <div class="entry-def-col">
+          <p class="entry-def">A high-amplitude, short-duration sound at the beginning of a waveform — a twig snapping, or a single raindrop striking a leaf. Transients provide the "definition" in an acoustic texture: they are the moments of onset that allow the ear to resolve one event from another.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────── -->
+<footer class="site-footer">
+
+  <div class="footer-nav">
+
+    <div class="footer-col">
+      <span class="footer-col-label">Navigate</span>
+      <ul>
+        <li><a href="archive.html">Archive Explorer</a></li>
+        <li><a href="acousticstudies.html">Acoustic Studies</a></li>
+        <li><a href="fieldguide.html">Field Guide</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <span class="footer-col-label">About</span>
+      <ul>
+        <li><a href="fieldguide.html">Field Guide</a></li>
+        <li><a href="fieldguide.html#principles">Recording Standards</a></li>
+        <li><a href="#">Submit a Recording</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <span class="footer-col-label">Archive</span>
+      <ul>
+        <li><a href="archive.html">Chronological Index</a></li>
+        <li><a href="archive.html">Geophony</a></li>
+        <li><a href="archive.html">Biophony</a></li>
+        <li><a href="archive.html">Anthropophony</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p class="footer-copy">
+      © 2026 Aurafact — Environmental Sound Archive<br>
+      Preserving Acoustic Memory
+    </p>
+    <p class="footer-time" id="footerTime"></p>
+  </div>
+
+</footer>
+
+<script>
+/* ── FOOTER CLOCK ────────────────────────────────────────────── */
+(function() {
+  const el = document.getElementById('footerTime');
+  if (!el) return;
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const now = new Date();
+    const utcH = pad(now.getUTCHours());
+    const utcM = pad(now.getUTCMinutes());
+    const utcS = pad(now.getUTCSeconds());
+    const locH = pad(now.getHours());
+    const locM = pad(now.getMinutes());
+    el.textContent = `UTC ${utcH}:${utcM}:${utcS}  ·  Local ${locH}:${locM}`;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+
+</body>
+</html>
