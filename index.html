@@ -295,41 +295,32 @@ body::after {
   border-bottom: 1px solid #1a1a1a;
 }
 
-/* Primary large image */
-.study-primary {
-  margin-bottom: 24px;
-}
-
+/* ── Image frame: shared base ─── */
 .study-img-frame {
+  position: relative;
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
   overflow: hidden;
   line-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.study-primary .study-img-frame {
-  aspect-ratio: 16 / 7;
-}
-
-.study-primary .study-img-frame .img-ph {
-  aspect-ratio: 16 / 7;
 }
 
 .study-img-frame img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  opacity: 0.85;
+  opacity: 0.88;
   transition: opacity 0.4s;
 }
 
 .study-img-frame img:hover { opacity: 1; }
 
-/* Image placeholder */
+/* Placeholder — visible only when no img present */
 .img-ph {
-  width: 100%;
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -341,59 +332,72 @@ body::after {
   color: #222;
 }
 
-/* Study metadata */
+/* ── Row 1: two large images 3:2 ─── */
+.study-large-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.study-large .study-img-frame {
+  aspect-ratio: 3 / 2;
+}
+
+/* ── Divider ─── */
+.study-divider {
+  border: none;
+  border-top: 1px solid #1a1a1a;
+  margin: 0 0 24px;
+}
+
+/* ── Row 2: four thumbnails ─── */
+.study-thumb-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.study-thumb .study-img-frame {
+  aspect-ratio: 1 / 1;
+}
+
+/* ── Metadata block ─── */
 .study-meta {
-  padding: 12px 0 0;
-  margin-bottom: 4px;
+  padding: 8px 0 0;
 }
 
 .study-meta-id {
   display: block;
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 7px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--text-mono);
-  margin-bottom: 3px;
+  margin-bottom: 2px;
 }
 
 .study-meta-title {
   display: block;
   font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  font-size: 10px;
+  letter-spacing: 0.06em;
   color: var(--text-secondary);
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 
 .study-meta-sub {
   display: block;
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: 0.10em;
+  text-transform: uppercase;
   color: var(--text-mono);
 }
 
-/* Divider between primary and secondary */
-.study-divider {
-  border: none;
-  border-top: 1px solid #1a1a1a;
-  margin: 24px 0;
-}
-
-/* Secondary row: two small images */
-.study-secondary-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.study-secondary .study-img-frame {
-  aspect-ratio: 4 / 3;
-}
-
-.study-secondary .study-img-frame .img-ph {
-  aspect-ratio: 4 / 3;
+/* Thumbnail meta: even more compact */
+.study-thumb .study-meta-title {
+  font-size: 8px;
 }
 
 .archive-table-title {
@@ -416,8 +420,8 @@ body::after {
   margin-bottom: 4px;
 }
 .page-h3 {
-  font-family: "Libre Baskerville", serif;
-  font-size: 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
   font-weight: 400;
   margin-bottom: 4px;
 }
@@ -429,7 +433,7 @@ body::after {
   font-family: "Libre Baskerville", serif;
   font-style: italic;
   font-weight: 300;
-  font-size: clamp(15px, 1.5vw, 20px);
+  font-size: clamp(15px, 1.5vw, 24px);
   line-height: 1.55;
   margin-bottom: 16px;
   color: var( --text-accent);
@@ -437,7 +441,7 @@ body::after {
 
 .right-quote-caption {
   font-family: 'DM Mono', monospace;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var( --text-accent);
@@ -461,11 +465,11 @@ body::after {
 }
 
 .right-ecology-body {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  line-height: 1.9;
+  font-family: "Libre Baskerville", serif;
+  font-size: 12px;
+  line-height: 1.6;
   color: var(--text-mono);
+  margin-bottom: 24px;
 }
 
 .right-panel-title {
@@ -850,6 +854,7 @@ tr.is-playing .sound-indicator span {
     border-bottom: 1px solid #1a1a1a;
   }
   .studies-panel { padding: 48px 24px 64px; }
+  .study-thumb-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
   /* Table: allow horizontal scroll on smaller viewports */
   .archive-table { font-size: 9px; }
@@ -891,9 +896,8 @@ tr.is-playing .sound-indicator span {
     border-bottom: 1px solid #1a1a1a;
   }
   .studies-panel { padding: 40px 20px 56px; }
-
-  /* Secondary images: stack on small screens */
-  .study-secondary-row { grid-template-columns: 1fr; }
+  .study-large-row { grid-template-columns: 1fr; gap: 16px; }
+  .study-thumb-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
 
   /* Table: horizontal scroll container */
   .archive-table {
@@ -1050,36 +1054,50 @@ tr.is-playing .sound-indicator span {
     <p class="right-quote">"A place without its sound is only half remembered."</p>
     <p class="right-quote-caption">Aurafact &nbsp;·&nbsp; Field Notes &nbsp;·&nbsp; 2024</p>
     <hr class="right-rule">
-    <h2 class="right-ecology-title">Acoustic Ecology Principles</h2>
+    <h2 class="right-ecology-title">Principles of Acoustic Archiving</h2>
+    
     <h3 class="page-h3">Audio-First Hierarchy</h3>
-    <p class="right-ecology-body">Visuals exist to support the ear, not compete with it. The interface recedes when a recording plays.</p>
+    <p class="right-ecology-body">Sound is the primary artifact. Visual elements exist only to reveal, frame, or contextualize the recording. When audio is active, the interface recedes, allowing the listener to experience the environment before interpreting it.</p>
+    
+    <h3 class="page-h3">Semantic Transparency</h3>
+    <p class="right-ecology-body">Metadata is not decorative. Each attribute — frequency range, recording conditions, location, microphone model, atmospheric state — contributes to understanding the acoustic character of the environment. The interface exposes this information clearly so the recording can be interpreted as a document, not merely a file.</p>
+
+    <h3 class="page-h3">Variable Density</h3>
+    <p class="right-ecology-body">Different listeners approach environmental sound with different intentions. Researchers may seek technical detail, while artists or casual listeners may seek atmosphere. The interface adapts its informational density, revealing deeper layers of data without overwhelming the initial listening experience.</p>
+
+    <h3 class="page-h3">Environmental Context</h3>
+    <p class="right-ecology-body">A recording is inseparable from its environment. Geographic location, ecological conditions, and human presence shape every soundscape. Aurafact treats each recording as a spatial and temporal artifact, preserving the sonic identity of a place at a specific moment in time.</p>
+
+    <h3 class="page-h3">Sonic Artifacts</h3>
+    <p class="right-ecology-body">Environmental recordings are treated as artifacts rather than media files. Each capture represents a unique acoustic state of a place — shaped by geography, ecology, atmosphere, and human activity — and is preserved as part of a growing acoustic archive.</p>
   </div>
 
   <!-- Right: research display panel -->
   <div class="studies-panel">
 
-    <h2 class="page-h2 space-after-1-2">Acoustic Studies</h2>
+    <p class="studies-panel-label">Acoustic Studies</p>
 
-    <!-- Primary image -->
-    <div class="study-primary">
-      <div class="study-img-frame">
-        <img src="img/aurafact-acoustic-study-01.png" alt="Longitudinal Pressure Field"
-             onerror="this.style.display='none'">
+    <!-- Row 1: two large 3:2 images -->
+    <div class="study-large-row">
+
+      <div class="study-large">
+        <div class="study-img-frame">
+          <img src="img/aurafact-acoustic-study-01.png" alt="Longitudinal Pressure Field"
+               onerror="this.style.display='none'">
+          <div class="img-ph">img / study-01</div>
+        </div>
+        <div class="study-meta">
+          <span class="study-meta-id">img / study-01</span>
+          <span class="study-meta-title">Longitudinal Pressure Field</span>
+          <span class="study-meta-sub">Simulation Model</span>
+        </div>
       </div>
-      <div class="study-meta">
-        <span class="study-meta-id">IMG / STUDY-01</span>
-        <span class="study-meta-title">Longitudinal Pressure Field</span>
-        <span class="study-meta-sub">Simulation Model</span>
-      </div>
-    </div>
 
-    <!-- Secondary row -->
-    <div class="study-secondary-row">
-
-      <div class="study-secondary">
+      <div class="study-large">
         <div class="study-img-frame">
           <img src="img/aurafact-acoustic-study-02.png" alt="Wave Interference"
                onerror="this.style.display='none'">
+          <div class="img-ph">img / study-02</div>
         </div>
         <div class="study-meta">
           <span class="study-meta-id">img / study-02</span>
@@ -1088,15 +1106,62 @@ tr.is-playing .sound-indicator span {
         </div>
       </div>
 
-      <div class="study-secondary">
+    </div>
+
+    <hr class="study-divider">
+
+    <!-- Row 2: four thumbnails -->
+    <div class="study-thumb-row">
+
+      <div class="study-thumb">
         <div class="study-img-frame">
           <img src="img/aurafact-acoustic-study-03.png" alt="Surface Resonance"
                onerror="this.style.display='none'">
+          <div class="img-ph">03</div>
         </div>
         <div class="study-meta">
-          <span class="study-meta-id">img / study-03</span>
+          <span class="study-meta-id">study-03</span>
           <span class="study-meta-title">Surface Resonance</span>
-          <span class="study-meta-sub">Cymatic Ripple Formation</span>
+          <span class="study-meta-sub">Cymatic Ripple</span>
+        </div>
+      </div>
+
+      <div class="study-thumb">
+        <div class="study-img-frame">
+          <img src="img/aurafact-acoustic-study-04.png" alt="Pressure Mapping"
+               onerror="this.style.display='none'">
+          <div class="img-ph">04</div>
+        </div>
+        <div class="study-meta">
+          <span class="study-meta-id">study-04</span>
+          <span class="study-meta-title">Pressure Mapping</span>
+          <span class="study-meta-sub">Field Analysis</span>
+        </div>
+      </div>
+
+      <div class="study-thumb">
+        <div class="study-img-frame">
+          <img src="img/aurafact-acoustic-study-05.png" alt="Frequency Decay"
+               onerror="this.style.display='none'">
+          <div class="img-ph">05</div>
+        </div>
+        <div class="study-meta">
+          <span class="study-meta-id">study-05</span>
+          <span class="study-meta-title">Frequency Decay</span>
+          <span class="study-meta-sub">Spectral Analysis</span>
+        </div>
+      </div>
+
+      <div class="study-thumb">
+        <div class="study-img-frame">
+          <img src="img/aurafact-acoustic-study-06.png" alt="Resonant Chamber"
+               onerror="this.style.display='none'">
+          <div class="img-ph">06</div>
+        </div>
+        <div class="study-meta">
+          <span class="study-meta-id">study-06</span>
+          <span class="study-meta-title">Resonant Chamber</span>
+          <span class="study-meta-sub">Modal Study</span>
         </div>
       </div>
 
