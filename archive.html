@@ -273,6 +273,7 @@ body::after {
   font-family: 'DM Mono', monospace;
   font-size: 11px;
   letter-spacing: 0.10em;
+  margin-bottom: 1px;
 }
 
 .archive-table thead th {
@@ -685,7 +686,6 @@ body::after {
     position: static;
     height: auto;
     border-left: none;
-    border-top: 1px solid var(--panel-rule);
   }
   .archive-header { padding: 32px 24px 24px; }
   .result-bar { padding: 12px 24px; }
@@ -1121,7 +1121,7 @@ const SPECIMENS = [
     region: 'North America',
     source: 'Anthropophony',
     subtype: 'Crowd Assembly',
-    freq: '120 Hz – 5 kHz',
+    freq: '120 Hz – 6.5 kHz',
     freqLow: '120 Hz',
     freqHigh: '6.5 kHz',
     date: '2026-03-17',
@@ -1130,7 +1130,40 @@ const SPECIMENS = [
     image: 'img/AF-0012-st-paddys-day-ottawa-2026.png',
     notes: 'High-density human presence with continuous conversational layering, intermittent laughter spikes, and rhythmic low-frequency bleed from amplified music; acoustic reflections shaped by enclosed interior surfaces.',
   },
+    {
+    id: 'AF-0013',
+    artifact: 'Domestic Bath Preparation',
+    location: 'Ottawa, CA',
+    region: 'North America',
+    source: 'Geophony',
+    subtype: 'Controlled Hydrophony',
+    freq: '90 Hz – 8 kHz',
+    freqLow: '90 Hz',
+    freqHigh: '8 kHz',
+    date: '2020-11-03',
+    duration: '0:12',
+    audio: 'audio/AF-0013-bathtub-ottawa-2020.mp3',
+    image: 'img/AF-0013-bathtub-ottawa-2020.jpg',
+    notes: 'Steady water stream filling a tub, producing a continuous, uniform acoustic field; enclosed bathroom surfaces introduce mild reverberation and reinforce midrange density.',
+  },
+    {
+    id: 'AF-0014',
+    artifact: 'Basketball Dribble',
+    location: 'Paris, FR',
+    region: 'Europe',
+    source: 'Anthropophony',
+    subtype: 'Rhythmic Sport',
+    freq: '70 Hz – 5.5 kHz',
+    freqLow: '70 Hz',
+    freqHigh: '5.5 kHz',
+    date: '2017-11-19',
+    duration: '0:10',
+    audio: 'audio/AF-0014-basketball-paris-2020.mp3',
+    image: 'img/AF-0014-basketball-paris-2020.png',
+    notes: 'Isolated basketball dribbling within an urban streetscape, producing a steady percussive rhythm against hard ground; surrounding city ambience remains present but secondary, with reflections shaped by nearby buildings and open street geometry.',
+  },
 ];
+
 
 /* ── STATE ──────────────────────────────────────────────────── */
 const state = { search: '', sort: 'id-asc', selectedId: null };
