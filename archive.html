@@ -492,23 +492,16 @@ body::after {
 .play-pause-btn.playing { border-color: var(--text-accent); }
 .play-pause-btn svg { width: 10px; height: 10px; fill: var(--text-accent); }
 
-/* Progress bar */
-.player-progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+/* Spectrogram player */
+.player-progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
 
-.progress-bar-track {
+#spectrogramCanvas {
   width: 100%;
-  height: 2px;
-  background: var(--btn-border);
+  height: 72px;
+  display: block;
   cursor: pointer;
-  position: relative;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background: var(--text-accent);
-  width: 0%;
-  transition: width 0.1s linear;
-  pointer-events: none;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
 
 .player-time {
@@ -838,9 +831,7 @@ body::after {
           <svg id="playPauseIcon" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg>
         </button>
         <div class="player-progress-wrap">
-          <div class="progress-bar-track" id="progressTrack">
-            <div class="progress-bar-fill" id="progressFill"></div>
-          </div>
+          <canvas id="spectrogramCanvas" width="512" height="72"></canvas>
           <div class="player-time">
             <span id="timeElapsed">0:00</span>
             <span id="timeDuration">—</span>
@@ -1356,25 +1347,228 @@ function setPlayingState(playing) {
   const btn = document.getElementById('playPauseBtn');
   const icon = document.getElementById('playPauseIcon');
   if (!btn || !icon) return;
-
   btn.classList.toggle('playing', playing);
-
   if (playing) {
     icon.innerHTML = '<rect x="0" y="0" width="3" height="12"/><rect x="5" y="0" width="3" height="12"/>';
     icon.setAttribute('viewBox', '0 0 8 12');
   } else {
     icon.innerHTML = '<polygon points="0,0 10,6 0,12"/>';
     icon.setAttribute('viewBox', '0 0 10 12');
-    document.getElementById('progressFill').style.width = '0%';
+    drawPlayhead(0);
+  }
+}
+
+function drawPlayhead(frac) {
+  const canvas = document.getElementById('spectrogramCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cached = spectrogramCache.get(state.selectedId);
+  if (cached) ctx.putImageData(cached, 0, 0);
+  if (frac > 0) {
+    const x = Math.floor(frac * W);
+    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+    ctx.fillRect(x, 0, 1, H);
   }
 }
 
 function tickProgress() {
   if (!audioEl) return;
-  const pct = audioEl.duration ? (audioEl.currentTime / audioEl.duration) * 100 : 0;
-  document.getElementById('progressFill').style.width = pct + '%';
   document.getElementById('timeElapsed').textContent = fmtTime(audioEl.currentTime);
+  const frac = audioEl.duration ? audioEl.currentTime / audioEl.duration : 0;
+  drawPlayhead(frac);
   progressRaf = requestAnimationFrame(tickProgress);
+}
+
+/* ── SPECTROGRAM ─────────────────────────────────────────────── */
+const spectrogramCache = new Map(); // specimenId → ImageData
+
+const FFT_SIZE = 2048;
+
+// Cooley-Tukey radix-2 in-place FFT
+function fft(re, im) {
+  const n = re.length;
+  let j = 0;
+  for (let i = 1; i < n; i++) {
+    let bit = n >> 1;
+    for (; j & bit; bit >>= 1) j ^= bit;
+    j ^= bit;
+    if (i < j) {
+      let t = re[i]; re[i] = re[j]; re[j] = t;
+      t = im[i]; im[i] = im[j]; im[j] = t;
+    }
+  }
+  for (let len = 2; len <= n; len <<= 1) {
+    const ang = -2 * Math.PI / len;
+    const wRe = Math.cos(ang), wIm = Math.sin(ang);
+    for (let i = 0; i < n; i += len) {
+      let cRe = 1, cIm = 0;
+      for (let k = 0; k < len >> 1; k++) {
+        const uRe = re[i+k], uIm = im[i+k];
+        const half = i + k + (len >> 1);
+        const vRe = re[half]*cRe - im[half]*cIm;
+        const vIm = re[half]*cIm + im[half]*cRe;
+        re[i+k] = uRe+vRe; im[i+k] = uIm+vIm;
+        re[half] = uRe-vRe; im[half] = uIm-vIm;
+        const nr = cRe*wRe - cIm*wIm;
+        cIm = cRe*wIm + cIm*wRe; cRe = nr;
+      }
+    }
+  }
+}
+
+// Hann window
+function makeHann(n) {
+  const w = new Float32Array(n);
+  for (let i = 0; i < n; i++) w[i] = 0.5 * (1 - Math.cos(2*Math.PI*i/(n-1)));
+  return w;
+}
+const HANN = makeHann(FFT_SIZE);
+
+// Magma-style colormap stops [r,g,b]
+const MAGMA_STOPS = [
+  [0,0,4],[28,16,68],[80,18,123],[149,27,103],
+  [207,68,70],[238,130,65],[251,193,100],[252,253,191]
+];
+function magmaRGB(t) {
+  t = Math.max(0, Math.min(1, t));
+  const s = t * (MAGMA_STOPS.length - 1);
+  const i = Math.min(Math.floor(s), MAGMA_STOPS.length - 2);
+  const f = s - i;
+  const a = MAGMA_STOPS[i], b = MAGMA_STOPS[i+1];
+  return [a[0]+(b[0]-a[0])*f, a[1]+(b[1]-a[1])*f, a[2]+(b[2]-a[2])*f];
+}
+
+async function buildSpectrogram(specId, audioBuffer) {
+  const canvas = document.getElementById('spectrogramCanvas');
+  if (!canvas) return;
+  const W = canvas.width, H = canvas.height;
+  const ctx = canvas.getContext('2d');
+
+  const sampleRate = audioBuffer.sampleRate;
+  const nyquist = sampleRate / 2;
+  const totalSamples = audioBuffer.length;
+
+  // Mix to mono
+  let samples;
+  if (audioBuffer.numberOfChannels > 1) {
+    const ch0 = audioBuffer.getChannelData(0);
+    const ch1 = audioBuffer.getChannelData(1);
+    samples = new Float32Array(totalSamples);
+    for (let i = 0; i < totalSamples; i++) samples[i] = (ch0[i] + ch1[i]) * 0.5;
+  } else {
+    samples = audioBuffer.getChannelData(0);
+  }
+
+  const hopSize = Math.max(1, Math.floor(totalSamples / W));
+  const re = new Float32Array(FFT_SIZE);
+  const im = new Float32Array(FFT_SIZE);
+  const halfFFT = FFT_SIZE >> 1;
+
+  // colMags[col] = Float32Array of halfFFT magnitudes
+  const colMags = new Array(W);
+  for (let col = 0; col < W; col++) {
+    if (state.selectedId !== specId) return; // aborted
+    const offset = col * hopSize;
+    for (let i = 0; i < FFT_SIZE; i++) {
+      const si = offset + i;
+      re[i] = (si < totalSamples ? samples[si] : 0) * HANN[i];
+      im[i] = 0;
+    }
+    fft(re, im);
+    const mags = new Float32Array(halfFFT);
+    for (let i = 0; i < halfFFT; i++) mags[i] = Math.sqrt(re[i]*re[i] + im[i]*im[i]);
+    colMags[col] = mags;
+    if ((col & 63) === 63) await new Promise(r => setTimeout(r, 0));
+  }
+
+  if (state.selectedId !== specId) return;
+
+  // Global max for normalisation
+  let gMax = 1e-10;
+  for (const m of colMags) for (const v of m) if (v > gMax) gMax = v;
+
+  // Log-frequency mapping constants
+  const logMin = Math.log(20);
+  const logMax = Math.log(nyquist);
+  const logRange = logMax - logMin;
+
+  const imgData = ctx.createImageData(W, H);
+  const d = imgData.data;
+
+  for (let x = 0; x < W; x++) {
+    const mags = colMags[x];
+    for (let y = 0; y < H; y++) {
+      // y=0 → top → high freq
+      const t = (H - 1 - y) / (H - 1);
+      const freq = Math.exp(logMin + t * logRange);
+      const binF = freq * FFT_SIZE / sampleRate;
+      const b0 = Math.min(Math.floor(binF), halfFFT - 1);
+      const b1 = Math.min(b0 + 1, halfFFT - 1);
+      const bf = binF - b0;
+      let mag = mags[b0] * (1 - bf) + mags[b1] * bf;
+      mag = Math.pow(mag / gMax, 0.42); // perceptual gamma
+      const [r, g, b] = magmaRGB(mag);
+      const idx = (y * W + x) * 4;
+      d[idx] = r; d[idx+1] = g; d[idx+2] = b; d[idx+3] = 255;
+    }
+  }
+
+  ctx.putImageData(imgData, 0, 0);
+
+  // Frequency axis labels (right edge)
+  const freqLabels = [{f:100,l:'100'},{f:500,l:'500'},{f:1000,l:'1k'},{f:4000,l:'4k'},{f:10000,l:'10k'}];
+  ctx.font = '7px "DM Mono", monospace';
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.textAlign = 'right';
+  for (const {f, l} of freqLabels) {
+    if (f > nyquist) continue;
+    const t = (Math.log(f) - logMin) / logRange;
+    const y = Math.round((H-1) - t*(H-1));
+    if (y > 6 && y < H - 2) ctx.fillText(l, W - 2, y + 3);
+  }
+  ctx.textAlign = 'left';
+
+  // Cache the fully-rendered frame (before any playhead)
+  spectrogramCache.set(specId, ctx.getImageData(0, 0, W, H));
+}
+
+async function loadSpectrogram(spec) {
+  const canvas = document.getElementById('spectrogramCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  // Serve from cache immediately
+  if (spectrogramCache.has(spec.id)) {
+    ctx.putImageData(spectrogramCache.get(spec.id), 0, 0);
+    return;
+  }
+
+  // Loading state
+  ctx.fillStyle = '#080808';
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#2a2a2a';
+  ctx.font = '8px "DM Mono", monospace';
+  ctx.letterSpacing = '0.18em';
+  ctx.fillText('ANALYSING', 10, H/2 + 3);
+
+  try {
+    const resp = await fetch(spec.audio);
+    if (!resp.ok) throw new Error('fetch failed');
+    const ab = await resp.arrayBuffer();
+    const actx = new (window.AudioContext || window.webkitAudioContext)();
+    const audioBuffer = await actx.decodeAudioData(ab);
+    await actx.close();
+    await buildSpectrogram(spec.id, audioBuffer);
+  } catch (e) {
+    if (state.selectedId === spec.id) {
+      ctx.fillStyle = '#080808';
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#2a2a2a';
+      ctx.fillText('UNAVAILABLE', 10, H/2 + 3);
+    }
+  }
 }
 
 /* ── OPEN DETAIL PANEL ──────────────────────────────────────── */
@@ -1419,7 +1613,7 @@ function openPanel(id) {
     noAudioEl.style.display = 'none';
     document.getElementById('timeDuration').textContent = spec.duration || '—';
     document.getElementById('timeElapsed').textContent = '0:00';
-    document.getElementById('progressFill').style.width = '0%';
+    loadSpectrogram(spec);
   } else {
     playerEl.style.display = 'none';
     noAudioEl.style.display = 'block';
@@ -1487,12 +1681,27 @@ document.getElementById('playPauseBtn').addEventListener('click', () => {
   progressRaf = requestAnimationFrame(tickProgress);
 });
 
-/* Progress bar scrub */
-document.getElementById('progressTrack').addEventListener('click', e => {
-  if (!audioEl || !audioEl.duration) return;
+/* Spectrogram scrub */
+document.getElementById('spectrogramCanvas').addEventListener('click', e => {
   const rect = e.currentTarget.getBoundingClientRect();
-  const pct = (e.clientX - rect.left) / rect.width;
-  audioEl.currentTime = pct * audioEl.duration;
+  const frac = (e.clientX - rect.left) / rect.width;
+  if (audioEl && audioEl.duration) {
+    audioEl.currentTime = frac * audioEl.duration;
+  } else {
+    // If not yet playing, preload and seek when ready
+    const spec = SPECIMENS.find(s => s.id === state.selectedId);
+    if (!spec || !spec.audio) return;
+    if (!audioEl) {
+      audioEl = new Audio(spec.audio);
+      audioEl.volume = 0.85;
+      audioEl.addEventListener('loadedmetadata', () => {
+        document.getElementById('timeDuration').textContent = fmtTime(audioEl.duration);
+        audioEl.currentTime = frac * audioEl.duration;
+        drawPlayhead(frac);
+      });
+      audioEl.addEventListener('ended', () => { stopAudio(); setPlayingState(false); });
+    }
+  }
 });
 
 /* ── BUILD TABLE ROWS ───────────────────────────────────────── */
