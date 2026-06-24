@@ -578,9 +578,11 @@ body::after {
   transition: color 0.2s;
 }
 
-.footer-col ul li a:hover {
-  color: var(--text-accent);
-}
+.footer-col ul li a:hover { color: var(--text-accent); }
+.footer-submit-label { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.10em; color: var(--text-secondary); }
+.footer-email { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.05em; }
+.footer-copy-btn { background: none; border: none; cursor: pointer; color: var(--text-secondary); font-size: 13px; padding: 0 0 0 6px; vertical-align: middle; transition: color 0.2s; }
+.footer-copy-btn:hover { color: var(--text-accent); }
 
 /* Bottom bar */
 .footer-bottom {
@@ -766,7 +768,7 @@ body::after {
       <span class="footer-col-label">About</span>
       <ul>
         <li><a href="fieldguide.html">Field Guide</a></li>
-        <li><a href="mailto:yayafalanga@gmail.com">Submit a Recording</a></li>
+        <li><span class="footer-submit-label">Submit a Recording:</span><br><a href="mailto:jennifalanga@gmail.com" class="footer-email">jennifalanga@gmail.com</a><button class="footer-copy-btn" onclick="navigator.clipboard.writeText('jennifalanga@gmail.com')" title="Copy email">⊕</button></li>
       </ul>
     </div>
 
@@ -783,7 +785,7 @@ body::after {
   <div class="footer-bottom">
     <p class="footer-copy">
       © 2026 Aurafact — Environmental Sound Archive<br>
-      Preserving Acoustic Memory
+      A project by Jenni Falanga &nbsp;·&nbsp; Preserving Acoustic Memory
     </p>
     <p class="footer-time" id="footerTime"></p>
   </div>
