@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soundmap — Aurafact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   COLOUR TOKENS — exact match with index.html / archive.html
+   ============================================================ */
+:root {
+  --bg:              #0C0C0C;
+  --text-primary:    #EDECEA;
+  --text-secondary:  #4A4A4A;
+  --text-mono:       #3A3A3A;
+  --text-accent:     #AD472F;
+  --btn-border:      #2E2E2E;
+  --btn-text:        #2E2E2E;
+  --btn-hover-border:#777777;
+  --btn-hover-text:  #EDECEA;
+  --nav-logo:        #EDECEA;
+  --nav-link:        #EDECEA;
+  --nav-rule:        #2c2c2c;
+  --nav-h:           61px;
+  --grain-opacity:   0.045;
+  --rule:            #1a1a1a;
+
+  /* Map-specific */
+  --map-bg:          #0a0a0a;
+  --map-grid:        #141414;
+  --dot-audio:       #EDECEA;
+  --dot-silent:      #2a2a2a;
+  --listener-color:  #AD472F;
+  --falloff-ring:    rgba(173, 71, 47, 0.10);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+html, body { width: 100%; overflow-x: hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: "Libre Baskerville", serif;
+}
+
+/* Grain — identical to other pages */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: var(--grain-opacity);
+  pointer-events: none;
+  z-index: 9000;
+}
+
+/* ── NAV ────────────────────────────────────────────────────── */
+#site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  border-bottom: 1px solid var(--nav-rule);
+  background: rgba(12,12,12,0.75);
+  backdrop-filter: blur(14px);
+  height: var(--nav-h);
+}
+
+.nav-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--nav-logo);
+  text-decoration: none;
+}
+
+.nav-links { display: flex; gap: 36px; list-style: none; }
+
+.nav-links a {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--nav-link);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.nav-links a:hover { opacity: 0.6; }
+.nav-links a.active {
+  border-bottom: 1px solid var(--text-accent);
+  padding-bottom: 2px;
+}
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--nav-link);
+  cursor: pointer;
+  z-index: 201;
+  transition: color 0.2s;
+}
+.nav-toggle:hover { color: var(--text-accent); }
+.nav-toggle span {
+  display: block;
+  width: 20px;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform 0.25s ease, opacity 0.2s;
+}
+#site-nav.nav-open .nav-toggle span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+#site-nav.nav-open .nav-toggle span:nth-child(2) { opacity: 0; }
+#site-nav.nav-open .nav-toggle span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+/* ── PAGE LAYOUT ────────────────────────────────────────────── */
+.soundmap-page {
+  padding-top: var(--nav-h);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── PAGE HEADER ────────────────────────────────────────────── */
+.page-header {
+  padding: 48px 80px 36px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.page-header h1 {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(24px, 3.2vw, 44px);
+  color: var(--text-secondary);
+  line-height: 1.0;
+  margin-bottom: 10px;
+}
+
+.page-header-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+}
+
+.header-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── MAP REGION ─────────────────────────────────────────────── */
+.map-region {
+  flex: 1;
+  position: relative;
+  background: var(--map-bg);
+  min-height: 540px;
+}
+
+#soundmap-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 540px;
+  cursor: crosshair;
+  user-select: none;
+}
+
+/* SVG elements */
+.map-grid-line { stroke: var(--map-grid); stroke-width: 0.5; }
+.region-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  fill: #222;
+  pointer-events: none;
+}
+
+.specimen-dot {
+  cursor: pointer;
+  transition: r 0.15s ease;
+}
+.specimen-dot.has-audio { fill: var(--dot-audio); fill-opacity: 0.45; stroke: none; }
+.specimen-dot.no-audio  { fill: none; stroke: var(--dot-silent); stroke-width: 1; }
+.specimen-dot.has-audio:hover,
+.specimen-dot.has-audio.audible { fill-opacity: 1; }
+.specimen-dot.no-audio:hover  { stroke: var(--dot-audio); }
+
+.specimen-ring {
+  fill: none;
+  stroke: var(--dot-audio);
+  stroke-width: 0.5;
+  stroke-opacity: 0;
+  pointer-events: none;
+  transition: stroke-opacity 0.4s ease;
+}
+.specimen-ring.active { stroke-opacity: 0.3; }
+
+.falloff-ring {
+  fill: var(--falloff-ring);
+  stroke: var(--listener-color);
+  stroke-width: 0.5;
+  stroke-opacity: 0.3;
+  stroke-dasharray: 4 4;
+  pointer-events: none;
+}
+
+.listener-dot {
+  fill: var(--listener-color);
+  cursor: grab;
+  filter: drop-shadow(0 0 6px rgba(173,71,47,0.5));
+}
+.listener-dot:active { cursor: grabbing; }
+
+/* ── OVERLAY CONTROLS ───────────────────────────────────────── */
+.map-controls {
+  position: absolute;
+  bottom: 24px;
+  left: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 10;
+}
+
+.ctrl-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  background: rgba(12,12,12,0.85);
+  border: 1px solid var(--btn-border);
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  backdrop-filter: blur(8px);
+}
+.ctrl-btn:hover { border-color: var(--btn-hover-border); color: var(--btn-hover-text); }
+.ctrl-btn.active { border-color: var(--text-accent); color: var(--text-accent); }
+
+#startBtn.walking { border-color: var(--text-accent); color: var(--text-accent); }
+
+/* ── AUDIBLE STRIP ──────────────────────────────────────────── */
+.audible-strip {
+  position: absolute;
+  bottom: 24px;
+  right: 32px;
+  z-index: 10;
+  text-align: right;
+  pointer-events: none;
+  max-width: 40%;
+}
+
+.audible-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 6px;
+}
+
+.audible-items {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-end;
+}
+
+.audible-item {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.audible-item.visible { opacity: 1; }
+.audible-item.loud { color: var(--text-primary); }
+
+/* ── TOOLTIP ────────────────────────────────────────────────── */
+#tooltip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 50;
+  display: none;
+  background: rgba(10,10,10,0.92);
+  border: 1px solid #222;
+  padding: 10px 14px;
+  backdrop-filter: blur(8px);
+  max-width: 220px;
+}
+#tooltip.visible { display: block; }
+
+.tooltip-id {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 4px;
+}
+.tooltip-name {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+  line-height: 1.3;
+}
+.tooltip-loc {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.10em;
+  color: var(--text-secondary);
+}
+.tooltip-no-audio {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  color: var(--text-mono);
+  margin-top: 4px;
+}
+
+/* ── ABOUT SECTION ──────────────────────────────────────────── */
+.about-section {
+  border-top: 1px solid var(--rule);
+  padding: 0;
+}
+
+.about-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 80px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+.about-toggle:hover { border-bottom-color: var(--rule); }
+
+.about-toggle-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+}
+
+.about-toggle-arrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-mono);
+  transition: transform 0.25s ease;
+}
+.about-section.open .about-toggle-arrow { transform: rotate(180deg); }
+
+.about-content {
+  display: none;
+  padding: 32px 80px 48px;
+  border-top: 1px solid var(--rule);
+  max-width: 720px;
+}
+.about-section.open .about-content { display: block; }
+
+.about-content p {
+  font-family: "Libre Baskerville", serif;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* ── WALK OVERLAY (pre-start) ───────────────────────────────── */
+.walk-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10,10,10,0.72);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  gap: 16px;
+  transition: opacity 0.4s ease;
+}
+.walk-overlay.hidden { opacity: 0; pointer-events: none; }
+
+.walk-overlay-title {
+  font-family: "Libre Baskerville", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(18px, 2.2vw, 28px);
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.walk-overlay-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.walk-start-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  background: none;
+  border: 1px solid #444;
+  padding: 12px 28px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.walk-start-btn:hover { border-color: var(--text-accent); color: var(--text-accent); }
+
+/* ── KEYBOARD HINT ──────────────────────────────────────────── */
+.key-hint {
+  position: absolute;
+  top: 16px;
+  right: 32px;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ── FOOTER ─────────────────────────────────────────────────── */
+.site-footer {
+  background-color: #0a0a0a;
+  border-top: 1px solid var(--rule);
+}
+
+.footer-nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--rule);
+}
+
+.footer-col {
+  padding: 64px 48px 64px 80px;
+  border-right: 1px solid var(--rule);
+}
+.footer-col:first-child { padding-left: 80px; }
+.footer-col:last-child  { border-right: none; padding-right: 80px; }
+
+.footer-col-label {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  margin-bottom: 24px;
+  padding-bottom: 14px;
+}
+
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+
+.footer-col ul li a {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.10em;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-col ul li a:hover { color: var(--text-accent); }
+
+.footer-submit-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.10em;
+  color: var(--text-secondary);
+}
+.footer-email {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.footer-email:hover { color: var(--text-accent); }
+.footer-copy-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-secondary); font-size: 13px;
+  padding: 0 0 0 6px; vertical-align: middle; transition: color 0.2s;
+}
+.footer-copy-btn:hover { color: var(--text-accent); }
+
+.footer-bottom {
+  padding: 28px 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  line-height: 1.8;
+}
+
+.footer-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-mono);
+  line-height: 1.8;
+  text-align: right;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .page-header { padding: 40px 32px 28px; }
+  .about-toggle { padding: 16px 32px; }
+  .about-content { padding: 28px 32px 40px; }
+  .footer-col { padding: 48px 32px 48px 40px; }
+  .footer-col:first-child { padding-left: 40px; }
+  .footer-col:last-child  { padding-right: 40px; }
+  .footer-bottom { padding: 24px 40px; }
+  .map-controls { left: 16px; bottom: 16px; }
+  .audible-strip { right: 16px; bottom: 16px; }
+  .key-hint { display: none; }
+}
+
+@media (max-width: 640px) {
+  .nav-links { display: none; flex-direction: column; position: fixed; top: var(--nav-h); left: 0; right: 0; background: rgba(12,12,12,0.97); padding: 24px 32px; gap: 24px; border-bottom: 1px solid var(--nav-rule); z-index: 199; }
+  #site-nav.nav-open .nav-links { display: flex; }
+  .nav-toggle { display: flex; }
+  .page-header { padding: 32px 20px 24px; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .header-right { text-align: left; }
+  .footer-nav { grid-template-columns: 1fr; }
+  .footer-col { border-right: none; border-bottom: 1px solid var(--rule); padding: 40px 20px; }
+  .footer-col:first-child { padding-left: 20px; }
+  .footer-col:last-child  { padding-right: 20px; border-bottom: none; }
+  .footer-bottom { padding: 24px 20px; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .about-toggle { padding: 16px 20px; }
+  .about-content { padding: 24px 20px 36px; }
+  .walk-overlay-title { font-size: 18px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav id="site-nav">
+  <a href="index.html" class="nav-logo">Aurafact</a>
+  <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links">
+    <li><a href="archive.html">Archive</a></li>
+    <li><a href="acousticstudies.html">Acoustic Studies</a></li>
+    <li><a href="fieldguide.html">Field Guide</a></li>
+    <li><a href="glossary.html">Glossary</a></li>
+    <li><a href="soundmap.html" class="active">Soundmap</a></li>
+  </ul>
+</nav>
+
+<div class="soundmap-page">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <h1>Soundmap</h1>
+      <p class="page-header-sub" id="specimenCount"></p>
+    </div>
+    <div class="header-right">
+      <p class="page-header-sub">Drag or click the map to move.<br>Arrow keys for fine control.</p>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div class="map-region" id="mapRegion">
+
+    <!-- Walk start overlay -->
+    <div class="walk-overlay" id="walkOverlay">
+      <p class="walk-overlay-title">Begin the walk</p>
+      <p class="walk-overlay-sub">Move through the archive's geography — recordings rise as you approach</p>
+      <button class="walk-start-btn" id="walkStartBtn">Start Walk</button>
+    </div>
+
+    <!-- The map SVG -->
+    <svg id="soundmap-svg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"
+         role="application" aria-label="Aurafact soundmap — drag the red point to explore recordings by location"
+         tabindex="0">
+
+      <!-- Background grid — subtle reference lines -->
+      <g id="map-grid" opacity="0.6"></g>
+
+      <!-- Region labels -->
+      <g id="region-labels"></g>
+
+      <!-- Falloff ring around listener -->
+      <ellipse id="falloff-ring" class="falloff-ring" cx="500" cy="280" rx="0" ry="0"/>
+
+      <!-- Specimen dots -->
+      <g id="specimen-dots"></g>
+
+      <!-- Listener -->
+      <circle id="listener" class="listener-dot" cx="500" cy="280" r="5"
+              tabindex="0" role="button" aria-label="Listener position — drag or use arrow keys"/>
+
+    </svg>
+
+    <!-- Keyboard hint -->
+    <div class="key-hint">Arrow keys to move</div>
+
+    <!-- Bottom-left controls -->
+    <div class="map-controls">
+      <button class="ctrl-btn" id="startBtn" style="display:none">■ Stop Walk</button>
+      <button class="ctrl-btn" id="muteBtn" style="display:none">Mute</button>
+    </div>
+
+    <!-- Bottom-right audible strip -->
+    <div class="audible-strip" id="audibleStrip" style="display:none">
+      <div class="audible-label">Now audible</div>
+      <div class="audible-items" id="audibleItems"></div>
+    </div>
+
+    <!-- Tooltip -->
+    <div id="tooltip">
+      <div class="tooltip-id" id="tt-id"></div>
+      <div class="tooltip-name" id="tt-name"></div>
+      <div class="tooltip-loc" id="tt-loc"></div>
+      <div class="tooltip-no-audio" id="tt-noaudio"></div>
+    </div>
+
+  </div><!-- /map-region -->
+
+  <!-- About this map -->
+  <div class="about-section" id="aboutSection">
+    <button class="about-toggle" id="aboutToggle" aria-expanded="false">
+      <span class="about-toggle-label">About this map</span>
+      <span class="about-toggle-arrow">↓</span>
+    </button>
+    <div class="about-content" id="aboutContent">
+      <p>Each point on this map is placed by the recording's location — derived from the place-name attached to that specimen and treated as approximate. The map shows roughly where a sound was captured, not a surveyed coordinate; a dot marked Ottawa and one marked Petrie Island are both honest placements, but neither should be read as precise. The projection is a simple equirectangular plot of those coordinates onto an abstract field, scaled to the bounding box of the collection. There is no basemap or street geography here: the space belongs to the archive, not to the world. What moves with proximity is volume only — nearness brings a recording up in the mix, distance returns it to silence. The recordings themselves are unaltered field captures; nothing about their internal character is simulated or invented. The spatial dimension is the collection's own, assembled from where and when these sounds were heard.</p>
+    </div>
+  </div>
+
+</div><!-- /soundmap-page -->
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-nav">
+    <div class="footer-col">
+      <span class="footer-col-label">Navigate</span>
+      <ul>
+        <li><a href="archive.html">Archive Explorer</a></li>
+        <li><a href="acousticstudies.html">Acoustic Studies</a></li>
+        <li><a href="fieldguide.html">Field Guide</a></li>
+        <li><a href="soundmap.html">Soundmap</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-label">About</span>
+      <ul>
+        <li><a href="fieldguide.html">Field Guide</a></li>
+        <li><a href="fieldguide.html#principles">Recording Standards</a></li>
+        <li><span class="footer-submit-label">Submit a Recording:</span><br><a href="mailto:jennifalanga@gmail.com" class="footer-email">jennifalanga@gmail.com</a><button class="footer-copy-btn" onclick="navigator.clipboard.writeText('jennifalanga@gmail.com')" title="Copy email">⊕</button></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-label">Archive</span>
+      <ul>
+        <li><a href="archive.html">Chronological Index</a></li>
+        <li><a href="glossary.html">Glossary</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">
+      © 2026 Aurafact — Environmental Sound Archive<br>
+      A project by Jenni Falanga &nbsp;·&nbsp; Preserving Acoustic Memory
+    </p>
+    <p class="footer-time" id="footerTime"></p>
+  </div>
+</footer>
+
+
+<script>
+/* ── MOBILE NAV TOGGLE ───────────────────────────────────────── */
+(function() {
+  var nav = document.getElementById('site-nav');
+  var btn = document.querySelector('.nav-toggle');
+  var links = document.querySelectorAll('.nav-links a');
+  if (!nav || !btn) return;
+  function open()  { nav.classList.add('nav-open'); btn.setAttribute('aria-expanded','true'); }
+  function close() { nav.classList.remove('nav-open'); btn.setAttribute('aria-expanded','false'); }
+  btn.addEventListener('click', function() { nav.classList.contains('nav-open') ? close() : open(); });
+  links.forEach(function(a) { a.addEventListener('click', close); });
+})();
+
+/* ── FOOTER TIME ────────────────────────────────────────────── */
+(function() {
+  var el = document.getElementById('footerTime');
+  if (!el) return;
+  function update() {
+    var now = new Date();
+    el.textContent = now.toLocaleTimeString('en-CA', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+  }
+  update();
+  setInterval(update, 1000);
+})();
+
+/* ── ABOUT TOGGLE ───────────────────────────────────────────── */
+(function() {
+  var section = document.getElementById('aboutSection');
+  var toggle  = document.getElementById('aboutToggle');
+  if (!section || !toggle) return;
+  toggle.addEventListener('click', function() {
+    var open = section.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   SPECIMENS — with approximate coords
+   All coords are approximate, derived from place-name only.
+   ══════════════════════════════════════════════════════════════ */
+const SPECIMENS = [
+  {
+    id: 'AF-0001',
+    artifact: '2022 World Cup Watch Party',
+    location: 'Ottawa, CA',
+    region: 'North America',
+    audio: 'audio/AF-0001-world-cup-watch-party-ottawa-2022.mp3',
+    coords: [45.424, -75.692], // approximate — downtown Ottawa
+  },
+  {
+    id: 'AF-0002',
+    artifact: '2022 World Cup Watch Party',
+    location: 'Ottawa, CA',
+    region: 'North America',
+    audio: 'audio/AF-0002-world-cup-watch-party-ottawa-2022.mp3',
+    coords: [45.424, -75.692], // approximate — same event as AF-0001
+  },
+  {
+    id: 'AF-0003',
+    artifact: '2022 World Cup Watch Party',
+    location: 'Ottawa, CA',
+    region: 'North America',
+    audio: 'audio/AF-0003-world-cup-watch-party-ottawa-2022.mp3',
+    coords: [45.424, -75.692], // approximate — same event as AF-0001
+  },
+  {
+    id: 'AF-0004',
+    artifact: 'Evening Motorcycle Passage',
+    location: 'Marseille, FR',
+    region: 'Europe',
+    audio: 'audio/AF-0004-evening-motorcycle-marseille-2023.mp3',
+    coords: [43.298, 5.374], // approximate — Marseille city centre
+  },
+  {
+    id: 'AF-0005',
+    artifact: 'River Edge Flow',
+    location: 'Ottawa, CA',
+    region: 'North America',
+    audio: 'audio/AF-0005-petrie-island-ottawa-2023.mp3',
+    coords: [45.473, -75.556], // approximate — Petrie Island shoreline, east Ottawa
+  },
+  {
+    id: 'AF-0006',
+    artifact: 'Spring Canopy Chorus',
+    location: 'Ottawa, CA',
+    region: 'North America',
+    audio: 'audio/AF-0006-birdsong-donaldst-ottawa-2023.mp3',
+    coords: [45.434, -75.678], // approximate — Donald St green space, Ottawa
+  },
+  {
+    id: 'AF-0007',
+    artifact: 'Marché Street Corridor',
+    location: 'Kinshasa, DRC',
+    region: 'Africa',
+    audio: 'audio/AF-0007-market-kinshasa-2021.mp3',
+    coords: [-4.322, 15.322], // approximate — Kinshasa city centre
+  },
+  {
+    id: 'AF-0008',
+    artifact: '2014 World Cup Watch Party',
+    location: 'Kinshasa, DRC',
+    region: 'Africa',
+    audio: 'audio/AF-0008-worldcup-kinshasa-2021.mp3',
+    coords: [-4.322, 15.322], // approximate — Kinshasa city centre
+  },
+  {
+    id: 'AF-0009',
+    artifact: 'Stockholm City Tram',
+    location: 'Stockholm, SE',
+    region: 'Europe',
+    audio: 'audio/AF-0009-citytram-stockholm-2022.mp3',
+    coords: [59.332, 18.065], // approximate — central Stockholm tram network
+  },
+  {
+    id: 'AF-0010',
+    artifact: 'Stockholm New Years Night',
+    location: 'Stockholm, SE',
+    region: 'Europe',
+    audio: 'audio/AF-0010-newyearsparty-stockholm-2022.mp3',
+    coords: [59.334, 18.068], // approximate — central Stockholm
+  },
+  {
+    id: 'AF-0011',
+    artifact: 'Lyon vs PSG Match',
+    location: 'Lyon, FR',
+    region: 'Europe',
+    audio: 'audio/AF-0011-soccer-psg-lyon-2023.mp3',
+    coords: [45.748, 4.839], // approximate — Groupama Stadium area, Lyon
+  },
+  {
+    id: 'AF-0012',
+    artifact: 'St. Patrick’s Day Bar Interior',
+    location: 'Ottawa, CA',
+    region: 'North America',
+    audio: 'audio/AF-0012-st-paddys-day-ottawa-2026.mp3',
+    coords: [45.421, -75.696], // approximate — downtown Ottawa bar district
+  },
+  {
+    id: 'AF-0013',
+    artifact: 'Domestic Bath Preparation',
+    location: 'Ottawa, CA',
+    region: 'North America',
+    audio: 'audio/AF-0013-bathtub-ottawa-2020.mp3',
+    coords: [45.420, -75.700], // approximate — Ottawa, city-level only
+  },
+  {
+    id: 'AF-0014',
+    artifact: 'Basketball Dribble',
+    location: 'Paris, FR',
+    region: 'Europe',
+    audio: 'audio/AF-0014-basketball-paris-2020.mp3',
+    coords: [48.860, 2.349], // approximate — Paris city centre
+  },
+  {
+    id: 'AF-0015',
+    artifact: 'Shoreline (Rock Edge)',
+    location: 'Marseille, FR',
+    region: 'Europe',
+    audio: 'audio/AF-0015-windocean-marseille-2025.mp3',
+    coords: [43.288, 5.352], // approximate — Corniche coastal area, Marseille
+  },
+  {
+    id: 'AF-0016',
+    artifact: 'Corsican Song (Street Terrace)',
+    location: 'Marseille, FR',
+    region: 'Europe',
+    audio: 'audio/AF-0016-corsicansingers-marseille-2025.mp3',
+    coords: [43.295, 5.380], // approximate — Le Panier / Vieux-Port area
+  },
+  {
+    id: 'AF-0017',
+    artifact: 'World Rugby Championship Night Crowd',
+    location: 'Marseille, FR',
+    region: 'Europe',
+    audio: 'audio/AF-0017-worldrugbychampionship-marseille-2023.mp3',
+    coords: [43.302, 5.370], // approximate — Marseille city centre terrace
+  },
+  {
+    id: 'AF-0018',
+    artifact: 'Elevator Transit',
+    location: 'Lyon, FR',
+    region: 'Europe',
+    audio: 'audio/AF-0018-elevatordown-lyon-2023.mp3',
+    coords: [45.757, 4.832], // approximate — Lyon city centre
+  },
+  {
+    id: 'AF-0019',
+    artifact: 'Arlanda Departure',
+    location: 'Stockholm, SE',
+    region: 'Europe',
+    audio: 'audio/AF-0019-flying-stockholm-2022.mp3',
+    coords: [59.648, 17.932], // approximate — Arlanda Airport, north of Stockholm
+  },
+  {
+    id: 'AF-0020',
+    artifact: 'Pub Concert Ambience',
+    location: 'Gatineau, QC',
+    region: 'North America',
+    audio: 'audio/AF-0020-minotaure-2026.mp3',
+    coords: [45.478, -75.701], // approximate — Gatineau city centre
+  },
+  {
+    id: 'AF-0021',
+    artifact: 'Applause and Pub Tone',
+    location: 'Gatineau, QC',
+    region: 'North America',
+    audio: 'audio/AF-0021-minotaure-applause-2026.mp3',
+    coords: [45.478, -75.701], // approximate — same venue as AF-0020
+  },
+  {
+    id: 'AF-0022',
+    artifact: 'Lakeshore Drift',
+    location: 'Ottawa, ON',
+    region: 'North America',
+    audio: 'audio/AF-0022-ottawa-lakeshore-2026.mp3',
+    coords: [45.348, -75.863], // approximate — Lac Deschênes shoreline, SW Ottawa
+  },
+  {
+    id: 'AF-0023',
+    artifact: 'Umbrella Canopy (Pedestrian Transit)',
+    location: 'Ottawa, ON',
+    region: 'North America',
+    audio: 'audio/AF-0023-ottawa-umbrella-2026.mp3',
+    coords: [45.422, -75.690], // approximate — Ottawa, city-level
+  },
+  {
+    id: 'AF-0024',
+    artifact: 'Spring Passage',
+    location: 'Ottawa, ON',
+    region: 'North America',
+    audio: 'audio/AF-0024-ottawa-morning-2026.mp3',
+    coords: [45.419, -75.704], // approximate — Ottawa shared path
+  },
+];
+
+/* ══════════════════════════════════════════════════════════════
+   PROJECTION
+   ══════════════════════════════════════════════════════════════ */
+const VW = 1000, VH = 560;
+const PAD = { x: 80, y: 60 }; // padding inside viewBox
+const mapW = VW - PAD.x * 2;
+const mapH = VH - PAD.y * 2;
+
+const plotted = SPECIMENS.filter(s => s.coords);
+
+const bounds = plotted.reduce((b, s) => ({
+  minLat: Math.min(b.minLat, s.coords[0]),
+  maxLat: Math.max(b.maxLat, s.coords[0]),
+  minLng: Math.min(b.minLng, s.coords[1]),
+  maxLng: Math.max(b.maxLng, s.coords[1]),
+}), { minLat: Infinity, maxLat: -Infinity, minLng: Infinity, maxLng: -Infinity });
+
+// Expand bounds slightly so edge specimens have breathing room
+const latSpan = bounds.maxLat - bounds.minLat;
+const lngSpan = bounds.maxLng - bounds.minLng;
+bounds.minLat -= latSpan * 0.12;
+bounds.maxLat += latSpan * 0.12;
+bounds.minLng -= lngSpan * 0.10;
+bounds.maxLng += lngSpan * 0.10;
+
+function project(lat, lng) {
+  const x = PAD.x + (lng - bounds.minLng) / (bounds.maxLng - bounds.minLng) * mapW;
+  const y = PAD.y + (bounds.maxLat - lat) / (bounds.maxLat - bounds.minLat) * mapH;
+  return { x, y };
+}
+
+function unproject(svgX, svgY) {
+  const lng = bounds.minLng + (svgX - PAD.x) / mapW * (bounds.maxLng - bounds.minLng);
+  const lat = bounds.maxLat - (svgY - PAD.y) / mapH * (bounds.maxLat - bounds.minLat);
+  return { lat, lng };
+}
+
+function geoDist(lat1, lng1, lat2, lng2) {
+  return Math.sqrt((lat1 - lat2) ** 2 + (lng1 - lng2) ** 2);
+}
+
+// Falloff radius in degrees — at this scale, ~8° gives neighbourhood-level proximity
+const FALLOFF = 8;
+
+/* ── Falloff ring radius in SVG units ──────────────────────── */
+function falloffSvgRadius() {
+  // Convert FALLOFF degrees to approximate SVG pixels (use lat scale)
+  return (FALLOFF / (bounds.maxLat - bounds.minLat)) * mapH;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BUILD SVG ELEMENTS
+   ══════════════════════════════════════════════════════════════ */
+const svg = document.getElementById('soundmap-svg');
+const gridG = document.getElementById('map-grid');
+const labelsG = document.getElementById('region-labels');
+const dotsG = document.getElementById('specimen-dots');
+const listenerEl = document.getElementById('listener');
+const falloffRingEl = document.getElementById('falloff-ring');
+const tooltip = document.getElementById('tooltip');
+
+// Subtle background grid
+(function buildGrid() {
+  const ns = 'http://www.w3.org/2000/svg';
+  for (let i = 0; i <= 8; i++) {
+    const x = PAD.x + (mapW / 8) * i;
+    const l = document.createElementNS(ns, 'line');
+    l.setAttribute('x1', x); l.setAttribute('y1', PAD.y);
+    l.setAttribute('x2', x); l.setAttribute('y2', VH - PAD.y);
+    l.setAttribute('class', 'map-grid-line');
+    gridG.appendChild(l);
+  }
+  for (let i = 0; i <= 5; i++) {
+    const y = PAD.y + (mapH / 5) * i;
+    const l = document.createElementNS(ns, 'line');
+    l.setAttribute('x1', PAD.x); l.setAttribute('y1', y);
+    l.setAttribute('x2', VW - PAD.x); l.setAttribute('y2', y);
+    l.setAttribute('class', 'map-grid-line');
+    gridG.appendChild(l);
+  }
+})();
+
+// Region labels — positioned at approximate centroid of each region's specimens
+(function buildRegionLabels() {
+  const ns = 'http://www.w3.org/2000/svg';
+  const regions = {};
+  plotted.forEach(s => {
+    if (!regions[s.region]) regions[s.region] = { lats: [], lngs: [] };
+    regions[s.region].lats.push(s.coords[0]);
+    regions[s.region].lngs.push(s.coords[1]);
+  });
+
+  Object.entries(regions).forEach(([name, { lats, lngs }]) => {
+    const cLat = lats.reduce((a,b) => a+b, 0) / lats.length;
+    const cLng = lngs.reduce((a,b) => a+b, 0) / lngs.length;
+    const pos = project(cLat, cLng);
+    const t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', pos.x);
+    t.setAttribute('y', pos.y - 22);
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('class', 'region-label');
+    t.textContent = name.toUpperCase();
+    labelsG.appendChild(t);
+  });
+})();
+
+// Specimen dots
+const dotEls = {}; // id → { circle, ring }
+const ns = 'http://www.w3.org/2000/svg';
+
+SPECIMENS.forEach(spec => {
+  if (!spec.coords) return;
+  const pos = project(spec.coords[0], spec.coords[1]);
+  const hasAudio = !!spec.audio;
+
+  // Outer ring (shows when audible)
+  const ring = document.createElementNS(ns, 'circle');
+  ring.setAttribute('cx', pos.x);
+  ring.setAttribute('cy', pos.y);
+  ring.setAttribute('r', 14);
+  ring.setAttribute('class', 'specimen-ring');
+  dotsG.appendChild(ring);
+
+  // Dot
+  const circle = document.createElementNS(ns, 'circle');
+  circle.setAttribute('cx', pos.x);
+  circle.setAttribute('cy', pos.y);
+  circle.setAttribute('r', 4);
+  circle.setAttribute('class', 'specimen-dot ' + (hasAudio ? 'has-audio' : 'no-audio'));
+  circle.setAttribute('data-id', spec.id);
+  dotsG.appendChild(circle);
+
+  dotEls[spec.id] = { circle, ring, pos };
+
+  // Tooltip events
+  circle.addEventListener('mouseenter', function(e) { showTooltip(spec, e); });
+  circle.addEventListener('mouseleave', hideTooltip);
+  circle.addEventListener('mousemove', function(e) { moveTooltip(e); });
+  circle.addEventListener('focus', function(e) { showTooltip(spec, e); });
+  circle.addEventListener('blur', hideTooltip);
+});
+
+// Move listener to front
+svg.appendChild(falloffRingEl);
+svg.appendChild(listenerEl);
+
+// Specimen count
+document.getElementById('specimenCount').textContent =
+  plotted.length + ' specimens plotted · ' + SPECIMENS.filter(s => !s.coords).length + ' unlocated';
+
+/* ══════════════════════════════════════════════════════════════
+   LISTENER STATE
+   ══════════════════════════════════════════════════════════════ */
+let listenerX = VW / 2;
+let listenerY = VH / 2;
+
+function setListenerPos(x, y) {
+  listenerX = Math.max(PAD.x, Math.min(VW - PAD.x, x));
+  listenerY = Math.max(PAD.y, Math.min(VH - PAD.y, y));
+  listenerEl.setAttribute('cx', listenerX);
+  listenerEl.setAttribute('cy', listenerY);
+
+  const rSvg = falloffSvgRadius();
+  falloffRingEl.setAttribute('cx', listenerX);
+  falloffRingEl.setAttribute('cy', listenerY);
+  falloffRingEl.setAttribute('rx', rSvg);
+  falloffRingEl.setAttribute('ry', rSvg);
+}
+
+setListenerPos(VW / 2, VH / 2);
+
+/* ── SVG coordinate helper ──────────────────────────────────── */
+function svgPoint(e) {
+  const pt = svg.createSVGPoint();
+  pt.x = e.clientX;
+  pt.y = e.clientY;
+  return pt.matrixTransform(svg.getScreenCTM().inverse());
+}
+
+/* ── Drag listener ──────────────────────────────────────────── */
+let dragging = false;
+
+listenerEl.addEventListener('mousedown', function(e) {
+  e.preventDefault();
+  dragging = true;
+});
+listenerEl.addEventListener('touchstart', function(e) {
+  e.preventDefault();
+  dragging = true;
+}, { passive: false });
+
+svg.addEventListener('mousemove', function(e) {
+  if (!dragging) return;
+  const p = svgPoint(e);
+  setListenerPos(p.x, p.y);
+});
+svg.addEventListener('touchmove', function(e) {
+  if (!dragging) return;
+  e.preventDefault();
+  const touch = e.touches[0];
+  const p = svgPoint(touch);
+  setListenerPos(p.x, p.y);
+}, { passive: false });
+
+window.addEventListener('mouseup', () => { dragging = false; });
+window.addEventListener('touchend', () => { dragging = false; });
+
+/* Click-to-move (on the SVG background, not on a specimen dot) */
+svg.addEventListener('click', function(e) {
+  if (e.target === listenerEl) return;
+  if (e.target.closest('#specimen-dots')) return;
+  const p = svgPoint(e);
+  setListenerPos(p.x, p.y);
+});
+
+/* ── Arrow keys ─────────────────────────────────────────────── */
+const STEP = 8;
+svg.addEventListener('keydown', function(e) {
+  const dirs = { ArrowLeft: [-STEP,0], ArrowRight: [STEP,0], ArrowUp: [0,-STEP], ArrowDown: [0,STEP] };
+  if (dirs[e.key]) {
+    e.preventDefault();
+    setListenerPos(listenerX + dirs[e.key][0], listenerY + dirs[e.key][1]);
+  }
+});
+listenerEl.addEventListener('keydown', function(e) {
+  const dirs = { ArrowLeft: [-STEP,0], ArrowRight: [STEP,0], ArrowUp: [0,-STEP], ArrowDown: [0,STEP] };
+  if (dirs[e.key]) {
+    e.preventDefault();
+    setListenerPos(listenerX + dirs[e.key][0], listenerY + dirs[e.key][1]);
+  }
+});
+
+/* ══════════════════════════════════════════════════════════════
+   TOOLTIP
+   ══════════════════════════════════════════════════════════════ */
+function showTooltip(spec, e) {
+  document.getElementById('tt-id').textContent = spec.id;
+  document.getElementById('tt-name').textContent = spec.artifact;
+  document.getElementById('tt-loc').textContent = spec.location + ' · ' + spec.region;
+  const noAudioEl = document.getElementById('tt-noaudio');
+  noAudioEl.textContent = spec.audio ? '' : 'No recording';
+  tooltip.classList.add('visible');
+  moveTooltip(e);
+}
+function hideTooltip() { tooltip.classList.remove('visible'); }
+function moveTooltip(e) {
+  const rect = svg.parentElement.getBoundingClientRect();
+  const x = e.clientX - rect.left + 14;
+  const y = e.clientY - rect.top - 10;
+  tooltip.style.left = (x + tooltip.offsetWidth > rect.width - 10 ? x - tooltip.offsetWidth - 28 : x) + 'px';
+  tooltip.style.top  = Math.max(4, y) + 'px';
+}
+
+/* ══════════════════════════════════════════════════════════════
+   WEB AUDIO
+   ══════════════════════════════════════════════════════════════ */
+let audioCtx = null;
+let masterGain = 1;
+let walkActive = false;
+let gainRaf = null;
+
+// Per-specimen audio state
+const audioState = {};
+SPECIMENS.forEach(spec => {
+  if (!spec.audio) return;
+  audioState[spec.id] = {
+    gainNode: null,
+    source:   null,
+    buffer:   null,
+    loading:  false,
+    currentGain: 0,
+  };
+});
+
+function ensureCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+async function loadSpecimen(spec) {
+  const sa = audioState[spec.id];
+  if (!sa || sa.loading || sa.buffer) return;
+  sa.loading = true;
+  try {
+    const res = await fetch(spec.audio);
+    const arrayBuf = await res.arrayBuffer();
+    sa.buffer = await audioCtx.decodeAudioData(arrayBuf);
+    if (walkActive) startSource(spec.id);
+  } catch(err) {
+    console.warn('Could not load', spec.id, err);
+    sa.loading = false;
+  }
+}
+
+function startSource(id) {
+  const spec = SPECIMENS.find(s => s.id === id);
+  const sa = audioState[id];
+  if (!sa || !sa.buffer || sa.source) return;
+  if (!sa.gainNode) {
+    sa.gainNode = audioCtx.createGain();
+    sa.gainNode.gain.value = 0;
+    sa.gainNode.connect(audioCtx.destination);
+  }
+  const src = audioCtx.createBufferSource();
+  src.buffer = sa.buffer;
+  src.loop = true;
+  src.connect(sa.gainNode);
+  src.start(0);
+  sa.source = src;
+}
+
+function stopAllSources() {
+  Object.values(audioState).forEach(sa => {
+    if (sa.source) {
+      try { sa.source.stop(); } catch(e) {}
+      sa.source = null;
+    }
+    if (sa.gainNode) {
+      sa.gainNode.gain.cancelScheduledValues(0);
+      sa.gainNode.gain.value = 0;
+    }
+  });
+}
+
+/* ── Gain update loop ───────────────────────────────────────── */
+const audibleItems = document.getElementById('audibleItems');
+const audibleStrip = document.getElementById('audibleStrip');
+const audibleEls = {};
+
+function updateGains() {
+  if (!walkActive) return;
+
+  const pos = unproject(listenerX, listenerY);
+  const now = audioCtx.currentTime;
+  const nowAudible = [];
+
+  SPECIMENS.forEach(spec => {
+    if (!spec.coords || !spec.audio) return;
+    const sa = audioState[spec.id];
+    if (!sa) return;
+
+    const d = geoDist(pos.lat, pos.lng, spec.coords[0], spec.coords[1]);
+    const targetGain = Math.max(0, 1 - d / FALLOFF) * masterGain;
+
+    // Lazy load when entering range
+    if (targetGain > 0 && !sa.buffer && !sa.loading) {
+      loadSpecimen(spec);
+    }
+
+    if (sa.gainNode) {
+      sa.gainNode.gain.setTargetAtTime(targetGain, now, 0.15);
+    }
+    sa.currentGain = targetGain;
+
+    if (targetGain > 0.05) nowAudible.push({ spec, gain: targetGain });
+
+    // Visual ring on dot
+    const dotInfo = dotEls[spec.id];
+    if (dotInfo) {
+      dotInfo.ring.classList.toggle('active', targetGain > 0.1);
+      if (targetGain > 0.1) {
+        const scale = 0.6 + targetGain * 0.8;
+        dotInfo.ring.setAttribute('r', 14 * scale);
+      }
+    }
+  });
+
+  // Update audible strip
+  nowAudible.sort((a, b) => b.gain - a.gain);
+  const shown = nowAudible.slice(0, 4);
+
+  audibleStrip.style.display = shown.length ? '' : 'none';
+  Object.keys(audibleEls).forEach(id => { audibleEls[id].classList.remove('visible', 'loud'); });
+
+  shown.forEach(({ spec, gain }) => {
+    if (!audibleEls[spec.id]) {
+      const div = document.createElement('div');
+      div.className = 'audible-item';
+      div.textContent = spec.artifact + ' — ' + spec.location;
+      audibleItems.appendChild(div);
+      audibleEls[spec.id] = div;
+    }
+    audibleEls[spec.id].classList.add('visible');
+    if (gain > 0.5) audibleEls[spec.id].classList.add('loud');
+  });
+
+  gainRaf = requestAnimationFrame(updateGains);
+}
+
+/* ── Walk start / stop ──────────────────────────────────────── */
+const walkOverlay = document.getElementById('walkOverlay');
+const walkStartBtn = document.getElementById('walkStartBtn');
+const startBtn = document.getElementById('startBtn');
+const muteBtn = document.getElementById('muteBtn');
+
+function beginWalk() {
+  ensureCtx();
+  walkActive = true;
+
+  walkOverlay.classList.add('hidden');
+  startBtn.style.display = '';
+  muteBtn.style.display = '';
+
+  // Initialise gain nodes for all audio specimens
+  SPECIMENS.forEach(spec => {
+    if (!spec.audio) return;
+    const sa = audioState[spec.id];
+    if (!sa.gainNode) {
+      sa.gainNode = audioCtx.createGain();
+      sa.gainNode.gain.value = 0;
+      sa.gainNode.connect(audioCtx.destination);
+    }
+  });
+
+  gainRaf = requestAnimationFrame(updateGains);
+}
+
+function endWalk() {
+  walkActive = false;
+  if (gainRaf) { cancelAnimationFrame(gainRaf); gainRaf = null; }
+  stopAllSources();
+
+  // Clear visual state
+  Object.values(dotEls).forEach(({ ring }) => {
+    ring.classList.remove('active');
+    ring.setAttribute('r', 14);
+  });
+  audibleStrip.style.display = 'none';
+  Object.values(audibleEls).forEach(el => el.classList.remove('visible', 'loud'));
+
+  walkOverlay.classList.remove('hidden');
+  startBtn.style.display = 'none';
+  muteBtn.style.display = 'none';
+}
+
+walkStartBtn.addEventListener('click', beginWalk);
+
+startBtn.addEventListener('click', endWalk);
+
+muteBtn.addEventListener('click', function() {
+  const muted = muteBtn.classList.toggle('active');
+  masterGain = muted ? 0 : 1;
+  muteBtn.textContent = muted ? 'Unmute' : 'Mute';
+  if (audioCtx) {
+    Object.values(audioState).forEach(sa => {
+      if (sa.gainNode) {
+        sa.gainNode.gain.setTargetAtTime(
+          muted ? 0 : sa.currentGain,
+          audioCtx.currentTime, 0.1
+        );
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>
