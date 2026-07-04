@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "aurafact",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-l", "8742", "."],
+      "port": 8742
+    }
+  ]
+}
